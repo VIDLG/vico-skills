@@ -31,7 +31,9 @@ Accept either:
 - an active plan under `.wilco/plans/active/<slug>.md`
 - or the current resume file under `.wilco/resume/<slug>.md`
 
-If the plan is stale or the current implementation is unclear, use `wilco-resume` first. Prefer the index manifest when present so cross-agent coordination does not rely on guessing file paths.
+Prefer the index manifest when present so cross-agent coordination does not rely on guessing file paths.
+
+If the plan is stale, the current resume is stale, or the current implementation is unclear, use `wilco-resume` first.
 
 ## Execution Loop
 
@@ -44,6 +46,8 @@ High-level rules:
 - Verify after each meaningful step.
 - Update the plan as you go when the user wants execution-state docs kept current.
 - When a blocker is real, say exactly why execution cannot continue and what decision or input is needed.
+- Continue after each completed slice when another unblocked step exists.
+- Do not stop merely because one checklist item finished.
 
 For each execution pass, produce a compact execution report using [references/execution-report-template.md](references/execution-report-template.md).
 When blocked, classify the blocker using [references/blocker-taxonomy.md](references/blocker-taxonomy.md).

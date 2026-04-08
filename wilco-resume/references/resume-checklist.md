@@ -38,3 +38,12 @@ Use this checklist when comparing PRD, plan, and code.
 - Update the plan if checklist state or source references are stale.
 - Update the PRD only if the intended scope or problem framing has actually changed.
 - Add or update architecture docs when current stable truth is only implied by code or buried in old plans.
+
+## Resume Staleness Checks
+
+- Did the linked PRD update after the current resume?
+- Did the linked plan update after the current resume?
+- Did checklist state change after the current resume was written?
+- Does current code or test evidence clearly exceed or contradict the old resume?
+
+If yes, overwrite the current resume file instead of trusting the old one.

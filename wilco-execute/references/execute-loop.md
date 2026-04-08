@@ -4,7 +4,8 @@ Use this loop for persistent execution.
 
 ## Step 1: Confirm the active source
 
-- Prefer `.wilco/plans/active/<slug>.md`
+- Prefer `.wilco/index/<slug>.json`
+- Resolve the current plan and current resume from the manifest when available
 - If a `wilco-resume` report exists and is current, use it to choose the next step
 
 ## Step 2: Reconcile if needed
@@ -15,6 +16,8 @@ If not:
 - run `wilco-resume`
 - update the working understanding
 - then continue
+
+Also rerun `wilco-resume` if the current resume is stale relative to the linked plan or PRD.
 
 ## Step 3: Pick the next smallest unblocked step
 
@@ -51,6 +54,7 @@ Continue when:
 
 - there is another unblocked step
 - no user decision is needed
+- no stale-plan or stale-resume condition requires fresh reconciliation
 
 Stop when:
 
