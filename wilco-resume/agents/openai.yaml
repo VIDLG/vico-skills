@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wilco Resume"
+  short_description: "Reconcile PRD, plan, and code to decide how to continue"
+  default_prompt: "Compare the current PRD, plan, code, and tests, determine the real implementation status, identify divergences, and recommend the smallest correct next step."

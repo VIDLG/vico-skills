@@ -8,6 +8,7 @@ Current skills:
 - `wilco-grill`
 - `wilco-prd`
 - `wilco-plan`
+- `wilco-resume`
 
 Intended distribution model:
 

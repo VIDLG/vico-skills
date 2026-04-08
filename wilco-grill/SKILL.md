@@ -11,7 +11,7 @@ Preserve the full core behavior of a strong grilling workflow:
 - Ask one question at a time.
 - If a question can be answered by exploring the codebase or existing docs, explore first instead of asking.
 
-Do not weaken the interaction compared with a generic grilling skill. The goal is not to be shorter or softer; the goal is to be equally rigorous while staying aligned with Wilco's repository-native planning flow.
+Maintain high-intensity questioning. Do not stop at surface agreement, and do not trade away necessary rigor just to be shorter or softer. The goal is to reach real clarity while staying aligned with Wilco's repository-native planning flow.
 
 When the discussion is about repository-native planning, prefer alignment with:
 
