@@ -5,6 +5,7 @@ Custom repository-oriented Codex skills.
 Current skills:
 
 - `wilco-docs-governance`
+- `wilco-grill-me`
 - `wilco-write-prd`
 - `wilco-prd-to-plan`
 

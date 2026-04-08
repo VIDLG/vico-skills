@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wilco Grill Me"
+  short_description: "Stress-test a PRD, plan, or design one question at a time"
+  default_prompt: "Interview the user relentlessly about the current plan, PRD, or design, ask one question at a time, and provide a recommended answer with each question."
