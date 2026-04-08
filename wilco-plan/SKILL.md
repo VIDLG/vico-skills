@@ -49,4 +49,5 @@ Use the full phased template for medium and large work. For small plan-only work
 
 - Use [references/plan-template.md](references/plan-template.md) for the repository plan template.
 - Use [references/plan-only-template.md](references/plan-only-template.md) for smaller plan-only work.
+- Use [../wilco-docs/references/status-vocabulary.md](../wilco-docs/references/status-vocabulary.md) when expressing progress or divergence.
 - Use `wilco-docs` when you need help with active/archive placement or document lifecycle.

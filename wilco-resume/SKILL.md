@@ -45,6 +45,7 @@ Do not trust checklist state alone. Verify implementation reality in code and te
 - Prefer public behavior and preserved tests over internal implementation shape.
 - If the implementation changed direction but still satisfies the PRD, record that as plan divergence, not automatic failure.
 - If the plan references paths or architecture that no longer exist, call that out explicitly.
+- Record evidence explicitly enough that another reader can see why the conclusion is `high`, `medium`, or `low` confidence.
 
 ## Output Contract
 
@@ -66,5 +67,6 @@ Produce a resume report that includes:
 
 - Use [references/resume-checklist.md](references/resume-checklist.md) for what evidence to inspect.
 - Use [references/resume-output-template.md](references/resume-output-template.md) for the report format.
+- Use [../wilco-docs/references/status-vocabulary.md](../wilco-docs/references/status-vocabulary.md) for shared status terms.
 
 If the reconciliation shows the document lifecycle itself is unclear, also use `wilco-docs`.

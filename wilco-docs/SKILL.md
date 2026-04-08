@@ -81,5 +81,6 @@ When asked to archive or complete a document set, produce:
 
 - For directory layout, naming, and lifecycle conventions, read [references/layout.md](references/layout.md).
 - For archive criteria, status blocks, and completion handling, read [references/archive.md](references/archive.md).
+- For shared progress/alignment terms, read [references/status-vocabulary.md](references/status-vocabulary.md).
 
 Keep the active skill body short. Load the reference files only when the user is asking for concrete directory policy, archive mechanics, or status templates.

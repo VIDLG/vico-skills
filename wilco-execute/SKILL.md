@@ -70,4 +70,5 @@ Codex does not have equivalent event hooks. Use the same execute loop directly a
 - Use [references/execute-loop.md](references/execute-loop.md) for the step-by-step loop.
 - Use [references/execution-report-template.md](references/execution-report-template.md) for per-step output.
 - Use [references/blocker-taxonomy.md](references/blocker-taxonomy.md) for blocker classification.
+- Use [../wilco-docs/references/status-vocabulary.md](../wilco-docs/references/status-vocabulary.md) for shared status terms.
 - Use [references/hooks-setup.md](references/hooks-setup.md) for Claude Code hook wiring.
