@@ -1,6 +1,6 @@
 ---
 name: wilco-resume
-description: Reconcile repository PRDs, plans, and current code or test state to determine real progress and the correct next step. Use when implementation was interrupted, the user asks how to continue, wants to compare current code against a PRD or plan, needs to verify what is actually done, or wants a resume report before continuing work. Also use when a task has only a plan and code state, without a separate PRD.
+description: Reconcile Wilco PRDs, plans, and current code or test state to determine real progress and the correct next step. Use when implementation was interrupted, the user asks how to continue, wants to compare current code against a PRD or plan, needs to verify what is actually done, or wants a resume report before continuing work. Also use when a task has only a plan and code state, without a separate PRD.
 ---
 
 # Wilco Resume
@@ -21,8 +21,8 @@ Do not trust checklist state alone. Verify implementation reality in code and te
 
 1. Locate the target plan, and locate the PRD if one exists.
    Prefer:
-   - `docs/plans/active/<slug>.md`
-   - `docs/prd/active/<slug>.md`
+   - `.wilco/plans/active/<slug>.md`
+   - `.wilco/prd/active/<slug>.md`
 2. Determine whether this is:
    - PRD + plan + code reconciliation
    - or plan + code reconciliation

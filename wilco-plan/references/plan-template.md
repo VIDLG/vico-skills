@@ -1,6 +1,6 @@
 # Repository Plan Template
 
-Use this template for `docs/plans/active/<slug>.md`.
+Use this template for `.wilco/plans/active/<slug>.md`.
 
 ```md
 # Plan: <Feature Name>
@@ -8,7 +8,7 @@ Use this template for `docs/plans/active/<slug>.md`.
 > Status: `in_progress`
 > Created: `2026-04-08`
 > Updated: `2026-04-08`
-> Source PRD: `docs/prd/active/<slug>.md`
+> Source PRD: `.wilco/prd/active/<slug>.md`
 
 ## Architectural decisions
 

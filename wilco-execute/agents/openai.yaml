@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wilco Execute"
+  short_description: "Execute the active Wilco plan until done or truly blocked"
+  default_prompt: "Read the active Wilco plan, reconcile current state if needed, execute the smallest unblocked next step, verify it, update plan state, and continue until done or a real blocker exists."

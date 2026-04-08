@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -File wilco-skills/wilco-execute/scripts/session_start_hook.ps1"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -File wilco-skills/wilco-execute/scripts/stop_hook.ps1"
+          }
+        ]
+      }
+    ]
+  }
+}

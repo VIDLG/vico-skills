@@ -1,26 +1,28 @@
 # Recommended Layout
 
-Use one stable top-level structure for engineering docs:
+Use one stable split between Wilco planning docs and long-lived project truth:
 
 ```text
-docs/
+ .wilco/
 ├── prd/
 │   ├── active/
 │   └── archive/
 ├── plans/
 │   ├── active/
 │   └── archive/
+
+docs/
 ├── architecture/
 └── adr/
 ```
 
 ## Intent By Directory
 
-- `docs/prd/active/`: active problem statements, scope, goals, and acceptance criteria.
-- `docs/plans/active/`: active implementation plans and checklists.
+- `.wilco/prd/active/`: active problem statements, scope, goals, and acceptance criteria.
+- `.wilco/plans/active/`: active implementation plans and checklists.
+- `.wilco/*/archive/`: historical Wilco planning documents.
 - `docs/architecture/`: current stable design truth.
 - `docs/adr/`: durable architectural decisions.
-- `docs/*/archive/`: historical documents preserved for traceability.
 
 ## Naming Rules
 
@@ -31,8 +33,8 @@ docs/
 Example:
 
 ```text
-docs/prd/active/action-pipeline.md
-docs/plans/active/action-pipeline.md
+.wilco/prd/active/action-pipeline.md
+.wilco/plans/active/action-pipeline.md
 docs/architecture/action-pipeline.md
 ```
 

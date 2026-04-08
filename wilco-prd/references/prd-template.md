@@ -1,12 +1,12 @@
 # Repository PRD Template
 
-Use this template for `docs/prd/active/<slug>.md`.
+Use this template for `.wilco/prd/active/<slug>.md`.
 
 ```md
 Status: accepted
 Created: 2026-04-08
 Updated: 2026-04-08
-Related plan: `docs/plans/active/<slug>.md`
+Related plan: `.wilco/plans/active/<slug>.md`
 
 # PRD: <Feature or Initiative Name>
 

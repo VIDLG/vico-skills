@@ -1,6 +1,6 @@
 ---
 name: wilco-prd
-description: Create a Wilco-style repo-local PRD through user interview, codebase exploration, and design clarification, then write it to `docs/prd/active/<slug>.md` when the work is large enough to justify a PRD. Use when the user wants to write a PRD, define a substantial engineering initiative, capture scope and acceptance criteria in-repo, or replace GitHub-issue-based PRD workflows with repository-native docs. For smaller, clearer tasks, prefer plan-only workflows instead of forcing a PRD.
+description: Create a Wilco-style repo-local PRD through user interview, codebase exploration, and design clarification, then write it to `.wilco/prd/active/<slug>.md` when the work is large enough to justify a PRD. Use when the user wants to write a PRD, define a substantial engineering initiative, capture scope and acceptance criteria in-repo, or replace issue-based PRD workflows with repository-native planning docs. For smaller, clearer tasks, prefer plan-only workflows instead of forcing a PRD.
 ---
 
 # Write Repo Prd
@@ -19,7 +19,7 @@ Do not assume every task deserves a PRD.
 4. If the work is small, tightly scoped, and implementation-facing, recommend using `wilco-plan` directly instead of creating a PRD.
 5. If the work deserves a PRD, interview the user until the scope, interfaces, and tradeoffs are clear enough to write a durable PRD.
 6. Identify the main modules, boundaries, and testing expectations without locking in fragile file-level detail.
-7. Choose a stable topic slug and target file path: `docs/prd/active/<slug>.md`.
+7. Choose a stable topic slug and target file path: `.wilco/prd/active/<slug>.md`.
 8. Write the PRD using the repository template in [references/prd-template.md](references/prd-template.md).
 9. If the repo's docs structure is unclear or needs normalization, also use `wilco-docs`.
 

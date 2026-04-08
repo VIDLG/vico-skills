@@ -1,13 +1,18 @@
 ---
 name: wilco-docs
-description: Repository documentation governance for Wilco-style engineering docs. Use when organizing or evolving repo-local PRDs, implementation plans, architecture docs, ADRs, and archive folders; deciding where docs belong; defining document lifecycle rules; choosing the minimal document set for a task; archiving completed plans or PRDs; or separating current architecture truth from historical planning records.
+description: Repository documentation governance for Wilco-style engineering docs. Use when organizing or evolving repo-local planning docs under `.wilco/`, long-lived architecture docs under `docs/`, deciding where docs belong, defining document lifecycle rules, choosing the minimal document set for a task, archiving completed plans or PRDs, or separating current architecture truth from historical planning records.
 ---
 
 # Docs Governance
 
 ## Overview
 
-Treat engineering documentation as a lifecycle, not a pile of markdown files. Keep current truth in stable docs, keep execution history in archived PRDs and plans, and make document status explicit whenever a document stops being active.
+Treat engineering documentation as a lifecycle with two distinct layers:
+
+- `.wilco/` for Wilco planning and execution docs
+- `docs/` for long-lived project truth
+
+Keep planning docs, active PRDs, and active plans under `.wilco/`. Keep durable architecture truth and decision records under `docs/`. Make document status explicit whenever a document stops being active.
 
 Do not maximize document count. Prefer the smallest document set that is sufficient for the task.
 
@@ -22,13 +27,13 @@ Do not maximize document count. Prefer the smallest document set that is suffici
 
 ## Classification Rules
 
-- `PRD`: why the change exists, goals, non-goals, scope, acceptance criteria.
-- `Plan`: how to implement the change, phases, migration steps, validation, checklist.
-- `Architecture`: the current stable design that future contributors should treat as truth.
+- `PRD`: why the change exists, goals, non-goals, scope, acceptance criteria. In Wilco flows, these normally live under `.wilco/prd/`.
+- `Plan`: how to implement the change, phases, migration steps, validation, checklist. In Wilco flows, these normally live under `.wilco/plans/`.
+- `Architecture`: the current stable design that future contributors should treat as truth. These should live under `docs/architecture/`.
 - `ADR`: a durable architectural decision with context, alternatives, and consequences.
 - `Archive`: historical material that is intentionally preserved but no longer drives current work.
 
-Never let archived PRDs or plans stand in for current architecture. If a completed plan still contains facts contributors need, extract those facts into an architecture document before or alongside archival work.
+Never let `.wilco` planning docs stand in for long-lived architecture truth. If a completed PRD or plan still contains facts contributors will need later, extract those facts into `docs/architecture/` before or alongside archival work.
 
 ## Minimal Document Strategy
 
@@ -37,6 +42,14 @@ Never let archived PRDs or plans stand in for current architecture. If a complet
 - Large or durable architecture work: PRD plus plan plus architecture
 
 Use PRDs when the intent, scope, or product boundary needs durable explanation. Use plan-only flows when the task is clear enough that a PRD would mostly duplicate the plan.
+
+## Boundary Rules
+
+- `.wilco/` is for active planning, execution tracking, and planning-history artifacts.
+- `docs/architecture/` is for current stable truth that should outlive any one plan.
+- `docs/adr/` is for key decisions and their rationale, not for current full-system descriptions.
+- Do not move planning churn into `docs/architecture/`.
+- Do not leave durable truth trapped only in `.wilco/`.
 
 ## Working Rules
 

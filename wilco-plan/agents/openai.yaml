@@ -1,4 +1,4 @@
 interface:
   display_name: "Wilco Plan"
-  short_description: "Turn docs/prd PRDs into Wilco-style docs/plans implementation plans"
-  default_prompt: "Read the repository PRD, explore the codebase, propose vertical slices, and write a Wilco-style repository-native plan under docs/plans/active with status and date metadata."
+  short_description: "Turn .wilco PRDs into Wilco-style implementation plans"
+  default_prompt: "Read the repository PRD, explore the codebase, propose vertical slices, and write a Wilco-style repository-native plan under .wilco/plans/active with status and date metadata."
