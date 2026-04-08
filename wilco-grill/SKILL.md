@@ -37,17 +37,115 @@ When a question exposes an unresolved issue, keep track of which document should
   2. lifecycle, ownership, and routing rules
   3. invariants, upgrade gates, and stop conditions
   4. output formatting, wording, and presentational details
-- When grilling a broad system such as `wilco-skills`, use this top-level branch order by default:
-  1. `workflow`
-  2. `contract-map`
-  3. `distribution`
-  4. `sync-and-validation`
-  5. `template-contracts`
-  6. `index-schema`
-  7. `docs-governance`
-  8. `grill-itself`
 - When one top-level branch is sufficiently resolved, move to the next top-level branch automatically instead of staying on one branch forever.
 - Do not start by polishing small format details when higher-level structure is still unsettled.
+
+## Global Question Selection
+
+- Default to portfolio-style selection, not naive depth-first questioning.
+- Maintain a lightweight question bank across the active top-level branches.
+- Each top-level branch should have at most a few live candidate questions, not an unbounded backlog dump.
+- Build a branch map for the current object before overcommitting to any one branch.
+- Prefer extracting the initial branch map from the object's existing structure when possible:
+  - architecture and module boundaries
+  - lifecycle or state-machine stages
+  - interface or integration seams
+  - migration and validation concerns
+- If the object does not yet expose a strong structure, bootstrap a temporary branch map and evolve it as understanding improves.
+- Rebuild or refresh the branch candidate list whenever new evidence or a new answer changes the decision tree.
+- After every answered question, reassess the best next candidate across all top-level branches.
+- Only stay in the current top-level branch when it still owns the highest-value next question.
+- Favor branch switching when:
+  - another top-level branch now has a higher-priority unresolved question
+  - the current branch has already consumed multiple consecutive questions
+  - the current branch is dropping from `critical` or `important` into `detail`
+  - the current branch is drifting into wording, naming, or presentation refinements
+- Treat the current branch as a local working context, not as a promise to exhaust that branch before reconsidering the rest of the tree.
+- If the user explicitly asks to go deep on one branch, you may temporarily switch to depth mode, but portfolio mode is the default.
+
+## Branch Coverage States
+
+Track each top-level branch in one of these states:
+
+- `unvisited`
+  - no real question has been asked from this branch yet
+- `active`
+  - this branch currently owns the best next candidate question
+- `deferred`
+  - this branch still has unresolved candidates, but another branch currently outranks it
+- `resolved`
+  - this branch no longer has `critical` or `important` candidates
+
+Do not leave branch coverage implicit. The scheduler should know which top-level branches remain unvisited, which are still active contenders, and which are effectively done.
+
+## Branch Map Evolution
+
+Treat the branch map as a dynamic working map, not as a fixed taxonomy.
+
+- Allow these operations as understanding evolves:
+  - `add`
+  - `split`
+  - `merge`
+  - `retire`
+  - `reprioritize`
+- When the branch map changes, update the question bank and branch coverage state before asking the next question.
+- Keep the branch map visible on demand. Show a compact snapshot when:
+  - the user asks how branching or scheduling works
+  - a top-level branch is added, split, merged, retired, or reprioritized
+  - the active top-level branch changes in a non-obvious way
+- Do not assume the branch map should be written back to docs. Treat it as session-local working state unless the user explicitly wants it captured.
+
+## Branch Map Bootstrap Heuristics
+
+When no strong object-specific branch map exists yet, bootstrap from these heuristics:
+
+- goals and scope
+- lifecycle and state-machine behavior
+- module, boundary, and interface structure
+- migration and validation
+
+These are starting heuristics, not a permanent taxonomy. Replace them with object-specific branches once the object reveals better structure.
+
+## Question Bank
+
+- Keep one active candidate queue per top-level branch.
+- A candidate question should be concrete enough to ask next, not just a topic label.
+- Prefer pruning stale or answered candidates instead of accumulating a long static list.
+- When a branch is partially resolved, replace broad candidates with narrower follow-up candidates.
+- When a branch no longer has `critical` or `important` candidates, deprioritize it and look elsewhere.
+
+## Scoring Rubric
+
+Score branch candidates comparatively, not in isolation. Prefer the next question with the strongest combined value across:
+
+- `impact`
+  - how much of the system model changes if this answer changes
+- `dependency_unlock`
+  - how many later questions become clearer or unnecessary after this answer
+- `irreversibility`
+  - how costly it would be to answer this late instead of now
+- `uncertainty`
+  - how unresolved the branch currently is
+- `evidence_readiness`
+  - whether enough repository or document evidence exists to ask sharply now
+- `duplication_penalty`
+  - whether this candidate is starting to repeat accepted conclusions
+- `branch_saturation_penalty`
+  - whether the current top-level branch has already consumed several consecutive questions
+- `unvisited_branch_bonus`
+  - whether another top-level branch has not yet been entered and deserves early coverage
+
+Use these dimensions to compare the best candidate from each top-level branch after every answer.
+
+## Branch Scheduling Rules
+
+- Maintain explicit top-level branch coverage state while grilling.
+- Give `unvisited` top-level branches an early bonus so they are not starved by one or two high-coupling branches.
+- Do not ask more than `2` consecutive questions from the same top-level branch unless the user explicitly asks for depth mode.
+- Once a branch falls from `critical` or `important` into `detail`, strongly prefer switching away unless no other branch has meaningful unresolved candidates.
+- If two branches are close in score, prefer the less-covered branch.
+- Re-rank all active top-level branch candidates after every answer before choosing the next question.
+- If the current object later exposes a better branch map than the bootstrap heuristics, replace the working map instead of clinging to the original branches.
 
 ## Output Contract
 
@@ -154,6 +252,7 @@ Use these only when they add real value:
   - use when the question affects maintainability, ownership, migration order, or validation responsibility, but does not rewrite the core system model
 - `detail`
   - use for naming, presentation, local formatting, and other low-risk refinements
+- Once a conversation drops into migration mechanics, naming, local wrappers, or generated-artifact polish, prefer `important` unless the answer still changes the runtime model itself.
 
 ## Stop Conditions
 
@@ -204,6 +303,9 @@ Do not:
 - keep grilling once only wording polish or repeated confirmation remains
 - let `agents/openai.yaml` become a second copy of the detailed format contract
 - keep one top-level branch active indefinitely once its critical and important questions are already resolved
+- keep drilling into one top-level branch without re-ranking the best next question across the full branch map
+- starve `unvisited` top-level branches because two adjacent branches keep outranking each other on local detail
+- hard-code one system's branch taxonomy as if it were the universal branch map for all grilled objects
 
 ## References
 

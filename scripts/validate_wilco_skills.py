@@ -69,6 +69,13 @@ def validate_wilco_grill_contract(root: Path) -> list[str]:
     skill_text = skill_path.read_text(encoding="utf-8")
     required_skill_markers = (
         "## Question Ordering Rules",
+        "## Global Question Selection",
+        "## Branch Coverage States",
+        "## Branch Map Evolution",
+        "## Branch Map Bootstrap Heuristics",
+        "## Question Bank",
+        "## Scoring Rubric",
+        "## Branch Scheduling Rules",
         "## Output Contract",
         "### Concise Mode",
         "### Detailed Mode",
@@ -86,8 +93,19 @@ def validate_wilco_grill_contract(root: Path) -> list[str]:
         "`Suggested edits`",
         "Mode: concise | available: concise, detailed",
         "Mode: detailed | available: concise, detailed",
-        "`workflow`",
-        "`contract-map`",
+        "dynamic working map",
+        "`add`",
+        "`split`",
+        "`merge`",
+        "`retire`",
+        "`reprioritize`",
+        "portfolio-style selection",
+        "highest-value next question",
+        "impact",
+        "dependency_unlock",
+        "branch_saturation_penalty",
+        "unvisited_branch_bonus",
+        "Do not ask more than `2` consecutive questions from the same top-level branch",
     )
     for marker in required_skill_markers:
         if marker not in skill_text:
@@ -97,6 +115,11 @@ def validate_wilco_grill_contract(root: Path) -> list[str]:
         reference_text = reference_path.read_text(encoding="utf-8")
         required_reference_markers = (
             "## Concise Question Template",
+            "## Cross-Branch Scheduling Example",
+            "## Object-Specific Branch Map Example",
+            "## Candidate Ranking Example",
+            "## Branch Coverage Example",
+            "## Branch Map Snapshot Example",
             "## Expanded Question Example",
             "## Final Summary Example",
             "Question 7:",
@@ -112,7 +135,9 @@ def validate_wilco_grill_contract(root: Path) -> list[str]:
         agent_text = agent_path.read_text(encoding="utf-8")
         required_agent_markers = (
             "SKILL.md",
-            "higher-impact branches before formatting details",
+            "object-specific branch map",
+            "top-level branch coverage state",
+            "2 consecutive questions",
         )
         for marker in required_agent_markers:
             if marker not in agent_text:

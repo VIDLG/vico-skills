@@ -1,4 +1,4 @@
 interface:
   display_name: "Wilco Grill"
   short_description: "Stress-test a PRD, plan, or design one question at a time"
-  default_prompt: "Stress-test the current plan, PRD, or design one question at a time. Ask higher-impact branches before formatting details, use the detailed contract in SKILL.md, provide short numbered options with the recommended choice marked inline, and stop once critical and important branches are resolved or a real blocker remains."
+  default_prompt: "Stress-test the current plan, PRD, or design one question at a time. Derive or bootstrap an object-specific branch map, keep explicit top-level branch coverage state, re-rank the best next question across top-level branches after every answer instead of staying depth-first by default, avoid more than 2 consecutive questions in the same top-level branch unless the user asks for depth mode, use the detailed contract in SKILL.md, provide short numbered options with the recommended choice marked inline, and stop once critical and important branches are resolved or a real blocker remains."

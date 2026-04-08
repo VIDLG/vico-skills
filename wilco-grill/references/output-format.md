@@ -16,6 +16,106 @@ Options
 2. No, keep it as guidance only.
 ```
 
+## Cross-Branch Scheduling Example
+
+```md
+wilco-skills | workflow > slug-lifecycle
+Mode: concise | available: concise, detailed
+Priority: critical
+
+Question 15: Should tracked slugs remain stable IDs?
+
+Options
+1. `Recommended` Yes, treat slug as a stable ID.
+2. No, allow midstream renames.
+
+---
+
+wilco-skills | distribution > runtime-closure
+Mode: concise | available: concise, detailed
+Priority: critical
+
+Question 16: Should runtime avoid cross-skill path dependencies?
+
+Options
+1. `Recommended` Yes, require skill-local runtime closure.
+2. No, cross-skill paths are acceptable.
+```
+
+## Object-Specific Branch Map Example
+
+```md
+Current working branch map for wilco-skills:
+
+- workflow
+- contract-map
+- distribution
+- sync-and-validation
+- migration-execution
+- template-contracts
+- index-schema
+- docs-governance
+- grill-itself
+
+Reason:
+- this map was derived from the object's current workflow, contract, distribution, and governance structure
+- it is not a universal branch taxonomy for every future grill target
+```
+
+## Candidate Ranking Example
+
+```md
+Top-level branch candidates after Question 15:
+
+- workflow: important, but now mostly on downgrade mechanics
+- distribution: critical, because runtime closure still changes the install model
+- contract-map: important, waiting on distribution decisions
+- migration-execution: unvisited, so it receives an early coverage bonus
+
+Next question chosen: distribution > runtime-closure
+Reason: highest impact plus highest dependency unlock across the current branch map.
+```
+
+## Branch Coverage Example
+
+```md
+Top-level branch coverage:
+
+- workflow: active
+- contract-map: deferred
+- distribution: active
+- sync-and-validation: deferred
+- migration-execution: unvisited
+- template-contracts: unvisited
+- index-schema: unvisited
+- docs-governance: deferred
+- grill-itself: deferred
+
+Scheduler rule:
+- if workflow has already taken 2 consecutive questions, compare the next best workflow candidate against the best unvisited branch candidate before asking another workflow question
+```
+
+## Branch Map Snapshot Example
+
+```md
+Branch map snapshot:
+
+- active branch: distribution
+- workflow: deferred
+- contract-map: deferred
+- distribution: active
+- sync-and-validation: unvisited
+- migration-execution: unvisited
+- template-contracts: unvisited
+- index-schema: unvisited
+- docs-governance: unvisited
+- grill-itself: deferred
+
+Recent map changes:
+- reprioritize: distribution moved above contract-map
+- add: migration-execution
+```
+
 ## Expanded Question Example
 
 ```md
