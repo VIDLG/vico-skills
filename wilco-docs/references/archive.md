@@ -44,6 +44,7 @@ Recommended minimums:
 3. Move the file into the correct archive directory.
 4. Add or update the status block.
 5. Add an `Outcome`, `Deviations`, or `Follow-up` section if the implementation materially differed from the original document.
+6. Remove or simplify stale resume snapshots and keep the index pointed at the surviving current artifacts only.
 
 ## Completion Summary Template
 
@@ -65,3 +66,5 @@ Recommended minimums:
 - relying on an archived PRD as the only place where current architecture is documented
 - moving files into archive without replacement links when a current document exists
 - treating `.wilco/resume/` as a history store instead of a current-state handoff location
+- treating `.wilco/index/` as if it were the primary source of scope or execution truth
+- performing archive handling as if it were the same lifecycle stage as active execution

@@ -19,28 +19,36 @@ Do not trust checklist state alone. Verify implementation reality in code and te
 
 `wilco-resume` does not replace the plan. It audits the plan against implementation reality, records the current handoff state, and tells the next executor where to continue.
 
+Use this skill for three common lifecycle actions: `resume`, `diverge-replan`, and `close-archive` readiness checks.
+Do not create or refresh resume files by default for steady-state execution.
+
+When `.wilco` feels outdated or out of sync, this is the first skill to run. Use it to decide whether the real follow-up is `wilco-plan`, `wilco-prd`, `wilco-docs`, or `wilco-execute`.
+Tracked slugs should normally have an `.wilco/index/<slug>.json` manifest. Missing or stale linkage is a repair problem, not a reason to treat the index as the primary source of truth.
+
 ## Workflow
 
 1. If `.wilco/` does not exist yet, stop and explain that Wilco planning artifacts have not been initialized for this repository yet.
 2. Prefer `.wilco/index/<slug>.json` as the primary coordination entrypoint when it exists.
 3. From the index, resolve the current linked PRD, plan, and resume paths.
-4. If no index exists yet, fall back to locating the target plan, and the PRD if one exists.
-3. Determine whether this is:
+4. If no index exists yet, fall back to locating the target plan, and the PRD if one exists, then recommend restoring the derived linkage.
+5. Determine whether this is:
    - PRD + plan + code reconciliation
    - or plan + code reconciliation
-4. If a PRD exists, read it to recover scope, intended outcomes, constraints, and out-of-scope boundaries.
-5. Read the plan to recover phases, acceptance criteria, architectural decisions, and current documented status.
-6. Explore the codebase and tests for evidence of completion, partial completion, divergence, or abandoned work.
-7. Decide whether any existing resume file is stale enough that it must be replaced.
-8. Reconcile the available docs and implementation into a resume report.
-9. Write or overwrite the current handoff file at `.wilco/resume/<slug>.md`.
-10. If `.wilco/index/<slug>.json` exists, update `state.updated` and `artifacts.resume_current` so later agents can find the current handoff artifact quickly.
-11. Recommend the smallest correct next step.
-12. If the docs are stale, recommend whether to update:
+6. If a PRD exists, read it to recover scope, intended outcomes, constraints, and out-of-scope boundaries.
+7. Read the plan to recover phases, acceptance criteria, architectural decisions, and current documented status.
+8. Explore the codebase and tests for evidence of completion, partial completion, divergence, or abandoned work.
+9. Decide whether any existing resume file is stale enough that it must be replaced.
+10. Reconcile the available docs and implementation into a resume report.
+11. Write or overwrite the current handoff file at `.wilco/resume/<slug>.md` only because a real resume-style handoff, recovery, divergence, or closure check is needed.
+12. If `.wilco/index/<slug>.json` exists, update `state.updated` and `artifacts.resume_current` so later agents can find the current handoff artifact quickly.
+13. Recommend the smallest correct next step.
+14. If the docs are stale, recommend whether to update:
    - the plan
    - the PRD, if one exists or is actually needed
    - architecture docs
    Do not rewrite them automatically unless the user asks.
+15. If the evidence shows the task is effectively complete, recommend `close-archive` handling instead of leaving the slug indefinitely `in_progress`.
+16. If the evidence shows the plan no longer matches reality, recommend `diverge-replan` rather than pretending checklist drift is harmless.
 
 ## Reconciliation Rules
 
@@ -53,6 +61,10 @@ Do not trust checklist state alone. Verify implementation reality in code and te
 - Record evidence explicitly enough that another reader can see why the conclusion is `high`, `medium`, or `low` confidence.
 - Treat the plan checklist as the intended execution path and the resume report as the verified current-state snapshot.
 - Treat an existing resume file as stale when the linked PRD or plan has a newer update, when checklist state materially changed, or when current code and tests clearly exceed the old resume conclusions.
+- Treat resume as a temporary current snapshot, not as per-slug history.
+- If the work hit an existing slug through small implementation changes, call out the minimum required sync updates instead of recommending a full new plan or PRD by default.
+- If the implementation is complete but docs lag behind, say so explicitly and point to `close-archive` rather than leaving completion ambiguous.
+- If no handoff, interruption, divergence, or closure check is needed, recommend updating the plan directly instead of producing a fresh resume file.
 
 ## Output Contract
 
@@ -79,5 +91,7 @@ Keep one current resume file per slug; refresh it when stale rather than buildin
 - Use [references/resume-output-template.md](references/resume-output-template.md) for the report format.
 - Use `.wilco/index/<slug>.json` as the preferred machine-readable linkage file when present.
 - Use [../wilco-docs/references/status-vocabulary.md](../wilco-docs/references/status-vocabulary.md) for shared status terms.
+- Use [../wilco-docs/references/troubleshooting.md](../wilco-docs/references/troubleshooting.md) for the follow-up skill routing table.
+- Use [../wilco-docs/references/automation.md](../wilco-docs/references/automation.md) when cleanup or close-out can be scripted.
 
 If the reconciliation shows the document lifecycle itself is unclear, also use `wilco-docs`.

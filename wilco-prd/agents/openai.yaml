@@ -1,4 +1,4 @@
 interface:
   display_name: "Wilco PRD"
-  short_description: "Create Wilco-style repo-local PRDs in .wilco/prd/active"
-  default_prompt: "Interview the user, explore the codebase, and write a Wilco-style repository-native PRD under .wilco/prd/active using stable slugs plus status and date metadata."
+  short_description: "Create PRDs only when plan-only is not enough"
+  default_prompt: "Treat PRD creation as a hard escalation gate, not a default. Explore the codebase, decide whether scope truly justifies a PRD beyond the plan, route back to wilco-plan when it does not, and use wilco-init first if a new tracked slug has not been bootstrapped yet."

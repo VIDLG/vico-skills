@@ -18,15 +18,24 @@ Keep planning docs, active PRDs, and active plans under `.wilco/`. Keep durable 
 
 Do not maximize document count. Prefer the smallest document set that is sufficient for the task.
 
+## Minimal Defaults
+
+Default to the smallest artifact set that keeps the work clear:
+
+- new tracked work enters through `wilco-init`
+- `plan-only` is the default tracked workflow
+- `PRD` is an escalation for work that needs durable scope framing
+- `resume` is on-demand, not mandatory per slug
+- `index` exists for tracked slugs as a lightweight derived coordination file, not a primary human document
+
+Do not create all artifacts just because Wilco exists in the repository.
+
 ## Quick Start
 
 1. Inspect the current `docs/` tree and identify mixed responsibilities, duplicate topics, and historical documents posing as current truth.
-2. Decide whether the repository should initialize `.wilco/` yet, or whether the task is still too early for Wilco planning artifacts.
-3. Classify each document as one of: `prd`, `plan`, `architecture`, `adr`, or `archive`.
-4. Decide whether the task needs a plan only, a PRD plus a plan, or a PRD plus a plan plus architecture documentation.
-5. Decide whether the task needs a new document, a move, an archive action, or a stable summary document.
-6. Make the smallest possible structural change that clarifies ownership and lifecycle.
-7. Cross-link replacement documents whenever archiving or superseding older ones.
+2. Use [references/decision-tree.md](references/decision-tree.md) to choose the document level and lifecycle action.
+3. Make the smallest structural or lifecycle change that clarifies ownership and status.
+4. Cross-link replacement documents whenever archiving or superseding older ones.
 
 ## Classification Rules
 
@@ -37,14 +46,6 @@ Do not maximize document count. Prefer the smallest document set that is suffici
 - `Archive`: historical material that is intentionally preserved but no longer drives current work.
 
 Never let `.wilco` planning docs stand in for long-lived architecture truth. If a completed PRD or plan still contains facts contributors will need later, extract those facts into `docs/architecture/` before or alongside archival work.
-
-## Minimal Document Strategy
-
-- Small work: plan only
-- Medium work: PRD plus plan
-- Large or durable architecture work: PRD plus plan plus architecture
-
-Use PRDs when the intent, scope, or product boundary needs durable explanation. Use plan-only flows when the task is clear enough that a PRD would mostly duplicate the plan.
 
 ## Boundary Rules
 
@@ -62,6 +63,16 @@ Use PRDs when the intent, scope, or product boundary needs durable explanation. 
 - Prefer directory clarity over root-level sprawl: active docs should be easy to distinguish from historical docs at a glance.
 - Prefer migration by extraction, not by deletion: move stable truth into architecture docs before retiring planning documents.
 - Prefer minimal churn: do not rename or relocate unrelated docs in the same change.
+- If work hits an existing active slug, prefer updating the existing artifact set over creating a new sibling slug.
+- If work hits an existing active slug, do not treat the change as `no-doc`; update the tracked artifact set at least at the plan layer.
+- If tracked work changes only implementation progress, update the plan and derived linkage before considering PRD or architecture changes.
+- If tracked work changes goals, scope, non-goals, or acceptance criteria, update the PRD as well.
+- If tracked work creates durable design truth, update `docs/architecture/` and record that path in the linkage layer.
+- If state is unclear after interruption, refresh `.wilco/resume/<slug>.md` instead of guessing.
+- Treat `.wilco/index/` as a cache-like coordination layer. Keep it minimal and rebuildable from the primary documents.
+- Treat `.wilco/resume/` as an exception path for recovery, handoff, divergence, or completion checks, not as a default per-slug artifact.
+- Prefer archiving promptly once active work is finished so `.wilco/*/active/` stays small and legible.
+- Keep `wilco-execute` and `wilco-cleanup` as separate lifecycle stages even when an agent routes through both automatically for the user.
 
 ## Recommended Outputs
 
@@ -83,7 +94,10 @@ When asked to archive or complete a document set, produce:
 ## References
 
 - For directory layout, naming, and lifecycle conventions, read [references/layout.md](references/layout.md).
+- For the decision tree, document levels, lifecycle actions, sync rules, and out-of-sync routing, read [references/decision-tree.md](references/decision-tree.md).
 - For archive criteria, status blocks, and completion handling, read [references/archive.md](references/archive.md).
+- For automation usage, read [references/automation.md](references/automation.md).
 - For shared progress/alignment terms, read [references/status-vocabulary.md](references/status-vocabulary.md).
+- For out-of-sync routing and skill combinations, read [references/troubleshooting.md](references/troubleshooting.md).
 
 Keep the active skill body short. Load the reference files only when the user is asking for concrete directory policy, archive mechanics, or status templates.

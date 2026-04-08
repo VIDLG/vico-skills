@@ -1,4 +1,4 @@
 interface:
   display_name: "Wilco Plan"
-  short_description: "Turn .wilco PRDs into Wilco-style implementation plans"
-  default_prompt: "Read the repository PRD or confirm the task is small enough for a plan-only flow, explore the codebase, propose vertical slices, and write a Wilco-style repository-native plan under .wilco/plans/active with status and date metadata."
+  short_description: "Default to plan-only and write Wilco execution plans"
+  default_prompt: "Default to plan-only, reuse an existing active slug when appropriate, and update the active execution plan under .wilco/plans/active with derived index sync. If a new tracked slug does not exist yet, route to wilco-init instead of bootstrapping it here."

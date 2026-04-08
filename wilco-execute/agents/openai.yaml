@@ -1,4 +1,4 @@
 interface:
   display_name: "Wilco Execute"
   short_description: "Execute the active Wilco plan until done or truly blocked"
-  default_prompt: "Read the active Wilco plan, reconcile current state if needed, execute the smallest unblocked next step, verify it, update plan state, and continue until done or a real blocker exists."
+  default_prompt: "Read the active Wilco plan, use a resume file only when temporary handoff state is actually needed, execute the smallest unblocked next step, verify it, update the plan, and clear stale resume linkage once execution is steady again. Keep archive handling out of this skill and route to wilco-cleanup automatically when implementation is complete and the user expects end-to-end completion."
