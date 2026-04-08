@@ -1,6 +1,6 @@
 ---
 name: wilco-docs
-description: Repository documentation governance for Wilco-style engineering docs. Use when organizing or evolving repo-local PRDs, implementation plans, architecture docs, ADRs, and archive folders; deciding where docs belong; defining document lifecycle rules; archiving completed plans or PRDs; or separating current architecture truth from historical planning records.
+description: Repository documentation governance for Wilco-style engineering docs. Use when organizing or evolving repo-local PRDs, implementation plans, architecture docs, ADRs, and archive folders; deciding where docs belong; defining document lifecycle rules; choosing the minimal document set for a task; archiving completed plans or PRDs; or separating current architecture truth from historical planning records.
 ---
 
 # Docs Governance
@@ -9,13 +9,16 @@ description: Repository documentation governance for Wilco-style engineering doc
 
 Treat engineering documentation as a lifecycle, not a pile of markdown files. Keep current truth in stable docs, keep execution history in archived PRDs and plans, and make document status explicit whenever a document stops being active.
 
+Do not maximize document count. Prefer the smallest document set that is sufficient for the task.
+
 ## Quick Start
 
 1. Inspect the current `docs/` tree and identify mixed responsibilities, duplicate topics, and historical documents posing as current truth.
 2. Classify each document as one of: `prd`, `plan`, `architecture`, `adr`, or `archive`.
-3. Decide whether the task needs a new document, a move, an archive action, or a stable summary document.
-4. Make the smallest possible structural change that clarifies ownership and lifecycle.
-5. Cross-link replacement documents whenever archiving or superseding older ones.
+3. Decide whether the task needs a plan only, a PRD plus a plan, or a PRD plus a plan plus architecture documentation.
+4. Decide whether the task needs a new document, a move, an archive action, or a stable summary document.
+5. Make the smallest possible structural change that clarifies ownership and lifecycle.
+6. Cross-link replacement documents whenever archiving or superseding older ones.
 
 ## Classification Rules
 
@@ -26,6 +29,14 @@ Treat engineering documentation as a lifecycle, not a pile of markdown files. Ke
 - `Archive`: historical material that is intentionally preserved but no longer drives current work.
 
 Never let archived PRDs or plans stand in for current architecture. If a completed plan still contains facts contributors need, extract those facts into an architecture document before or alongside archival work.
+
+## Minimal Document Strategy
+
+- Small work: plan only
+- Medium work: PRD plus plan
+- Large or durable architecture work: PRD plus plan plus architecture
+
+Use PRDs when the intent, scope, or product boundary needs durable explanation. Use plan-only flows when the task is clear enough that a PRD would mostly duplicate the plan.
 
 ## Working Rules
 

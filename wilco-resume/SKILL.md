@@ -1,6 +1,6 @@
 ---
 name: wilco-resume
-description: Reconcile repository PRDs, plans, and current code or test state to determine real progress and the correct next step. Use when implementation was interrupted, the user asks how to continue, wants to compare current code against a PRD or plan, needs to verify what is actually done, or wants a resume report before continuing work.
+description: Reconcile repository PRDs, plans, and current code or test state to determine real progress and the correct next step. Use when implementation was interrupted, the user asks how to continue, wants to compare current code against a PRD or plan, needs to verify what is actually done, or wants a resume report before continuing work. Also use when a task has only a plan and code state, without a separate PRD.
 ---
 
 # Wilco Resume
@@ -13,22 +13,27 @@ Reconstruct the true state of work by comparing three sources of truth:
 - the plan
 - the current code and tests
 
+When no PRD exists because the task was intentionally plan-only, reconcile the plan against code and tests without treating the missing PRD as an error.
+
 Do not trust checklist state alone. Verify implementation reality in code and tests before concluding that a phase is done, partial, diverged, or still pending.
 
 ## Workflow
 
-1. Locate the target PRD and plan.
+1. Locate the target plan, and locate the PRD if one exists.
    Prefer:
-   - `docs/prd/active/<slug>.md`
    - `docs/plans/active/<slug>.md`
-2. Read the PRD to recover scope, intended outcomes, constraints, and out-of-scope boundaries.
-3. Read the plan to recover phases, acceptance criteria, architectural decisions, and current documented status.
-4. Explore the codebase and tests for evidence of completion, partial completion, divergence, or abandoned work.
-5. Reconcile PRD, plan, and implementation into a resume report.
-6. Recommend the smallest correct next step.
-7. If the docs are stale, recommend whether to update:
+   - `docs/prd/active/<slug>.md`
+2. Determine whether this is:
+   - PRD + plan + code reconciliation
+   - or plan + code reconciliation
+3. If a PRD exists, read it to recover scope, intended outcomes, constraints, and out-of-scope boundaries.
+4. Read the plan to recover phases, acceptance criteria, architectural decisions, and current documented status.
+5. Explore the codebase and tests for evidence of completion, partial completion, divergence, or abandoned work.
+6. Reconcile the available docs and implementation into a resume report.
+7. Recommend the smallest correct next step.
+8. If the docs are stale, recommend whether to update:
    - the plan
-   - the PRD
+   - the PRD, if one exists or is actually needed
    - architecture docs
    Do not rewrite them automatically unless the user asks.
 
