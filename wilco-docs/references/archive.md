@@ -64,3 +64,4 @@ Recommended minimums:
 - leaving a completed plan in an active directory without status updates
 - relying on an archived PRD as the only place where current architecture is documented
 - moving files into archive without replacement links when a current document exists
+- treating `.wilco/resume/` as a history store instead of a current-state handoff location

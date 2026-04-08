@@ -16,14 +16,15 @@ The plan is the primary execution document. Its checklist defines the intended p
 1. Determine whether this plan is PRD-backed or plan-only.
 2. If PRD-backed, confirm the source PRD path, ideally `.wilco/prd/active/<slug>.md`.
 3. If plan-only, confirm the task is small enough that a separate PRD would add more process than clarity.
-4. Explore the codebase to understand current architecture, ownership, and integration seams.
-5. Identify durable architectural decisions that should apply across all phases.
-6. Draft thin vertical slices that produce verifiable behavior end-to-end.
-7. Review slice granularity with the user and iterate until approved.
-8. Create or update `.wilco/index/<slug>.json` so the active plan has a machine-readable link to its PRD, resume snapshot, and related architecture docs.
-9. Write the plan to `.wilco/plans/active/<slug>.md` using [references/plan-template.md](references/plan-template.md).
-10. If there is a source PRD, update the PRD header so `Related plan` points to the new plan path.
-11. If the repo's docs layout is unclear or drifting, also use `wilco-docs`.
+4. If `.wilco/` does not exist yet, initialize it as the Wilco planning workspace before writing any plan files.
+5. Explore the codebase to understand current architecture, ownership, and integration seams.
+6. Identify durable architectural decisions that should apply across all phases.
+7. Draft thin vertical slices that produce verifiable behavior end-to-end.
+8. Review slice granularity with the user and iterate until approved.
+9. Create or update `.wilco/index/<slug>.json` so the active plan has a machine-readable link to its PRD, resume snapshot, and related architecture docs.
+10. Write the plan to `.wilco/plans/active/<slug>.md` using [references/plan-template.md](references/plan-template.md).
+11. If there is a source PRD, update the PRD header so `Related plan` points to the new plan path.
+12. If the repo's docs layout is unclear or drifting, also use `wilco-docs`.
 
 ## Planning Rules
 

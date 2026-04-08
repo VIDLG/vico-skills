@@ -6,6 +6,7 @@ Use this shape for a resume report.
 ## Resume Summary
 
 - Manifest: `.wilco/index/<slug>.json`
+- Resume file: `.wilco/resume/<slug>.md`
 - PRD: active / accepted / stale / missing
 - Plan: in_progress / partially_completed / stale / missing
 - Alignment: aligned / partially_aligned / diverged
@@ -13,6 +14,7 @@ Use this shape for a resume report.
 - Confidence: high / medium / low
 
 Resume reports are current-state snapshots, not replacements for the plan.
+Refresh the current resume file when stale; do not keep historical resume snapshots by default.
 
 ## Verified Progress
 

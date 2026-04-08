@@ -19,10 +19,11 @@ Do not assume every task deserves a PRD.
 4. If the work is small, tightly scoped, and implementation-facing, recommend using `wilco-plan` directly instead of creating a PRD.
 5. If the work deserves a PRD, interview the user until the scope, interfaces, and tradeoffs are clear enough to write a durable PRD.
 6. Identify the main modules, boundaries, and testing expectations without locking in fragile file-level detail.
-7. Choose a stable topic slug and target file path: `.wilco/prd/active/<slug>.md`.
-8. Create or update `.wilco/index/<slug>.json` so PRD, plan, resume, and architecture links have a machine-readable coordination layer.
-9. Write the PRD using the repository template in [references/prd-template.md](references/prd-template.md).
-10. If the repo's docs structure is unclear or needs normalization, also use `wilco-docs`.
+7. If `.wilco/` does not exist yet, initialize it as the Wilco planning workspace before writing any PRD files.
+8. Choose a stable topic slug and target file path: `.wilco/prd/active/<slug>.md`.
+9. Create or update `.wilco/index/<slug>.json` so PRD, plan, resume, and architecture links have a machine-readable coordination layer.
+10. Write the PRD using the repository template in [references/prd-template.md](references/prd-template.md).
+11. If the repo's docs structure is unclear or needs normalization, also use `wilco-docs`.
 
 ## Writing Rules
 

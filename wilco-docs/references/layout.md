@@ -10,7 +10,8 @@ Use one stable split between Wilco planning docs and long-lived project truth:
 ├── plans/
 │   ├── active/
 │   └── archive/
-
+├── resume/
+└── index/
 docs/
 ├── architecture/
 └── adr/
@@ -20,7 +21,10 @@ docs/
 
 - `.wilco/prd/active/`: active problem statements, scope, goals, and acceptance criteria.
 - `.wilco/plans/active/`: active implementation plans and checklists.
-- `.wilco/*/archive/`: historical Wilco planning documents.
+- `.wilco/prd/archive/`: archived Wilco PRDs.
+- `.wilco/plans/archive/`: archived Wilco plans.
+- `.wilco/resume/`: current-only resume snapshots.
+- `.wilco/index/`: machine-readable linkage manifests.
 - `docs/architecture/`: current stable design truth.
 - `docs/adr/`: durable architectural decisions.
 
@@ -35,6 +39,8 @@ Example:
 ```text
 .wilco/prd/active/action-pipeline.md
 .wilco/plans/active/action-pipeline.md
+.wilco/resume/action-pipeline.md
+.wilco/index/action-pipeline.json
 docs/architecture/action-pipeline.md
 ```
 

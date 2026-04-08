@@ -14,16 +14,19 @@ Treat engineering documentation as a lifecycle with two distinct layers:
 
 Keep planning docs, active PRDs, and active plans under `.wilco/`. Keep durable architecture truth and decision records under `docs/`. Make document status explicit whenever a document stops being active.
 
+`.wilco/` is an opt-in workspace. A repository does not need it at birth. Create it when the project starts using Wilco planning, resume, or execution workflows.
+
 Do not maximize document count. Prefer the smallest document set that is sufficient for the task.
 
 ## Quick Start
 
 1. Inspect the current `docs/` tree and identify mixed responsibilities, duplicate topics, and historical documents posing as current truth.
-2. Classify each document as one of: `prd`, `plan`, `architecture`, `adr`, or `archive`.
-3. Decide whether the task needs a plan only, a PRD plus a plan, or a PRD plus a plan plus architecture documentation.
-4. Decide whether the task needs a new document, a move, an archive action, or a stable summary document.
-5. Make the smallest possible structural change that clarifies ownership and lifecycle.
-6. Cross-link replacement documents whenever archiving or superseding older ones.
+2. Decide whether the repository should initialize `.wilco/` yet, or whether the task is still too early for Wilco planning artifacts.
+3. Classify each document as one of: `prd`, `plan`, `architecture`, `adr`, or `archive`.
+4. Decide whether the task needs a plan only, a PRD plus a plan, or a PRD plus a plan plus architecture documentation.
+5. Decide whether the task needs a new document, a move, an archive action, or a stable summary document.
+6. Make the smallest possible structural change that clarifies ownership and lifecycle.
+7. Cross-link replacement documents whenever archiving or superseding older ones.
 
 ## Classification Rules
 
