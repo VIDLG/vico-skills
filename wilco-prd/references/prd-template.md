@@ -4,6 +4,8 @@ Use this template for `.wilco/prd/active/<slug>.md`.
 
 ```md
 Status: accepted
+Slug: <slug>
+Manifest: `.wilco/index/<slug>.json`
 Created: 2026-04-08
 Updated: 2026-04-08
 Related plan: `.wilco/plans/active/<slug>.md`

@@ -5,11 +5,14 @@ Use this shape for a resume report.
 ```md
 ## Resume Summary
 
+- Manifest: `.wilco/index/<slug>.json`
 - PRD: active / accepted / stale / missing
 - Plan: in_progress / partially_completed / stale / missing
 - Alignment: aligned / partially_aligned / diverged
 - Overall implementation status: done / partial / not_started / diverged / unclear
 - Confidence: high / medium / low
+
+Resume reports are current-state snapshots, not replacements for the plan.
 
 ## Verified Progress
 
@@ -44,3 +47,5 @@ Use this shape for a resume report.
 - update PRD only if scope changed
 - extract architecture truth if needed
 ```
+
+If the report contradicts the checklist, recommend updating the plan rather than letting the resume report become the only source of truth.

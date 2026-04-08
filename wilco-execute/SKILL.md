@@ -27,10 +27,11 @@ Do not stop just because one small slice completed. Stop only when:
 
 Accept either:
 
+- an index manifest under `.wilco/index/<slug>.json`
 - an active plan under `.wilco/plans/active/<slug>.md`
 - or a `wilco-resume` result that already identified the correct next step
 
-If the plan is stale or the current implementation is unclear, use `wilco-resume` first.
+If the plan is stale or the current implementation is unclear, use `wilco-resume` first. Prefer the index manifest when present so cross-agent coordination does not rely on guessing file paths.
 
 ## Execution Loop
 

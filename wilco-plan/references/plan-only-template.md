@@ -6,6 +6,8 @@ Use this template for smaller scoped work that does not justify a separate PRD.
 # Plan: <Task Name>
 
 > Status: `in_progress`
+> Slug: `<slug>`
+> Manifest: `.wilco/index/<slug>.json`
 > Created: `2026-04-08`
 > Updated: `2026-04-08`
 
@@ -30,3 +32,4 @@ Describe the concrete task outcome in one short paragraph.
 ```
 
 Prefer this template when a PRD would mostly restate the same information in longer form.
+Treat the checklist as the execution anchor; `wilco-resume` exists to verify the real state against it.

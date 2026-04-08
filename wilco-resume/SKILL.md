@@ -17,10 +17,13 @@ When no PRD exists because the task was intentionally plan-only, reconcile the p
 
 Do not trust checklist state alone. Verify implementation reality in code and tests before concluding that a phase is done, partial, diverged, or still pending.
 
+`wilco-resume` does not replace the plan. It audits the plan against implementation reality, records the current handoff state, and tells the next executor where to continue.
+
 ## Workflow
 
 1. Locate the target plan, and locate the PRD if one exists.
    Prefer:
+   - `.wilco/index/<slug>.json`
    - `.wilco/plans/active/<slug>.md`
    - `.wilco/prd/active/<slug>.md`
 2. Determine whether this is:
@@ -30,8 +33,9 @@ Do not trust checklist state alone. Verify implementation reality in code and te
 4. Read the plan to recover phases, acceptance criteria, architectural decisions, and current documented status.
 5. Explore the codebase and tests for evidence of completion, partial completion, divergence, or abandoned work.
 6. Reconcile the available docs and implementation into a resume report.
-7. Recommend the smallest correct next step.
-8. If the docs are stale, recommend whether to update:
+7. If `.wilco/index/<slug>.json` exists, update the `resume` and `updated` fields so later agents can find the current handoff artifact quickly.
+8. Recommend the smallest correct next step.
+9. If the docs are stale, recommend whether to update:
    - the plan
    - the PRD, if one exists or is actually needed
    - architecture docs
@@ -46,6 +50,7 @@ Do not trust checklist state alone. Verify implementation reality in code and te
 - If the implementation changed direction but still satisfies the PRD, record that as plan divergence, not automatic failure.
 - If the plan references paths or architecture that no longer exist, call that out explicitly.
 - Record evidence explicitly enough that another reader can see why the conclusion is `high`, `medium`, or `low` confidence.
+- Treat the plan checklist as the intended execution path and the resume report as the verified current-state snapshot.
 
 ## Output Contract
 
@@ -63,10 +68,13 @@ Produce a resume report that includes:
 - the recommended next step
 - recommended doc updates, if any
 
+The report should make it easy for another agent to continue work, but the plan remains the main execution document.
+
 ## References
 
 - Use [references/resume-checklist.md](references/resume-checklist.md) for what evidence to inspect.
 - Use [references/resume-output-template.md](references/resume-output-template.md) for the report format.
+- Use `.wilco/index/<slug>.json` as the preferred machine-readable linkage file when present.
 - Use [../wilco-docs/references/status-vocabulary.md](../wilco-docs/references/status-vocabulary.md) for shared status terms.
 
 If the reconciliation shows the document lifecycle itself is unclear, also use `wilco-docs`.

@@ -24,6 +24,7 @@ Choose:
 - or the smallest plan slice that can be implemented and verified
 
 Do not pick a larger batch just because it feels more efficient.
+Treat the plan checklist as the primary execution anchor. If a recent resume report exists, use it to choose the correct next unchecked or partially completed item.
 
 ## Step 4: Execute
 

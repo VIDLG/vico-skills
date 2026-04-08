@@ -9,6 +9,8 @@ description: Turn a Wilco-style repo-local PRD into a multi-phase implementation
 
 Convert repository PRDs into active implementation plans that live under `.wilco/plans/active/`. For smaller and clearer tasks, support plan-only work without forcing a separate PRD. Keep the slug stable, capture status and dates in metadata, and prefer vertical slices over horizontal layer-by-layer plans.
 
+The plan is the primary execution document. Its checklist defines the intended path of work and the smallest next executable units.
+
 ## Workflow
 
 1. Determine whether this plan is PRD-backed or plan-only.
@@ -18,9 +20,10 @@ Convert repository PRDs into active implementation plans that live under `.wilco
 5. Identify durable architectural decisions that should apply across all phases.
 6. Draft thin vertical slices that produce verifiable behavior end-to-end.
 7. Review slice granularity with the user and iterate until approved.
-8. Write the plan to `.wilco/plans/active/<slug>.md` using [references/plan-template.md](references/plan-template.md).
-9. If there is a source PRD, update the PRD header so `Related plan` points to the new plan path.
-10. If the repo's docs layout is unclear or drifting, also use `wilco-docs`.
+8. Create or update `.wilco/index/<slug>.json` so the active plan has a machine-readable link to its PRD, resume snapshot, and related architecture docs.
+9. Write the plan to `.wilco/plans/active/<slug>.md` using [references/plan-template.md](references/plan-template.md).
+10. If there is a source PRD, update the PRD header so `Related plan` points to the new plan path.
+11. If the repo's docs layout is unclear or drifting, also use `wilco-docs`.
 
 ## Planning Rules
 
@@ -30,6 +33,8 @@ Convert repository PRDs into active implementation plans that live under `.wilco
 - Acceptance criteria should describe observable outcomes, not implementation chores.
 - Put status and dates in the header so age and freshness remain obvious to humans and agents.
 - Do not force a PRD for every task. Small, clear, implementation-facing work can be plan-only.
+- Keep the checklist. The checklist is not redundant with `wilco-resume`; it is the execution anchor that `wilco-execute` should work from.
+- Prefer checklist items that are small, behavior-oriented, and verifiable.
 
 ## Output Contract
 
@@ -49,5 +54,6 @@ Use the full phased template for medium and large work. For small plan-only work
 
 - Use [references/plan-template.md](references/plan-template.md) for the repository plan template.
 - Use [references/plan-only-template.md](references/plan-only-template.md) for smaller plan-only work.
+- Use `.wilco/index/<slug>.json` as the machine-readable linkage file for cross-agent coordination.
 - Use [../wilco-docs/references/status-vocabulary.md](../wilco-docs/references/status-vocabulary.md) when expressing progress or divergence.
 - Use `wilco-docs` when you need help with active/archive placement or document lifecycle.
