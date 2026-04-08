@@ -4,10 +4,10 @@ Custom repository-oriented Codex skills.
 
 Current skills:
 
-- `wilco-docs-governance`
-- `wilco-grill-me`
-- `wilco-write-prd`
-- `wilco-prd-to-plan`
+- `wilco-docs`
+- `wilco-grill`
+- `wilco-prd`
+- `wilco-plan`
 
 Intended distribution model:
 

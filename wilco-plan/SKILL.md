@@ -1,5 +1,5 @@
 ---
-name: wilco-prd-to-plan
+name: wilco-plan
 description: Turn a Wilco-style repo-local PRD into a multi-phase implementation plan using tracer-bullet vertical slices, then write it to `docs/plans/active/<slug>.md`. Use when the user wants to break down a PRD, create an implementation plan from a repository PRD, plan phases from `docs/prd/active/`, or keep planning aligned with repository-native docs instead of `./plans/` or GitHub issues.
 ---
 
@@ -18,7 +18,7 @@ Convert repository PRDs into active implementation plans that live under `docs/p
 5. Review slice granularity with the user and iterate until approved.
 6. Write the plan to `docs/plans/active/<slug>.md` using [references/plan-template.md](references/plan-template.md).
 7. If needed, update the PRD header so `Related plan` points to the new plan path.
-8. If the repo's docs layout is unclear or drifting, also use `docs-governance`.
+8. If the repo's docs layout is unclear or drifting, also use `wilco-docs`.
 
 ## Planning Rules
 
@@ -43,4 +43,4 @@ Write plans with at least:
 ## References
 
 - Use [references/plan-template.md](references/plan-template.md) for the repository plan template.
-- Use `docs-governance` when you need help with active/archive placement or document lifecycle.
+- Use `wilco-docs` when you need help with active/archive placement or document lifecycle.

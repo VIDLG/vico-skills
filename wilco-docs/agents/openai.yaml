@@ -1,4 +1,4 @@
 interface:
-  display_name: "Wilco Docs Governance"
+  display_name: "Wilco Docs"
   short_description: "Organize Wilco-style PRDs, plans, architecture docs, and archives"
   default_prompt: "Organize repo-local engineering docs by lifecycle, classify each document correctly, keep current truth in architecture docs, and archive completed PRDs or plans with explicit status, date metadata, and replacement links."

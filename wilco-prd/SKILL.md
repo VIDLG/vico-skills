@@ -1,5 +1,5 @@
 ---
-name: wilco-write-prd
+name: wilco-prd
 description: Create a Wilco-style repo-local PRD through user interview, codebase exploration, and design clarification, then write it to `docs/prd/active/<slug>.md`. Use when the user wants to write a PRD, define a new engineering initiative, capture scope and acceptance criteria in-repo, or replace GitHub-issue-based PRD workflows with repository-native docs.
 ---
 

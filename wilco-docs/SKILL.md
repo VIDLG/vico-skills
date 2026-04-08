@@ -1,5 +1,5 @@
 ---
-name: wilco-docs-governance
+name: wilco-docs
 description: Repository documentation governance for Wilco-style engineering docs. Use when organizing or evolving repo-local PRDs, implementation plans, architecture docs, ADRs, and archive folders; deciding where docs belong; defining document lifecycle rules; archiving completed plans or PRDs; or separating current architecture truth from historical planning records.
 ---
 
