@@ -34,6 +34,12 @@ PROGRESS_ALIASES = {
     "near_complete": "mostly_complete",
     "partial": "partially_completed",
 }
+RELATIONSHIP_KEYS = {
+    "related",
+    "follow_up",
+    "supersedes",
+    "superseded_by",
+}
 
 
 @dataclass
@@ -257,6 +263,23 @@ def derive_progress(status: str, existing_progress: str | None = None) -> str:
     return "partial"
 
 
+def normalize_relationships(existing_index: dict | None) -> dict[str, list[str]]:
+    if not existing_index:
+        return {}
+    raw_relationships = existing_index.get("relationships", {})
+    if not isinstance(raw_relationships, dict):
+        return {}
+
+    relationships: dict[str, list[str]] = {}
+    for key, value in raw_relationships.items():
+        if key not in RELATIONSHIP_KEYS or not isinstance(value, list):
+            continue
+        cleaned = [item for item in value if isinstance(item, str) and item.strip()]
+        if cleaned:
+            relationships[key] = cleaned
+    return relationships
+
+
 def build_index_manifest(root: Path, slug: str, existing_index: dict | None) -> dict | None:
     plan = plan_path(root, slug)
     prd = prd_path(root, slug)
@@ -285,7 +308,9 @@ def build_index_manifest(root: Path, slug: str, existing_index: dict | None) -> 
     if arch_paths:
         artifacts["architecture"] = arch_paths
 
-    return {
+    relationships = normalize_relationships(existing_index)
+
+    manifest = {
         "kind": "wilco-linkage-v1",
         "slug": slug,
         "state": {
@@ -295,6 +320,9 @@ def build_index_manifest(root: Path, slug: str, existing_index: dict | None) -> 
         },
         "artifacts": artifacts,
     }
+    if relationships:
+        manifest["relationships"] = relationships
+    return manifest
 
 
 def ensure_wilco_layout(root: Path) -> None:

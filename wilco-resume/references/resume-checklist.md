@@ -8,6 +8,7 @@ Use this checklist when comparing PRD, plan, and code.
 - What outcomes are explicitly in scope?
 - What is explicitly out of scope?
 - What decisions in the PRD still appear to matter?
+- Does the PRD still add independent scope, intent, or acceptance value beyond the plan?
 
 ## Plan Checks
 
@@ -37,7 +38,10 @@ Use this checklist when comparing PRD, plan, and code.
 
 - Update the plan if checklist state or source references are stale.
 - Update the PRD only if the intended scope or problem framing has actually changed.
+- Recommend `downgrade-to-plan-only` if the PRD has become redundant.
 - Add or update architecture docs when current stable truth is only implied by code or buried in old plans.
+- If the topic split into a new slug, record the split in prose and index linkage instead of silently stretching the old slug.
+- Remove or clear stale resume linkage once the plan is current again and no further handoff is needed.
 
 ## Resume Staleness Checks
 

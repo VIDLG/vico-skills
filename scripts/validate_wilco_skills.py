@@ -70,8 +70,11 @@ def validate_wilco_grill_contract(root: Path) -> list[str]:
     required_skill_markers = (
         "## Question Ordering Rules",
         "## Output Contract",
+        "### Concise Mode",
+        "### Detailed Mode",
         "### Core Sections",
         "### Optional Sections",
+        "## Priority Rubric",
         "## Stop Conditions",
         "## Summary Contract",
         "### Core Summary Sections",
@@ -81,6 +84,10 @@ def validate_wilco_grill_contract(root: Path) -> list[str]:
         "`Question N: <question text>`",
         "`Accepted decisions`",
         "`Suggested edits`",
+        "Mode: concise | available: concise, detailed",
+        "Mode: detailed | available: concise, detailed",
+        "`workflow`",
+        "`contract-map`",
     )
     for marker in required_skill_markers:
         if marker not in skill_text:
@@ -89,10 +96,12 @@ def validate_wilco_grill_contract(root: Path) -> list[str]:
     if reference_path.exists():
         reference_text = reference_path.read_text(encoding="utf-8")
         required_reference_markers = (
-            "## Minimal Question Template",
+            "## Concise Question Template",
             "## Expanded Question Example",
             "## Final Summary Example",
             "Question 7:",
+            "Mode: concise | available: concise, detailed",
+            "Mode: detailed | available: concise, detailed",
             "Accepted decisions",
         )
         for marker in required_reference_markers:
@@ -133,10 +142,18 @@ def validate_workflow_invariants(root: Path) -> list[str]:
         root / "wilco-plan" / "SKILL.md": (
             "use `wilco-init` first",
             "do not treat it as `no-doc`",
+            "stable topic ID",
+            "split to a new slug",
+            "downgraded to plan-only",
         ),
         root / "wilco-prd" / "SKILL.md": (
             "hard escalation gate",
             "hand off to `wilco-init`",
+            "`downgrade-to-plan-only`",
+        ),
+        root / "wilco-resume" / "SKILL.md": (
+            "`downgrade-to-plan-only`",
+            "PRD has effectively become redundant",
         ),
         root / "wilco-execute" / "SKILL.md": (
             "not final archive handling",
@@ -148,6 +165,8 @@ def validate_workflow_invariants(root: Path) -> list[str]:
         root / "wilco-docs" / "SKILL.md": (
             "new tracked work enters through `wilco-init`",
             "index` exists for tracked slugs",
+            "stable topic identifier",
+            "`related`, `follow_up`, `supersedes`, and `superseded_by`",
         ),
         root / "wilco-init" / "references" / "bootstrap-levels.md": (
             "create the active plan and the derived index manifest",
@@ -155,9 +174,44 @@ def validate_workflow_invariants(root: Path) -> list[str]:
         root / "wilco-docs" / "references" / "decision-tree.md": (
             "tracked work should enter through `wilco-init`",
             "Do not treat the work as `no-doc`",
+            "`downgrade-to-plan-only`",
+            "Treat the slug as a stable topic ID",
+            "`related`",
+        ),
+        root / "wilco-docs" / "references" / "troubleshooting.md": (
+            "`downgrade-to-plan-only`",
+        ),
+        root / "wilco-docs" / "references" / "archive.md": (
+            "downgraded out of the active lifecycle",
+        ),
+        root / "wilco-plan" / "references" / "plan-template.md": (
+            "Keep the slug stable once tracked",
+            "`downgrade-to-plan-only`",
+        ),
+        root / "wilco-plan" / "references" / "plan-only-template.md": (
+            "Keep the slug stable once tracked",
+        ),
+        root / "wilco-prd" / "references" / "prd-template.md": (
+            "`downgrade-to-plan-only`",
+        ),
+        root / "wilco-resume" / "references" / "resume-output-template.md": (
+            "`downgrade-to-plan-only`",
+            "record slug splits",
+        ),
+        root / "wilco-resume" / "references" / "resume-checklist.md": (
+            "independent scope, intent, or acceptance value",
+            "record the split in prose and index linkage",
         ),
         root / "wilco-execute" / "references" / "execute-loop.md": (
             "do not perform archive handling inside `wilco-execute`",
+        ),
+        root / "wilco-docs" / "scripts" / "wilco_common.py": (
+            "RELATIONSHIP_KEYS",
+            "normalize_relationships",
+        ),
+        root / "wilco-docs" / "scripts" / "validate_wilco_workspace.py": (
+            "RELATIONSHIP_KEYS",
+            "unexpected relationship key",
         ),
     }
 
@@ -170,6 +224,41 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             if marker not in text:
                 failures.append(f"{path.relative_to(root)} missing marker: {marker}")
 
+    return failures
+
+
+def validate_contract_map(root: Path) -> list[str]:
+    failures: list[str] = []
+    file_markers: dict[Path, tuple[str, ...]] = {
+        root / "CONTRACTS.md": (
+            "## Distribution Assumptions",
+            "## Contract Layers",
+            "## Owners And Derived Forms",
+            "## Sync Policy",
+            "## Validation Responsibilities",
+            "shared scripts",
+            "status and decision rules",
+            "strong structural templates",
+        ),
+        root / "CONTRACTS-zh.md": (
+            "## 分发前提",
+            "## 契约层级",
+            "## Owner 与派生层",
+            "## 同步策略",
+            "## Validator 责任",
+            "共享脚本",
+            "状态与决策规则",
+            "强结构模板",
+        ),
+    }
+    for path, required_markers in file_markers.items():
+        if not path.exists():
+            failures.append(f"Missing contract map file: {path}")
+            continue
+        text = path.read_text(encoding="utf-8")
+        for marker in required_markers:
+            if marker not in text:
+                failures.append(f"{path.relative_to(root)} missing marker: {marker}")
     return failures
 
 
@@ -235,6 +324,12 @@ def main() -> int:
         failures.append("workflow invariant validation failed:\n" + "\n".join(workflow_failures))
     else:
         print("[ok] workflow invariants")
+
+    contract_map_failures = validate_contract_map(root)
+    if contract_map_failures:
+        failures.append("contract map validation failed:\n" + "\n".join(contract_map_failures))
+    else:
+        print("[ok] contract map")
 
     cache_dirs = pycache_dirs(root)
     if cache_dirs:

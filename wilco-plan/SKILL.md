@@ -14,6 +14,7 @@ The plan is the primary execution document. Its checklist defines the intended p
 Before creating anything new, decide whether the work hits an existing active slug. Tiny implementation work can still require plan synchronization when it advances already-tracked work.
 Default to plan-only when that is sufficient. A PRD is an escalation, not a baseline requirement.
 Do not treat this skill as the normal bootstrap entrypoint for new tracked work. If a new tracked slug does not exist yet, use `wilco-init` first.
+When a PRD is retired through `downgrade-to-plan-only`, this skill becomes the owner of the remaining active execution contract.
 
 ## Workflow
 
@@ -31,11 +32,13 @@ Do not treat this skill as the normal bootstrap entrypoint for new tracked work.
 12. Write or update the plan at `.wilco/plans/active/<slug>.md` using [references/plan-template.md](references/plan-template.md). Prefer `../wilco-docs/scripts/sync_wilco_headers.py` when header cross-links drift.
 13. If there is a source PRD, update the PRD header so `Related plan` points to the new plan path.
 14. If implementation reality has diverged materially from the current plan, rewrite the plan to match reality or hand off to `wilco-resume` first if state is unclear.
-15. If the repo's docs layout is unclear or drifting, also use `wilco-docs`.
+15. If a PRD is being downgraded out of the active lifecycle, update the plan so it fully carries the remaining execution contract before the PRD exits active status.
+16. If the repo's docs layout is unclear or drifting, also use `wilco-docs`.
 
 ## Planning Rules
 
 - Use one stable topic slug across PRD and plan.
+- Treat the slug as a stable topic ID. If the topic truly changes, create a new slug instead of renaming the old one.
 - Keep implementation plans repo-local; do not default to `./plans/`.
 - Use tracer-bullet vertical slices, not horizontal batches of layer-specific work.
 - Acceptance criteria should describe observable outcomes, not implementation chores.
@@ -47,6 +50,9 @@ Do not treat this skill as the normal bootstrap entrypoint for new tracked work.
 - Prefer checklist items that are small, behavior-oriented, and verifiable.
 - If tracked work advances, even via a tiny "vibe" change, sync the plan checklist and `Updated` date instead of silently relying on code state.
 - If scope, goals, or acceptance moved enough that the plan is no longer the right execution contract, update the PRD as well or escalate to `wilco-prd`.
+- If a request introduces a clearly new topic instead of more work on the same one, split to a new slug and keep the old plan scoped to its original topic.
+- When a slug is split, record the follow-up relationship in both the human-readable docs and the derived index linkage.
+- If a PRD is downgraded to plan-only, the plan update, PRD retirement, and linkage refresh should happen atomically.
 - Treat the plan as the main human-readable execution artifact. The index is supporting metadata, not peer-level prose.
 
 ## Sync Contract
@@ -55,6 +61,7 @@ Do not treat this skill as the normal bootstrap entrypoint for new tracked work.
 - new tracked work with no slug hit: use `wilco-init` first
 - existing slug, implementation advance only: update the plan and minimally refresh the index
 - existing slug, plan no longer matches implementation: perform `diverge-replan`
+- existing slug, PRD no longer justified: accept `downgrade-to-plan-only` output from `wilco-prd` and make the plan the sole active execution contract
 - existing slug, task completed: update the plan for completion and coordinate `close-archive` handling with `wilco-docs`
 
 ## Output Contract

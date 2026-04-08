@@ -19,7 +19,7 @@ Do not trust checklist state alone. Verify implementation reality in code and te
 
 `wilco-resume` does not replace the plan. It audits the plan against implementation reality, records the current handoff state, and tells the next executor where to continue.
 
-Use this skill for three common lifecycle actions: `resume`, `diverge-replan`, and `close-archive` readiness checks.
+Use this skill for four common lifecycle actions: `resume`, `diverge-replan`, `downgrade-to-plan-only`, and `close-archive` readiness checks.
 Do not create or refresh resume files by default for steady-state execution.
 
 When `.wilco` feels outdated or out of sync, this is the first skill to run. Use it to decide whether the real follow-up is `wilco-plan`, `wilco-prd`, `wilco-docs`, or `wilco-execute`.
@@ -49,6 +49,7 @@ Tracked slugs should normally have an `.wilco/index/<slug>.json` manifest. Missi
    Do not rewrite them automatically unless the user asks.
 15. If the evidence shows the task is effectively complete, recommend `close-archive` handling instead of leaving the slug indefinitely `in_progress`.
 16. If the evidence shows the plan no longer matches reality, recommend `diverge-replan` rather than pretending checklist drift is harmless.
+17. If the evidence shows the PRD no longer adds independent scope, intent, or acceptance value beyond the plan, recommend `downgrade-to-plan-only` instead of leaving a stale PRD active.
 
 ## Reconciliation Rules
 
@@ -64,6 +65,7 @@ Tracked slugs should normally have an `.wilco/index/<slug>.json` manifest. Missi
 - Treat resume as a temporary current snapshot, not as per-slug history.
 - If the work hit an existing slug through small implementation changes, call out the minimum required sync updates instead of recommending a full new plan or PRD by default.
 - If the implementation is complete but docs lag behind, say so explicitly and point to `close-archive` rather than leaving completion ambiguous.
+- If the PRD has effectively become redundant, say so explicitly and point to `downgrade-to-plan-only` rather than leaving plan-only work artificially PRD-backed.
 - If no handoff, interruption, divergence, or closure check is needed, recommend updating the plan directly instead of producing a fresh resume file.
 
 ## Output Contract

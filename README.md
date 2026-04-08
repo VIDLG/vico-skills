@@ -3,6 +3,7 @@
 Repository-native Wilco skills for planning, execution, reconciliation, and cleanup under `.wilco/`.
 
 Chinese version: [README-zh.md](README-zh.md)
+Contract map: [CONTRACTS.md](CONTRACTS.md)
 
 ## Skill Set
 
@@ -26,6 +27,8 @@ For `wilco-grill` output examples, see [wilco-grill/references/output-format.md]
 - `resume` is a temporary handoff or recovery snapshot
 - every tracked slug should have an `.wilco/index/<slug>.json` linkage file
 - `index` is derived linkage metadata, not the primary human source of truth
+
+See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, distribution assumptions, and validator responsibilities.
 
 ## When To Use What
 

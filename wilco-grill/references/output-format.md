@@ -2,37 +2,25 @@
 
 Use this file for examples. The normative rules live in `../SKILL.md`.
 
-## Minimal Question Template
+## Concise Question Template
 
 ```md
-Context: repo > branch > current-topic
+wilco-skills | workflow > lifecycle-transitions
+Mode: concise | available: concise, detailed
+Priority: critical
 
 Question 7: Should this rule be enforced at the workflow layer?
 
 Options
 1. `Recommended` Yes, enforce it centrally.
 2. No, keep it as guidance only.
-
-Evidence
-- The current README and skill body disagree about responsibility.
-
-Why it matters
-If this stays implicit, later skills will drift again.
-
-Decision dependency
-This depends on the earlier decision to keep the workflow strongly routed.
-
-Write-back target
-- README.md
-- path/to/SKILL.md
-
-Reply with a number or answer directly.
 ```
 
 ## Expanded Question Example
 
 ```md
-Context: wilco-skills > wilco-grill > stop-conditions
+wilco-skills | wilco-grill > stop-conditions
+Mode: detailed | available: concise, detailed
 Priority: critical
 
 Question 12: Should grilling stop once only wording polish remains?
@@ -59,8 +47,6 @@ If the user explicitly wants line-level wording review, stopping here could feel
 
 Write-back target
 - wilco-grill/SKILL.md
-
-Reply with a number or answer directly.
 ```
 
 ## Final Summary Example

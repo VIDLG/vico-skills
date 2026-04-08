@@ -3,6 +3,7 @@
 面向仓库内 `.wilco/` 工作流的 Wilco 技能集合，用于任务初始化、规划、执行、对账、归档和文档治理。
 
 English version: [README.md](README.md)
+契约映射: [CONTRACTS-zh.md](CONTRACTS-zh.md)
 
 ## 技能列表
 
@@ -34,6 +35,8 @@ English version: [README.md](README.md)
 - `resume` 是临时交接/恢复快照
 - 每个 tracked slug 都应有 `.wilco/index/<slug>.json`
 - `index` 是派生出来的 linkage metadata，不是主文档
+
+owner map、派生层、同步边界、分发前提和 validator 责任见 [CONTRACTS-zh.md](CONTRACTS-zh.md)。
 
 ## 什么时候用哪个 Skill
 

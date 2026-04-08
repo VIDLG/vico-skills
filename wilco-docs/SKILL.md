@@ -58,6 +58,7 @@ Never let `.wilco` planning docs stand in for long-lived architecture truth. If 
 ## Working Rules
 
 - Prefer one topic slug across related docs: the same subject should map cleanly across PRD, plan, and architecture files.
+- Treat the slug as a stable topic identifier once work is tracked. If a clearly new topic emerges, create a follow-up slug instead of renaming the old one.
 - Prefer explicit status over silent historical drift: add `Status`, completion date, and replacement links when archiving.
 - Prefer explicit document dates in the header: use stable file names and put `Created`, `Updated`, `Completed`, or review dates in document metadata instead of encoding dates into file names.
 - Prefer directory clarity over root-level sprawl: active docs should be easy to distinguish from historical docs at a glance.
@@ -67,9 +68,12 @@ Never let `.wilco` planning docs stand in for long-lived architecture truth. If 
 - If work hits an existing active slug, do not treat the change as `no-doc`; update the tracked artifact set at least at the plan layer.
 - If tracked work changes only implementation progress, update the plan and derived linkage before considering PRD or architecture changes.
 - If tracked work changes goals, scope, non-goals, or acceptance criteria, update the PRD as well.
+- If an active PRD no longer adds independent value beyond the plan, perform `downgrade-to-plan-only` explicitly instead of leaving the PRD active forever.
 - If tracked work creates durable design truth, update `docs/architecture/` and record that path in the linkage layer.
 - If state is unclear after interruption, refresh `.wilco/resume/<slug>.md` instead of guessing.
 - Treat `.wilco/index/` as a cache-like coordination layer. Keep it minimal and rebuildable from the primary documents.
+- When index linkage records slug relationships, use a limited vocabulary such as `related`, `follow_up`, `supersedes`, and `superseded_by`.
+- When a slug is split, keep the old slug scoped to its original topic and record the split in both prose and index linkage.
 - Treat `.wilco/resume/` as an exception path for recovery, handoff, divergence, or completion checks, not as a default per-slug artifact.
 - Prefer archiving promptly once active work is finished so `.wilco/*/active/` stays small and legible.
 - Keep `wilco-execute` and `wilco-cleanup` as separate lifecycle stages even when an agent routes through both automatically for the user.

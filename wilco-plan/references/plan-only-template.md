@@ -6,10 +6,11 @@ Use this template for smaller scoped work that does not justify a separate PRD.
 # Plan: <Task Name>
 
 > Status: `in_progress`
+> Progress: optional `partially_completed`
 > Slug: `<slug>`
-> Manifest: `.wilco/index/<slug>.json`
 > Created: `2026-04-08`
 > Updated: `2026-04-08`
+> Manifest: optional `.wilco/index/<slug>.json`
 
 ## Goal
 
@@ -33,3 +34,5 @@ Describe the concrete task outcome in one short paragraph.
 
 Prefer this template when a PRD would mostly restate the same information in longer form.
 Treat the checklist as the execution anchor; `wilco-resume` exists to verify the real state against it.
+If no machine-readable linkage is needed yet, omit the `Manifest` line entirely.
+Keep the slug stable once tracked. If the work later splits into a new topic, create a follow-up slug instead of renaming this one, and record the split in prose plus index linkage.

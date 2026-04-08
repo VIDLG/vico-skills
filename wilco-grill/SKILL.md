@@ -37,13 +37,48 @@ When a question exposes an unresolved issue, keep track of which document should
   2. lifecycle, ownership, and routing rules
   3. invariants, upgrade gates, and stop conditions
   4. output formatting, wording, and presentational details
+- When grilling a broad system such as `wilco-skills`, use this top-level branch order by default:
+  1. `workflow`
+  2. `contract-map`
+  3. `distribution`
+  4. `sync-and-validation`
+  5. `template-contracts`
+  6. `index-schema`
+  7. `docs-governance`
+  8. `grill-itself`
+- When one top-level branch is sufficiently resolved, move to the next top-level branch automatically instead of staying on one branch forever.
 - Do not start by polishing small format details when higher-level structure is still unsettled.
 
 ## Output Contract
 
-Each question should use this core shape:
+Support two output modes:
 
-- `Context: <path > to > current > branch>`
+- `concise` is the default mode
+- `detailed` is the expanded mode
+- Show the current mode and available modes near the title area
+- Use the compact branch header shape:
+  - `<target> | <branch-path>`
+  - `>` belongs to the branch path, not to the target
+
+### Concise Mode
+
+Use this default shape:
+
+- `<target> | <branch-path>`
+- `Mode: concise | available: concise, detailed`
+- optional `Priority: critical|important|detail`
+- `Question N: <question text>`
+- `Options`
+
+Do not add the trailing response cue in concise mode.
+
+### Detailed Mode
+
+Use this expanded shape:
+
+- `<target> | <branch-path>`
+- `Mode: detailed | available: concise, detailed`
+- optional `Priority: critical|important|detail`
 - `Question N: <question text>`
 - `Options`
 - `Evidence`
@@ -53,11 +88,11 @@ Each question should use this core shape:
 
 ### Core Sections
 
-Every question must include:
+Every detailed-mode question must include:
 
-- `Context`
-  - Use a path-style hierarchy with `>` as the separator.
-  - Use the smallest path that still makes the branch obvious.
+- `<target> | <branch-path>`
+  - Use one stable target and the smallest branch path that still makes the branch obvious.
+- `Mode: <current> | available: concise, detailed`
 - `Question N: <question text>`
   - Keep the question text on the same line as the number.
 - `Options`
@@ -75,6 +110,14 @@ Every question must include:
 - `Write-back target`
   - Name the file or document class that should absorb the decision.
   - If nothing should be changed yet, say so explicitly.
+
+Every concise-mode question must include:
+
+- `<target> | <branch-path>`
+- `Mode: <current> | available: concise, detailed`
+- `Question N: <question text>`
+- `Options`
+- optional `Priority: critical|important|detail`
 
 ### Optional Sections
 
@@ -103,9 +146,14 @@ Use these only when they add real value:
   - Do not show by default.
   - Use only when the user asks for it or when a long branch needs a compact checkpoint to avoid repeated questions.
 
-End each question with a short response cue such as:
+## Priority Rubric
 
-- `Reply with a number or answer directly.`
+- `critical`
+  - use only when the question could change the state machine, lifecycle, distribution model, or another system-wide contract boundary
+- `important`
+  - use when the question affects maintainability, ownership, migration order, or validation responsibility, but does not rewrite the core system model
+- `detail`
+  - use for naming, presentation, local formatting, and other low-risk refinements
 
 ## Stop Conditions
 
@@ -155,6 +203,7 @@ Do not:
 - include every optional section by default and turn the grill into a long form
 - keep grilling once only wording polish or repeated confirmation remains
 - let `agents/openai.yaml` become a second copy of the detailed format contract
+- keep one top-level branch active indefinitely once its critical and important questions are already resolved
 
 ## References
 

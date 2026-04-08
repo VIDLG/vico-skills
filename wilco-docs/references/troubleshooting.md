@@ -16,6 +16,8 @@ When `.wilco` artifacts disagree with code or with each other, start with `wilco
   use `wilco-resume` then `wilco-plan`
 - scope, goals, non-goals, or acceptance changed:
   use `wilco-resume` then `wilco-prd` and `wilco-plan`
+- active PRD no longer adds independent value beyond the plan:
+  use `wilco-resume` then `wilco-prd` and `wilco-plan` for `downgrade-to-plan-only`
 - architecture truth moved but docs did not:
   use `wilco-resume` then `wilco-docs`
 - task is effectively done but active docs still linger:

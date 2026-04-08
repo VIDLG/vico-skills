@@ -1,11 +1,12 @@
 # Resume Output Template
 
 Use this shape for a resume report.
+Preserve these section headers exactly and keep status values within the shared Wilco vocabulary.
 
 ```md
 ## Resume Summary
 
-- Manifest: `.wilco/index/<slug>.json`
+- Manifest: optional `.wilco/index/<slug>.json`
 - Resume file: `.wilco/resume/<slug>.md`
 - PRD: active / accepted / stale / missing
 - Plan: in_progress / partially_completed / stale / missing
@@ -15,6 +16,7 @@ Use this shape for a resume report.
 
 Resume reports are current-state snapshots, not replacements for the plan.
 Refresh the current resume file when stale; do not keep historical resume snapshots by default.
+Delete the resume file or clear its index linkage once the plan is current again and no handoff or recovery need remains.
 
 ## Verified Progress
 
@@ -47,7 +49,10 @@ Refresh the current resume file when stale; do not keep historical resume snapsh
 - update plan status
 - update stale source links
 - update PRD only if scope changed
+- use `downgrade-to-plan-only` if the PRD no longer adds independent value
+- record slug splits in both prose and index linkage if a new topic emerged
 - extract architecture truth if needed
 ```
 
 If the report contradicts the checklist, recommend updating the plan rather than letting the resume report become the only source of truth.
+If no manifest exists, omit the `Manifest` line instead of inventing one just for symmetry.

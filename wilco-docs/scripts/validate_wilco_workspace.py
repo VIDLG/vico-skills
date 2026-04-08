@@ -18,6 +18,7 @@ PROGRESS_VALUES = {"not_started", "partially_completed", "mostly_complete", "don
 ALIGNMENT_VALUES = {"aligned", "partially_aligned", "diverged"}
 WORK_STATUS_VALUES = {"done", "partial", "not_started", "diverged", "unclear"}
 CONFIDENCE_VALUES = {"high", "medium", "low"}
+RELATIONSHIP_KEYS = {"related", "follow_up", "supersedes", "superseded_by"}
 
 
 def require(condition: bool, message: str, errors: list[str]) -> None:
@@ -125,6 +126,15 @@ def validate_index(path: Path, root: Path, errors: list[str]) -> None:
             require((root / artifact).exists(), f"{path}: artifact path does not exist for {key}: {artifact}", errors)
     for artifact in artifacts.get("architecture", []):
         require((root / artifact).exists(), f"{path}: architecture path does not exist: {artifact}", errors)
+    relationships = data.get("relationships", {})
+    require(isinstance(relationships, dict), f"{path}: relationships must be an object when present", errors)
+    if isinstance(relationships, dict):
+        for key, value in relationships.items():
+            require(key in RELATIONSHIP_KEYS, f"{path}: unexpected relationship key {key!r}", errors)
+            require(isinstance(value, list), f"{path}: relationship {key!r} must be a list", errors)
+            if isinstance(value, list):
+                for related_slug in value:
+                    require(isinstance(related_slug, str) and bool(related_slug.strip()), f"{path}: relationship {key!r} contains an invalid slug", errors)
 
 
 def main() -> int:

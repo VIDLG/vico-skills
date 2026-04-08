@@ -5,10 +5,10 @@ Use this template for `.wilco/prd/active/<slug>.md`.
 ```md
 Status: accepted
 Slug: <slug>
-Manifest: `.wilco/index/<slug>.json`
 Created: 2026-04-08
 Updated: 2026-04-08
-Related plan: `.wilco/plans/active/<slug>.md`
+Manifest: optional `.wilco/index/<slug>.json`
+Related plan: optional `.wilco/plans/active/<slug>.md`
 
 # PRD: <Feature or Initiative Name>
 
@@ -46,3 +46,6 @@ Avoid file paths and volatile implementation snippets.
 
 - Optional clarifications, dependencies, or migration context.
 ```
+
+If no machine-readable linkage is needed yet, omit the `Manifest` line entirely.
+If this PRD later becomes redundant because the plan fully carries the remaining execution contract, retire it explicitly through `downgrade-to-plan-only`; do not delete it without an archive or retirement trail.

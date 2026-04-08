@@ -5,6 +5,7 @@ Archive a PRD or plan when one of these is true:
 - the work is complete
 - the work was cancelled
 - the document was superseded by a newer document
+- an active PRD was downgraded out of the active lifecycle because the plan now carries the remaining execution contract
 - the stable facts were extracted into architecture docs and the original now serves only historical value
 
 ## Status Block Template
@@ -45,6 +46,7 @@ Recommended minimums:
 4. Add or update the status block.
 5. Add an `Outcome`, `Deviations`, or `Follow-up` section if the implementation materially differed from the original document.
 6. Remove or simplify stale resume snapshots and keep the index pointed at the surviving current artifacts only.
+7. If the archive action is part of `downgrade-to-plan-only`, leave an explicit pointer to the surviving active plan-only contract.
 
 ## Completion Summary Template
 
