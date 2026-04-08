@@ -44,6 +44,9 @@ High-level rules:
 - Update the plan as you go when the user wants execution-state docs kept current.
 - When a blocker is real, say exactly why execution cannot continue and what decision or input is needed.
 
+For each execution pass, produce a compact execution report using [references/execution-report-template.md](references/execution-report-template.md).
+When blocked, classify the blocker using [references/blocker-taxonomy.md](references/blocker-taxonomy.md).
+
 ## Claude Code
 
 For Claude Code, this skill can be paired with bundled hook scripts:
@@ -65,4 +68,6 @@ Codex does not have equivalent event hooks. Use the same execute loop directly a
 ## References
 
 - Use [references/execute-loop.md](references/execute-loop.md) for the step-by-step loop.
+- Use [references/execution-report-template.md](references/execution-report-template.md) for per-step output.
+- Use [references/blocker-taxonomy.md](references/blocker-taxonomy.md) for blocker classification.
 - Use [references/hooks-setup.md](references/hooks-setup.md) for Claude Code hook wiring.

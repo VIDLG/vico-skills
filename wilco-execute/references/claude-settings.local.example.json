@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -File wilco-skills/wilco-execute/scripts/session_start_hook.ps1"
+            "command": "powershell -File .\\wilco-skills\\wilco-execute\\scripts\\session_start_hook.ps1"
           }
         ]
       }
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -File wilco-skills/wilco-execute/scripts/stop_hook.ps1"
+            "command": "powershell -File .\\wilco-skills\\wilco-execute\\scripts\\stop_hook.ps1"
           }
         ]
       }

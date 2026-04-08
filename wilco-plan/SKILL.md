@@ -43,7 +43,10 @@ Write plans with at least:
 - phased slices
 - acceptance criteria per phase
 
+Use the full phased template for medium and large work. For small plan-only work, use the lighter plan-only template.
+
 ## References
 
 - Use [references/plan-template.md](references/plan-template.md) for the repository plan template.
+- Use [references/plan-only-template.md](references/plan-only-template.md) for smaller plan-only work.
 - Use `wilco-docs` when you need help with active/archive placement or document lifecycle.

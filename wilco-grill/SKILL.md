@@ -33,3 +33,10 @@ At the end of a substantial grilling pass, summarize:
 - unresolved decisions
 - your recommended resolutions
 - where each accepted resolution should be written back
+
+Use a compact output shape:
+
+- `Question`
+- `Recommended answer`
+- `Why it matters`
+- `Write-back target`

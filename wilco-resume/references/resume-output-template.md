@@ -7,7 +7,9 @@ Use this shape for a resume report.
 
 - PRD: active / accepted / stale / missing
 - Plan: in_progress / partially_completed / stale / missing
+- Alignment: aligned / partially_aligned / diverged
 - Overall implementation status: done / partial / not_started / diverged / unclear
+- Confidence: high / medium / low
 
 ## Verified Progress
 
@@ -19,6 +21,7 @@ Use this shape for a resume report.
 - code paths checked
 - tests checked
 - key behaviors or architectural changes observed
+- evidence strong enough / incomplete
 
 ## Divergences
 

@@ -17,8 +17,8 @@ Created: 2026-04-08
 Updated: 2026-04-20
 Completed: 2026-04-20
 Slug: action-pipeline
-Current architecture: docs/architecture/action-pipeline.md
-Superseded by: .wilco/plans/archive/action-pipeline-v2.md
+Current architecture: docs/architecture/<slug>.md
+Superseded by: .wilco/plans/archive/<slug>-v2.md
 ```
 
 Only include fields that are actually known. `Current architecture` and `Superseded by` are optional.

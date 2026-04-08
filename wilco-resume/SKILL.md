@@ -52,8 +52,11 @@ Produce a resume report that includes:
 
 - current PRD status
 - current plan status
+- alignment status
 - overall implementation status
 - phase-by-phase verification
+- evidence
+- confidence level
 - divergences between PRD, plan, and code
 - unresolved decisions or unclear areas
 - the recommended next step
