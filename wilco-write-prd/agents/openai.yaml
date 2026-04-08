@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wilco Write PRD"
+  short_description: "Create Wilco-style repo-local PRDs in docs/prd/active"
+  default_prompt: "Interview the user, explore the codebase, and write a Wilco-style repository-native PRD under docs/prd/active using stable slugs plus status and date metadata."
