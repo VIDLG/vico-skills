@@ -368,11 +368,20 @@ Use `grill` when the user wants a sustained interrogation loop or when the curre
 - `Likely recommendations`
 - `Open questions worth asking`
 - `Suggested next mode`
+- optional `Suggested next target`
 
 Use `scan` to establish the problem map, not to start a long questioning chain.
 Every `Finding` should be grounded in evidence, not just speculation.
 The internal `Issue Bank` still tracks the fuller issue set, but default `scan` output should emphasize user-facing findings over raw triage state.
 Only expose full issue-bank style detail when the user asks for it or when unresolved issue structure materially affects the next decision.
+- `scan` may legitimately suggest another narrower `scan` when the next missing input is repository evidence rather than user intent.
+- Treat repeated `scan` as a controlled recursive narrowing process, not as an invitation to rescan the whole object indefinitely.
+- Prefer another `scan` when a subtopic still lacks enough repository evidence to rank recommendations or ask a sharp user question.
+- Stop recursive `scan` and switch modes when:
+  - another narrower `scan` would not materially reduce uncertainty
+  - the remaining gap is primarily user intent or preference rather than repository evidence
+  - the active topic has dropped into `detail`
+  - the next useful action is clearly `grill`, `review`, or `resolve`
 
 ### Grill Contract
 

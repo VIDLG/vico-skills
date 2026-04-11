@@ -106,7 +106,11 @@ Open questions worth asking
 
 Suggested next mode
 
-- grill
+- scan
+
+Suggested next target
+
+- handoff-shape
 ```
 
 ## Review Example

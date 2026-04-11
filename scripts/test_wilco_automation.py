@@ -394,6 +394,7 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertNotIn("handoff template lacks `Target`", probe_output)
         self.assertIn("Issue classes", probe_output)
         self.assertIn("Findings", probe_output)
+        self.assertIn("Suggested next target", probe_output)
 
     def test_probe_mode_set_is_consistent_across_skill_help_and_readme(self) -> None:
         probe_skill = self.read(PROBE_SKILL)
@@ -500,6 +501,9 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("umbrella verb for inspect + ask + targeted refinement", probe_skill)
         self.assertIn("If the target object is an active plan", probe_skill)
         self.assertIn("Only expose full issue-bank style detail when the user asks for it", probe_skill)
+        self.assertIn("`scan` may legitimately suggest another narrower `scan`", probe_skill)
+        self.assertIn("controlled recursive narrowing process", probe_skill)
+        self.assertIn("Suggested next target", probe_skill)
         self.assertIn("accept short action modifiers in `grill`", probe_help)
         self.assertIn("`Findings`", probe_skill)
         self.assertIn("default `scan` output should emphasize user-facing findings over raw triage state", probe_skill)

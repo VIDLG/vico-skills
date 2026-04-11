@@ -156,6 +156,9 @@ def validate_wilco_probe_contract(root: Path) -> list[str]:
         "`Findings`",
         "default `scan` output should emphasize user-facing findings over raw triage state",
         "Only expose full issue-bank style detail when the user asks for it",
+        "`scan` may legitimately suggest another narrower `scan`",
+        "controlled recursive narrowing process",
+        "Suggested next target",
     )
     for marker in required_skill_markers:
         if marker not in skill_text:
@@ -186,6 +189,7 @@ def validate_wilco_probe_contract(root: Path) -> list[str]:
             "Accepted short replies",
             "`1 do cont`",
             "`rec do`",
+            "Suggested next target",
             "Mode: concise | available: concise, detailed",
             "Mode: detailed | available: concise, detailed",
             "Accepted decisions",
