@@ -336,6 +336,77 @@ def validate_wilco_exec_contract(root: Path) -> list[str]:
     return failures
 
 
+def validate_wilco_feedback_contract(root: Path) -> list[str]:
+    failures: list[str] = []
+    skill_path = root / "wilco-feedback" / "SKILL.md"
+    help_path = root / "wilco-feedback" / "references" / "help-template.md"
+    issue_path = root / "wilco-feedback" / "references" / "issue-template.md"
+    agent_path = root / "wilco-feedback" / "agents" / "openai.yaml"
+
+    if not skill_path.exists():
+        return [f"Missing wilco-feedback skill file: {skill_path}"]
+    for path, label in (
+        (help_path, "help template"),
+        (issue_path, "issue template"),
+        (agent_path, "agent prompt"),
+    ):
+        if not path.exists():
+            failures.append(f"Missing wilco-feedback {label}: {path}")
+
+    skill_text = skill_path.read_text(encoding="utf-8")
+    for marker in (
+        "GitHub issue draft",
+        "bug",
+        "ux_friction",
+        "contract_gap",
+        "feature_request",
+        "gh issue create",
+        "only create the issue after explicit user confirmation",
+        "Default to automatic classification",
+        "Skill route",
+        "Route reason",
+        "how do I use wilco-feedback",
+    ):
+        if marker not in skill_text:
+            failures.append(f"wilco-feedback/SKILL.md missing marker: {marker}")
+
+    if help_path.exists():
+        help_text = help_path.read_text(encoding="utf-8")
+        for marker in (
+            "## Wilco Feedback Help",
+            "GitHub issue draft",
+            "classify the feedback automatically",
+            "surface `Skill route` and `Route reason`",
+            "how do I use wilco-feedback",
+        ):
+            if marker not in help_text:
+                failures.append(f"wilco-feedback/references/help-template.md missing marker: {marker}")
+
+    if issue_path.exists():
+        issue_text = issue_path.read_text(encoding="utf-8")
+        for marker in (
+            "Title",
+            "Type",
+            "Affected skills",
+            "Current behavior",
+            "Expected behavior",
+            "Why it matters",
+        ):
+            if marker not in issue_text:
+                failures.append(f"wilco-feedback/references/issue-template.md missing marker: {marker}")
+
+    if agent_path.exists():
+        agent_text = agent_path.read_text(encoding="utf-8")
+        for marker in (
+            "GitHub issue draft",
+            "only create the issue after explicit user confirmation",
+        ):
+            if marker not in agent_text:
+                failures.append(f"wilco-feedback/agents/openai.yaml missing marker: {marker}")
+
+    return failures
+
+
 def validate_wilco_plan_contract(root: Path) -> list[str]:
     failures: list[str] = []
     skill_path = root / "wilco-plan" / "SKILL.md"
@@ -492,9 +563,11 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "how do I use wilco-probe",
             "how do I use wilco-plan",
             "how do I use wilco-exec",
+            "how do I use wilco-feedback",
             "If a natural-language request could reasonably mean more than one of these routes",
             "Skill route: <skill-name>",
             "Route reason: <natural trigger | explicit skill request>",
+            "auto-classify the report as `bug`, `ux_friction`, `contract_gap`, or `feature_request`",
             "Recommended install path: use `npx skills@latest`.",
             "### Install With `npx skills@latest`",
             "### Uninstall With `npx skills@latest`",
@@ -645,9 +718,11 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "wilco-probe 如何使用",
             "wilco-plan 如何使用",
             "wilco-exec 如何使用",
+            "wilco-feedback 如何使用",
             "优先用一句简短确认来消歧",
             "Skill route: <skill-name>",
             "Route reason: <natural trigger | explicit skill request>",
+            "默认应根据用户表达和上下文自动归类为 `bug`、`ux_friction`、`contract_gap` 或 `feature_request`",
             "推荐安装方式：使用 `npx skills@latest`。",
             "### 用 `npx skills@latest` 安装",
             "### 开发期 Link",
@@ -893,6 +968,12 @@ def main() -> int:
         failures.append("wilco-probe contract validation failed:\n" + "\n".join(probe_failures))
     else:
         print("[ok] wilco-probe contract")
+
+    feedback_failures = validate_wilco_feedback_contract(root)
+    if feedback_failures:
+        failures.append("wilco-feedback contract validation failed:\n" + "\n".join(feedback_failures))
+    else:
+        print("[ok] wilco-feedback contract")
 
     plan_failures = validate_wilco_plan_contract(root)
     if plan_failures:

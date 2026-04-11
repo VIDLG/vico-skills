@@ -32,6 +32,9 @@ EXEC_HELP = SKILLS_ROOT / "wilco-exec" / "references" / "help-template.md"
 EXEC_AUTOMATION = SKILLS_ROOT / "wilco-exec" / "references" / "automation.md"
 EXEC_STATUS = SKILLS_ROOT / "wilco-exec" / "references" / "status-vocabulary.md"
 EXEC_SYNC_SCRIPT = SKILLS_ROOT / "wilco-exec" / "scripts" / "sync_wilco_index.py"
+FEEDBACK_SKILL = SKILLS_ROOT / "wilco-feedback" / "SKILL.md"
+FEEDBACK_HELP = SKILLS_ROOT / "wilco-feedback" / "references" / "help-template.md"
+FEEDBACK_ISSUE = SKILLS_ROOT / "wilco-feedback" / "references" / "issue-template.md"
 README = SKILLS_ROOT / "README.md"
 README_ZH = SKILLS_ROOT / "README-zh.md"
 
@@ -295,6 +298,8 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("how do I use wilco-plan", readme)
         self.assertIn("verify this plan", readme)
         self.assertIn("how do I use wilco-exec", readme)
+        self.assertIn("how do I use wilco-feedback", readme)
+        self.assertIn("auto-classify the report as `bug`, `ux_friction`, `contract_gap`, or `feature_request`", readme)
         self.assertIn("`wilco-probe`: keep probe state session-local by default", readme)
         self.assertIn("`wilco-plan`: write or update active plan", readme)
         self.assertIn("`wilco-exec`: persist plan, index, or temporary reconcile updates", readme)
@@ -322,6 +327,8 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("wilco-plan 如何使用", readme_zh)
         self.assertIn("verify this plan", readme_zh)
         self.assertIn("wilco-exec 如何使用", readme_zh)
+        self.assertIn("wilco-feedback 如何使用", readme_zh)
+        self.assertIn("默认应根据用户表达和上下文自动归类为 `bug`、`ux_friction`、`contract_gap` 或 `feature_request`", readme_zh)
         self.assertIn("优先用一句简短确认来消歧", readme_zh)
         self.assertIn("Skill route: <skill-name>", readme_zh)
         self.assertIn("Route reason: <natural trigger | explicit skill request>", readme_zh)
@@ -687,6 +694,33 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertNotIn("../wilco-plan/", exec_automation)
         self.assertIn("## Execution Progress", exec_status)
         self.assertIn("from wilco_common import", exec_sync_script)
+
+    def test_feedback_skill_is_present_and_issue_draft_oriented(self) -> None:
+        feedback_skill = self.read(FEEDBACK_SKILL)
+        feedback_help = self.read(FEEDBACK_HELP)
+        feedback_issue = self.read(FEEDBACK_ISSUE)
+
+        self.assertIn("GitHub issue draft", feedback_skill)
+        self.assertIn("bug", feedback_skill)
+        self.assertIn("ux_friction", feedback_skill)
+        self.assertIn("contract_gap", feedback_skill)
+        self.assertIn("feature_request", feedback_skill)
+        self.assertIn("gh issue create", feedback_skill)
+        self.assertIn("only create the issue after explicit user confirmation", feedback_skill)
+        self.assertIn("Default to automatic classification", feedback_skill)
+        self.assertIn("how do I use wilco-feedback", feedback_skill)
+
+        self.assertIn("## Wilco Feedback Help", feedback_help)
+        self.assertIn("GitHub issue draft", feedback_help)
+        self.assertIn("classify the feedback automatically", feedback_help)
+        self.assertIn("surface `Skill route` and `Route reason`", feedback_help)
+
+        self.assertIn("Title", feedback_issue)
+        self.assertIn("Type", feedback_issue)
+        self.assertIn("Affected skills", feedback_issue)
+        self.assertIn("Current behavior", feedback_issue)
+        self.assertIn("Expected behavior", feedback_issue)
+        self.assertIn("Why it matters", feedback_issue)
 
 
 if __name__ == "__main__":

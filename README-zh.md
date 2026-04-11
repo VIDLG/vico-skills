@@ -13,6 +13,8 @@ English version: [README.md](README.md)
   按 active plan 持续执行，直到完成或遇到真实阻塞。
 - `wilco-probe`
   检查当前 plan、设计或代码库；先扫描问题，再按需追问，并产出可被 `wilco-plan` 消费的 handoff block。
+- `wilco-feedback`
+  把针对 `wilco-skills` 的反馈整理成 GitHub issue 草稿，并在用户明确确认后再发 issue。
 
 `wilco-probe` 的输出示例见 [wilco-probe/references/output-format.md](wilco-probe/references/output-format.md)。
 
@@ -67,6 +69,7 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 - `wilco-probe`：`scan 仓库`、`inspect codebase`、`grill 这个 plan`、`继续细化这个 plan`、`wilco-probe 如何使用`
 - `wilco-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify close`、`verify sync`、`verify replan`、`wilco-plan 如何使用`
 - `wilco-exec`：`继续做`、`一直做到完成`、`执行 active plan`、`除非阻塞否则继续`、`wilco-exec 如何使用`
+- `wilco-feedback`：`提个 issue`、`报告 bug`、`我对 wilco-skills 有反馈`、`整理成 GitHub issue`、`wilco-feedback 如何使用`
 
 如果一条自然语言请求同时可能落到多个 route 上，优先用一句简短确认来消歧，不要直接猜。
 
@@ -86,6 +89,9 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 - 需要对 tracked work 做 close-out 或 cancel 并删除 active docs：`wilco-plan`
 - 需要判断怎么做架构沉淀：`wilco-plan`
 - 需要先对 plan、设计或代码库做深入检查：`wilco-probe`
+- 需要把反馈整理成 GitHub issue 草稿，或确认后直接发 issue：`wilco-feedback`
+
+`wilco-feedback` 默认应根据用户表达和上下文自动归类为 `bug`、`ux_friction`、`contract_gap` 或 `feature_request`，只有类别确实不清楚时才反问用户。
 
 ## 自动化脚本
 
