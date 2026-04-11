@@ -49,7 +49,7 @@ Treat natural requests such as `file an issue`, `report a bug`, `this workflow f
    - `open the issue`
    - `reopen it`
    - `comment there`
-7. If the user confirms creation, create the issue with `gh issue create` against `VIDLG/wilco-skills`.
+7. If the user confirms creation, create the issue with `gh issue create` against `VIDLG/vico-skills`.
 8. If the user confirms a duplicate-aware action:
    - reopen the matching issue with `gh issue reopen`
    - or add context with `gh issue comment`

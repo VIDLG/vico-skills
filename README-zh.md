@@ -152,21 +152,21 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 为指定 agent 安装单个 skill：
 
 ```bash
-npx skills@latest add VIDLG/wilco-skills --skill wilco-probe --agent codex
-npx skills@latest add VIDLG/wilco-skills --skill wilco-plan --agent codex
-npx skills@latest add VIDLG/wilco-skills --skill wilco-exec --agent codex
+npx skills@latest add VIDLG/vico-skills --skill wilco-probe --agent codex
+npx skills@latest add VIDLG/vico-skills --skill wilco-plan --agent codex
+npx skills@latest add VIDLG/vico-skills --skill wilco-exec --agent codex
 ```
 
 为所有受支持的 agents 安装全部 Wilco skills：
 
 ```bash
-npx skills@latest add VIDLG/wilco-skills --all
+npx skills@latest add VIDLG/vico-skills --all
 ```
 
 只列出可安装的 skills，不实际安装：
 
 ```bash
-npx skills@latest add VIDLG/wilco-skills --list
+npx skills@latest add VIDLG/vico-skills --list
 ```
 
 `skills` CLI 也支持直接接 GitHub URL。

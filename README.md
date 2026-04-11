@@ -148,21 +148,21 @@ Recommended install path: use `npx skills@latest`.
 Install one skill for a specific agent:
 
 ```bash
-npx skills@latest add VIDLG/wilco-skills --skill wilco-probe --agent codex
-npx skills@latest add VIDLG/wilco-skills --skill wilco-plan --agent codex
-npx skills@latest add VIDLG/wilco-skills --skill wilco-exec --agent codex
+npx skills@latest add VIDLG/vico-skills --skill wilco-probe --agent codex
+npx skills@latest add VIDLG/vico-skills --skill wilco-plan --agent codex
+npx skills@latest add VIDLG/vico-skills --skill wilco-exec --agent codex
 ```
 
 Install all Wilco skills for all supported agents:
 
 ```bash
-npx skills@latest add VIDLG/wilco-skills --all
+npx skills@latest add VIDLG/vico-skills --all
 ```
 
 List available skills without installing:
 
 ```bash
-npx skills@latest add VIDLG/wilco-skills --list
+npx skills@latest add VIDLG/vico-skills --list
 ```
 
 The `skills` CLI can also take a GitHub URL directly.
