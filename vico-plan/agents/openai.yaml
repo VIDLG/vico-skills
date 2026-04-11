@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vico Plan"
+  short_description: "Default to plan_only and write Vico execution plans"
+  default_prompt: "Act as the only default front door for Vico planning. Decide whether work should stay `no-doc`, become `plan_only`, or upgrade to `prd_backed`; perform lightweight reconcile when active state is stale or overlapping; reuse, replace, or create one fresh dated slug as needed; absorb the latest `vico-probe` handoff block by default; and then update the active plan under .vico/plans/active with derived index sync."

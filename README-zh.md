@@ -1,97 +1,101 @@
-# wilco-skills
+# vico-skills
 
-面向仓库内 `.wilco/` 工作流的 Wilco 技能集合，用于规划与执行。
+面向仓库内 `.vico/` 工作流的 Vico 技能集合，用于规划与执行。
 
 English version: [README.md](README.md)
 契约映射: [CONTRACTS-zh.md](CONTRACTS-zh.md)
 
+## 为什么叫 Vico？
+
+`Vico` 可以看作更早 `Wilco` 这个名字的一个变体。
+
+- 它保留了 `Wilco` 里最有辨识度的 `-co` 发音骨架，所以名字虽然变了，但不会让人觉得完全断裂
+- 它把更重、更硬的 `Wil` 感受换成了 `Vi`，让整体气质更靠近 vibe、轻量交互和低摩擦工作流
+- 它想表达的是：内核仍然是靠谱执行，但外层更轻，更自然，默认从轻，按需升级，复杂度下降时也能再降级
+
+当前仓库里的 skill 名称仍然沿用 `vico-*`。`vico-skills` 表示的是这整套工作流的项目品牌，而不是要求立刻改掉所有 skill 名称。
+
 ## 技能列表
 
-- `wilco-plan`
+- `vico-plan`
   唯一默认入口；负责判断 `no-doc / plan_only / prd_backed`、轻量对账、创建或更新 active plan，并吸收 probe handoff。
-- `wilco-exec`
+- `vico-exec`
   按 active plan 持续执行，直到完成或遇到真实阻塞。
-- `wilco-probe`
-  检查当前 plan、设计或代码库；先扫描问题，再按需追问，并产出可被 `wilco-plan` 消费的 handoff block。
-- `wilco-feedback`
-  把针对 `wilco-skills` 的反馈整理成 GitHub issue 草稿，并在用户明确确认后再发 issue。
+- `vico-probe`
+  检查当前 plan、设计或代码库；先扫描问题，再按需追问，并产出可被 `vico-plan` 消费的 handoff block。
+- `vico-feedback`
+  把针对 `vico-skills` 的反馈整理成 GitHub issue 草稿，并在用户明确确认后再发 issue。
 
-`wilco-probe` 的输出示例见 [wilco-probe/references/output-format.md](wilco-probe/references/output-format.md)。
+`vico-probe` 的输出示例见 [vico-probe/references/output-format.md](vico-probe/references/output-format.md)。
 
 ## 默认模型
 
-- `wilco-skills` 是强意见、强路由的工作流，不是松散工具箱
-- `wilco-plan` 是唯一默认入口
-- `wilco-plan` 内部负责 bootstrap、轻量 reconcile、PRD 升级和 active slug 替换
-- `wilco-plan` 还应暴露显式模式，例如 `help`、`review`、`sync`、`prd`、`replace`、`close`、`cancel`
+- `vico-skills` 是强意见、强路由的工作流，不是松散工具箱
+- `vico-plan` 是唯一默认入口
+- `vico-plan` 内部负责 bootstrap、轻量 reconcile、PRD 升级和 active slug 替换
+- `vico-plan` 还应暴露显式模式，例如 `help`、`review`、`sync`、`prd`、`replace`、`close`、`cancel`
 - `plan_only` 是默认的 tracked workflow
 - `PRD` 是内部升级路径，不是默认入口
 - slug 一旦升级到 `prd_backed`，就不再原地降级
 - 临时 reconcile 状态仍然可能存在，但 `resume` 不再是主要用户入口
-- 每个 tracked slug 都应有 `.wilco/index/<slug>.json`
+- 每个 tracked slug 都应有 `.vico/index/<slug>.json`
 - `index` 是派生出来的 linkage metadata，不是主文档
 
 ## 设计原则
 
 `默认从轻，按需升级。`
 
-- `wilco-skills` 的目标是在低复杂度下保持 vibe-friendly，只在工作真正需要时才升级到更正式的流程
+- `vico-skills` 的目标是在低复杂度下保持 vibe-friendly，只在工作真正需要时才升级到更正式的流程
 - probing 和 execution 是两条独立的升级轴，不是单条强制的重流程
-- probing 可以从直接澄清逐步升级到 `wilco-probe`、`scan`、`grill`
-- execution 可以从直接 vibe 式执行逐步升级到 `wilco-plan`、`prd_backed`、`wilco-exec`
+- probing 可以从直接澄清逐步升级到 `vico-probe`、`scan`、`grill`
+- execution 可以从直接 vibe 式执行逐步升级到 `vico-plan`、`prd_backed`、`vico-exec`
 - 更重的模式是为了降低歧义和协作成本，不是为了给每个任务预先加流程
 - workflow re-entry 是一等能力：工作可以在 vibe execution 与 tracked workflow 之间往返，而不应被视为异常状态
-- direct execution 可以发生在 tracked workflow 之前、之中或之后；当 workflow 恢复时，当前 Wilco 路由应先根据仓库现实做 reconcile，再决定是否继续信任 `.wilco` 状态
+- direct execution 可以发生在 tracked workflow 之前、之中或之后；当 workflow 恢复时，当前 Vico 路由应先根据仓库现实做 reconcile，再决定是否继续信任 `.vico` 状态
 
 owner map、派生层、同步边界、分发前提和 validator 责任见 [CONTRACTS-zh.md](CONTRACTS-zh.md)。
 
 ## 落盘原则
 
-- `wilco-probe`：默认把 probe state 保持在会话内；只有用户明确要求写回时才落盘
-- `wilco-plan`：只要在塑造 tracked work，就默认写入或更新 active plan、可选 PRD 和派生 index
-- `wilco-exec`：当连续执行依赖准确状态，或用户希望文档保持最新时，落盘 plan、index 或临时 reconcile 更新
+- `vico-probe`：默认把 probe state 保持在会话内；只有用户明确要求写回时才落盘
+- `vico-plan`：只要在塑造 tracked work，就默认写入或更新 active plan、可选 PRD 和派生 index
+- `vico-exec`：当连续执行依赖准确状态，或用户希望文档保持最新时，落盘 plan、index 或临时 reconcile 更新
 
 ## 最常用路径
 
 - 直接 vibe 式执行：不需要 tracked workflow 时，直接对话并立即实现
-- 先检查再规划：`wilco-probe -> wilco-plan`
-- 继续细化现有 plan：`wilco-probe grill plan -> wilco-plan`
-- 只做 tracked planning：`wilco-plan`
-- 端到端 tracked execution：`wilco-plan -> wilco-exec -> wilco-plan close`
+- 先检查再规划：`vico-probe -> vico-plan`
+- 继续细化现有 plan：`vico-probe grill plan -> vico-plan`
+- 只做 tracked planning：`vico-plan`
+- 端到端 tracked execution：`vico-plan -> vico-exec -> vico-plan close`
 
 ## 升级提示
 
 - 当任务局部、低风险、且不需要跨轮 tracked 协调时，停留在直接 vibe 式执行
-- 当对象不清晰、有争议，或明显适合先做 evidence-first 追问时，使用 `wilco-probe`
-- 当工作应升级为 `.wilco/` 下的 tracked execution contract 时，使用 `wilco-plan`
-- 只有在 active plan 已经存在、且用户希望持续推进直到真正完成或遇到真实阻塞时，才进入 `wilco-exec`
+- 当对象不清晰、有争议，或明显适合先做 evidence-first 追问时，使用 `vico-probe`
+- 当工作应升级为 `.vico/` 下的 tracked execution contract 时，使用 `vico-plan`
+- 只有在 active plan 已经存在、且用户希望持续推进直到真正完成或遇到真实阻塞时，才进入 `vico-exec`
 - 如果 tracked work 又缩回到局部、低风险修改，优先降级回 `direct_execute`
 
 ## Route Shifts
 
-- `direct_execute -> wilco-plan`：当轻量执行演化成 tracked work 时，`wilco-plan` 应自动做最小 reconcile / sync，重新锚定当前代码现实
-- `wilco-plan -> direct_execute`：当剩余工作已经足够小且低风险时，优先回到更轻的执行路径，而不是继续把用户留在重流程里
-- `wilco-probe -> direct_execute`：当 probe 已经确认下一步是局部实现时，直接路由去做，不要强行再过 planning
+- `direct_execute -> vico-plan`：当轻量执行演化成 tracked work 时，`vico-plan` 应自动做最小 reconcile / sync，重新锚定当前代码现实
+- `vico-plan -> direct_execute`：当剩余工作已经足够小且低风险时，优先回到更轻的执行路径，而不是继续把用户留在重流程里
+- `vico-probe -> direct_execute`：当 probe 已经确认下一步是局部实现时，直接路由去做，不要强行再过 planning
 - 如果 tracked work 又缩回到局部、低风险修改，优先降级回 `direct_execute`
-
-## Route Shifts
-
-- `direct_execute -> wilco-plan`：当轻量执行演化成 tracked work 时，`wilco-plan` 应自动做最小 reconcile / sync，重新锚定当前代码现实
-- `wilco-plan -> direct_execute`：当剩余工作已经足够小且低风险时，优先回到更轻的执行路径，而不是继续把用户留在重流程里
-- `wilco-probe -> direct_execute`：当 probe 已经确认下一步是局部实现时，直接路由去做，不要强行再过 planning
 
 ## 自然触发词
 
-- `wilco-probe`：`scan 仓库`、`inspect codebase`、`grill 这个 plan`、`继续细化这个 plan`、`wilco-probe 如何使用`
-- `wilco-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify close`、`verify sync`、`verify replan`、`wilco-plan 如何使用`
-- `wilco-exec`：`继续做`、`一直做到完成`、`执行 active plan`、`除非阻塞否则继续`、`wilco-exec 如何使用`
-- `wilco-feedback`：`提个 issue`、`报告 bug`、`我对 wilco-skills 有反馈`、`整理成 GitHub issue`、`wilco-feedback 如何使用`
+- `vico-probe`：`scan 仓库`、`inspect codebase`、`grill 这个 plan`、`继续细化这个 plan`、`vico-probe 如何使用`
+- `vico-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify close`、`verify sync`、`verify replan`、`vico-plan 如何使用`
+- `vico-exec`：`继续做`、`一直做到完成`、`执行 active plan`、`除非阻塞否则继续`、`vico-exec 如何使用`
+- `vico-feedback`：`提个 issue`、`报告 bug`、`我对 vico-skills 有反馈`、`整理成 GitHub issue`、`vico-feedback 如何使用`
 
 如果一条自然语言请求同时可能落到多个 route 上，优先用一句简短确认来消歧，不要直接猜。
 
 ## 路由可见性
 
-- 一旦选中了某个 Wilco skill，第一条可见 update 应显式展示当前 skill 和路由原因。
+- 一旦选中了某个 Vico skill，第一条可见 update 应显式展示当前 skill 和路由原因。
 - 推荐形状：
   - `Skill route: <skill-name>`
   - `Route reason: <natural trigger | explicit skill request>`
@@ -99,49 +103,49 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 ## 什么时候用哪个 Skill
 
-- 需要开始、更新、对账或重建 tracked work：`wilco-plan`
-- 需要在 close-out 前根据真实代码库核实 plan 是否真的完成：`wilco-plan verify`
-- 基于 active plan 继续实现：`wilco-exec`
-- 需要对 tracked work 做 close-out 或 cancel 并删除 active docs：`wilco-plan`
-- 需要判断怎么做架构沉淀：`wilco-plan`
-- 需要先对 plan、设计或代码库做深入检查：`wilco-probe`
-- 需要把反馈整理成 GitHub issue 草稿，或确认后直接发 issue：`wilco-feedback`
+- 需要开始、更新、对账或重建 tracked work：`vico-plan`
+- 需要在 close-out 前根据真实代码库核实 plan 是否真的完成：`vico-plan verify`
+- 基于 active plan 继续实现：`vico-exec`
+- 需要对 tracked work 做 close-out 或 cancel 并删除 active docs：`vico-plan`
+- 需要判断怎么做架构沉淀：`vico-plan`
+- 需要先对 plan、设计或代码库做深入检查：`vico-probe`
+- 需要把反馈整理成 GitHub issue 草稿，或确认后直接发 issue：`vico-feedback`
 
-`wilco-feedback` 默认应根据用户表达和上下文自动归类为 `bug`、`ux_friction`、`contract_gap` 或 `feature_request`，只有类别确实不清楚时才反问用户。
-如果存在明显重复的 issue，`wilco-feedback` 应优先建议 `create`、`reopen` 或 `comment`，而不是默认新建。
+`vico-feedback` 默认应根据用户表达和上下文自动归类为 `bug`、`ux_friction`、`contract_gap` 或 `feature_request`，只有类别确实不清楚时才反问用户。
+如果存在明显重复的 issue，`vico-feedback` 应优先建议 `create`、`reopen` 或 `comment`，而不是默认新建。
 
 ## 反馈流程
 
-如果你在 `wilco-skills` 里遇到 bug、工作流不顺、命名别扭，或者发现 feature gap，就用 `wilco-feedback`。
+如果你在 `vico-skills` 里遇到 bug、工作流不顺、命名别扭，或者发现 feature gap，就用 `vico-feedback`。
 
 典型流程：
 
 1. 用自然语言描述问题。
-2. 让 `wilco-feedback` 自动归类并生成 issue 草稿。
+2. 让 `vico-feedback` 自动归类并生成 issue 草稿。
 3. 先检查草稿内容和重复 issue 处理建议。
 4. 只有当你真的想对 GitHub 执行动作时，再说 `create it`、`reopen it` 或 `comment there`。
 
 示例输入：
 
-- `我对 wilco-skills 有反馈`
+- `我对 vico-skills 有反馈`
 - `这个 workflow 有点别扭`
-- `报告 wilco-plan 的一个 bug`
+- `报告 vico-plan 的一个 bug`
 - `把这个整理成 GitHub issue`
 
 ## 自动化脚本
 
-- `wilco-plan/scripts/bootstrap_wilco_slug.py`
-  当 `wilco-plan` 判断需要新 slug 时，为其创建最小骨架。
-- `wilco-plan/scripts/sync_wilco_headers.py`
+- `vico-plan/scripts/bootstrap_vico_slug.py`
+  当 `vico-plan` 判断需要新 slug 时，为其创建最小骨架。
+- `vico-plan/scripts/sync_vico_headers.py`
   同步 plan / PRD 的 header 和交叉引用。
-- `wilco-plan/scripts/sync_wilco_index.py`
-  从当前 artifact 重新生成最小化 `.wilco/index/*.json`。
-- `wilco-plan/scripts/close_wilco_slug.py`
+- `vico-plan/scripts/sync_vico_index.py`
+  从当前 artifact 重新生成最小化 `.vico/index/*.json`。
+- `vico-plan/scripts/close_vico_slug.py`
   删除已完成 slug 的 active docs，并清理临时 resume / index 状态。
-- `wilco-plan/scripts/validate_wilco_workspace.py`
-  按 Wilco schema 校验当前 `.wilco` 工作区。
-- `scripts/validate_wilco_skills.py`
-  校验整个 Wilco skill 仓库、辅助脚本和测试。
+- `vico-plan/scripts/validate_vico_workspace.py`
+  按 Vico schema 校验当前 `.vico` 工作区。
+- `scripts/validate_vico_skills.py`
+  校验整个 Vico skill 仓库、辅助脚本和测试。
 
 ## 安装与卸载
 
@@ -152,12 +156,12 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 为指定 agent 安装单个 skill：
 
 ```bash
-npx skills@latest add VIDLG/vico-skills --skill wilco-probe --agent codex
-npx skills@latest add VIDLG/vico-skills --skill wilco-plan --agent codex
-npx skills@latest add VIDLG/vico-skills --skill wilco-exec --agent codex
+npx skills@latest add VIDLG/vico-skills --skill vico-probe --agent codex
+npx skills@latest add VIDLG/vico-skills --skill vico-plan --agent codex
+npx skills@latest add VIDLG/vico-skills --skill vico-exec --agent codex
 ```
 
-为所有受支持的 agents 安装全部 Wilco skills：
+为所有受支持的 agents 安装全部 Vico skills：
 
 ```bash
 npx skills@latest add VIDLG/vico-skills --all
@@ -191,9 +195,9 @@ npx skills@latest add VIDLG/vico-skills --list
 用 `npx skills@latest` 卸载单个 skill：
 
 ```bash
-npx skills@latest remove wilco-probe
-npx skills@latest remove wilco-plan
-npx skills@latest remove wilco-exec
+npx skills@latest remove vico-probe
+npx skills@latest remove vico-plan
+npx skills@latest remove vico-exec
 ```
 
 如果你走的是开发期 link，直接删除对应 agent skills 目录里的 link 即可。
@@ -203,19 +207,19 @@ npx skills@latest remove wilco-exec
 ### 开始或对账工作
 
 ```text
-wilco-plan
+vico-plan
 ```
 
 ### 查看当前状态
 
 ```text
-wilco-plan review
+vico-plan review
 ```
 
 ### Close-Out 前先 Verify
 
 ```text
-wilco-plan verify
+vico-plan verify
 ```
 
 `verify` 的结果应同时给出：
@@ -226,81 +230,81 @@ wilco-plan verify
 ### Verify 通过后直接 Close
 
 ```text
-wilco-plan verify close
+vico-plan verify close
 ```
 
 ### Verify 后直接 Sync
 
 ```text
-wilco-plan verify sync
+vico-plan verify sync
 ```
 
 ### Verify 后直接 Replan
 
 ```text
-wilco-plan verify replan
+vico-plan verify replan
 ```
 
 ### 查看可用模式
 
 ```text
-wilco-plan help
+vico-plan help
 ```
 
 ### 先 Probe 再 Plan
 
 ```text
-wilco-probe -> wilco-plan
+vico-probe -> vico-plan
 ```
 
 ### 查看可用模式
 
 ```text
-wilco-exec help
-wilco-probe help
+vico-exec help
+vico-probe help
 ```
 
 ## Probe 工作流
 
-- `wilco-probe`
+- `vico-probe`
   - 默认入口；先做轻量 scan，再根据 issue state 决定是直接建议、发一问、进入 `review`，还是直接收口
-- `wilco-probe scan`
+- `vico-probe scan`
   - 只做深度检查；建立 evidence、issues 和 topic map，不进入长追问
-- `wilco-probe grill`
+- `vico-probe grill`
   - 强制进入持续性的高强度追问模式，围绕最重要的未决问题连续发问
-- `wilco-probe grill plan`
+- `vico-probe grill plan`
   - 把当前 active plan 当作被 grill 的对象；当低风险澄清可以立即落地时，直接 refine plan 文本
-- `wilco-probe review`
+- `vico-probe review`
   - 查看当前已接受结论、未决问题和推荐下一步
-- `wilco-probe resolve`
-  - 停止追问，输出 final summary 或给 `wilco-plan` 的 `Probe Handoff`
-- `wilco-probe help`
+- `vico-probe resolve`
+  - 停止追问，输出 final summary 或给 `vico-plan` 的 `Probe Handoff`
+- `vico-probe help`
   - 查看模式和推荐使用方式
 
 ### 执行并完成
 
 ```text
-wilco-exec -> wilco-plan close
+vico-exec -> vico-plan close
 ```
 
 即使用户表达的是“做到真正完成”，生命周期仍然保持简单：
 
-- `wilco-exec` 负责完成实现并同步 plan
-- `wilco-plan close` 负责 close-out 删除
-- agent 可以在执行结束后自动路由到 `wilco-plan close`，不要求用户手动记住第二步
+- `vico-exec` 负责完成实现并同步 plan
+- `vico-plan close` 负责 close-out 删除
+- agent 可以在执行结束后自动路由到 `vico-plan close`，不要求用户手动记住第二步
 
 ## 开发说明
 
-- `wilco-skills/` 是单一事实来源。
+- `vico-skills/` 是单一事实来源。
 - 开发时优先让项目内 `.codex/skills/` 和 `.claude/skills/` 指向这些目录，而不是复制内容。
-- Claude Code 相关 hook 脚本在 `wilco-exec/scripts/`，项目级 hook 配置在 `.claude/settings*.json`。
+- Claude Code 相关 hook 脚本在 `vico-exec/scripts/`，项目级 hook 配置在 `.claude/settings*.json`。
 
 ## 校验
 
 运行：
 
 ```text
-python3 wilco-skills/scripts/validate_wilco_skills.py
+python3 vico-skills/scripts/validate_vico_skills.py
 ```
 
 它会执行：

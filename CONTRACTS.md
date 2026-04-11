@@ -1,4 +1,4 @@
-# Wilco Contracts
+# Vico Contracts
 
 This document is the governance map for ownership, derivation, and validation boundaries.
 It is not the user-facing workflow guide and not a second source of skill behavior truth.
@@ -12,9 +12,9 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 
 ## Persistence Policy
 
-- `wilco-probe` state is session-local by default and should not be written back unless the user explicitly asks.
-- `wilco-plan` owns tracked-doc writes for active plan, optional PRD, and derived index state.
-- `wilco-exec` may write plan, index, or temporary reconcile state when execution continuity depends on accurate persisted state.
+- `vico-probe` state is session-local by default and should not be written back unless the user explicitly asks.
+- `vico-plan` owns tracked-doc writes for active plan, optional PRD, and derived index state.
+- `vico-exec` may write plan, index, or temporary reconcile state when execution continuity depends on accurate persisted state.
 
 ## User-Facing Vs Internal
 
@@ -22,37 +22,37 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 - Internal state may remain richer than user-facing output when that extra detail mainly serves routing, continuity, or validation.
 - Do not dump the full internal scheduler, issue bank, or execution heuristics into default user-facing output unless the user asks for that detail or it materially affects the next decision.
 - Keep machine-consumed fields stable even when surrounding prose is optimized for user readability.
-- When a Wilco skill is selected, expose the active skill route and route reason in the first visible update so the user can distinguish skill-routed behavior from generic model behavior.
+- When a Vico skill is selected, expose the active skill route and route reason in the first visible update so the user can distinguish skill-routed behavior from generic model behavior.
 - When a human-facing checkpoint, summary, verification result, or handoff is emitted, prefer a `Recommended action` when that action is not already obvious.
 - Standardize `Recommended action` on:
   - `direct_execute`
-  - `wilco-plan`
-  - `wilco-plan -> wilco-exec`
+  - `vico-plan`
+  - `vico-plan -> vico-exec`
 
 ## Route Shift Policy
 
 - Escalation and de-escalation are both valid workflow moves.
-- If work grows beyond safe local execution, route into `wilco-plan` or `wilco-exec` as needed.
+- If work grows beyond safe local execution, route into `vico-plan` or `vico-exec` as needed.
 - If work shrinks back into a local, low-risk change, prefer `direct_execute` over keeping the user inside a heavier workflow.
-- When re-entering tracked workflow after direct execution, perform the minimum reconcile or sync needed to align `.wilco` state with current repository reality.
+- When re-entering tracked workflow after direct execution, perform the minimum reconcile or sync needed to align `.vico` state with current repository reality.
 
 ## Workflow Re-entry Rule
 
 - Workflow re-entry is a first-class supported path, not an exception path.
 - Direct execution may happen before, during, or after tracked workflow.
-- When tracked workflow resumes, the active Wilco route should reconcile against current repository reality before trusting stale `.wilco` state.
+- When tracked workflow resumes, the active Vico route should reconcile against current repository reality before trusting stale `.vico` state.
 
 ## Route Shift Policy
 
 - Escalation and de-escalation are both valid workflow moves.
-- If work grows beyond safe local execution, route into `wilco-plan` or `wilco-exec` as needed.
+- If work grows beyond safe local execution, route into `vico-plan` or `vico-exec` as needed.
 - If work shrinks back into a local, low-risk change, prefer `direct_execute` over keeping the user inside a heavier workflow.
-- When re-entering tracked workflow after direct execution, perform the minimum reconcile or sync needed to align `.wilco` state with current repository reality.
+- When re-entering tracked workflow after direct execution, perform the minimum reconcile or sync needed to align `.vico` state with current repository reality.
 
 ## Verification Authority
 
 - `Status`, checklist completion, and index linkage are operational planning signals, not final proof of completion.
-- Final close-out decisions should be gated by current repository evidence via `wilco-plan verify`.
+- Final close-out decisions should be gated by current repository evidence via `vico-plan verify`.
 
 ## Public Modes Vs Status Values
 
@@ -79,10 +79,10 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 | --- | --- | --- | --- |
 | Global workflow constitution | `README.md` | skill-level references, contract map entries, workflow invariant checks | ensure README markers exist and downstream docs do not drift on core invariants |
 | Skill behavior contract | each `<skill>/SKILL.md` | `<skill>/agents/openai.yaml`, skill-local references, examples | ensure the skill body is present, referenced helpers exist, and agent summaries do not become a second full contract |
-| Shared scripts | owner script file, currently under `wilco-plan/scripts/` | skill-local wrapper entries under `<skill>/scripts/` when still needed | ensure owner source exists, local wrapper entry points exist where required, and runtime references do not point across skill boundaries |
-| Shared status and decision rules | owner reference file, currently under `wilco-plan/references/` | skill-local full reference copies where runtime visibility is required | ensure owner files exist, local copies exist where required, and copies are treated as derived content |
+| Shared scripts | owner script file, currently under `vico-plan/scripts/` | skill-local wrapper entries under `<skill>/scripts/` when still needed | ensure owner source exists, local wrapper entry points exist where required, and runtime references do not point across skill boundaries |
+| Shared status and decision rules | owner reference file, currently under `vico-plan/references/` | skill-local full reference copies where runtime visibility is required | ensure owner files exist, local copies exist where required, and copies are treated as derived content |
 | Strong templates | owner template file, such as `plan-template.md`, `prd-template.md`, `reconcile-output-template.md` | skill-local visible copies or references needed for runtime closure | ensure owner templates exist, required local closures exist, and key structure remains stable |
-| Feedback / issue templates | owner template file under `wilco-feedback/references/` | issue drafts and filing behavior in `wilco-feedback` | ensure draft templates exist, stay concise, and keep confirmation boundaries explicit |
+| Feedback / issue templates | owner template file under `vico-feedback/references/` | issue drafts and filing behavior in `vico-feedback` | ensure draft templates exist, stay concise, and keep confirmation boundaries explicit |
 | Contract map | `CONTRACTS.md` and `CONTRACTS-zh.md` | README links | ensure the map exists and keeps owner/derived/validation responsibilities aligned |
 
 ## Sync Policy

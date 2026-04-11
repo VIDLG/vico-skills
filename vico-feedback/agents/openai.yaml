@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vico Feedback"
+  short_description: "Draft and optionally file GitHub issues for vico-skills"
+  default_prompt: "Turn user feedback about vico-skills into a structured GitHub issue draft. Ask only the shortest clarifying question needed, check likely duplicates when useful, and only create the issue after explicit user confirmation."

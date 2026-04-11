@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -File .\\vico-skills\\vico-exec\\scripts\\session_start_hook.ps1"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -File .\\vico-skills\\vico-exec\\scripts\\stop_hook.ps1"
+          }
+        ]
+      }
+    ]
+  }
+}
