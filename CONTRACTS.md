@@ -29,6 +29,26 @@ It is not the user-facing workflow guide and not a second source of skill behavi
   - `wilco-plan`
   - `wilco-plan -> wilco-exec`
 
+## Route Shift Policy
+
+- Escalation and de-escalation are both valid workflow moves.
+- If work grows beyond safe local execution, route into `wilco-plan` or `wilco-exec` as needed.
+- If work shrinks back into a local, low-risk change, prefer `direct_execute` over keeping the user inside a heavier workflow.
+- When re-entering tracked workflow after direct execution, perform the minimum reconcile or sync needed to align `.wilco` state with current repository reality.
+
+## Workflow Re-entry Rule
+
+- Workflow re-entry is a first-class supported path, not an exception path.
+- Direct execution may happen before, during, or after tracked workflow.
+- When tracked workflow resumes, the active Wilco route should reconcile against current repository reality before trusting stale `.wilco` state.
+
+## Route Shift Policy
+
+- Escalation and de-escalation are both valid workflow moves.
+- If work grows beyond safe local execution, route into `wilco-plan` or `wilco-exec` as needed.
+- If work shrinks back into a local, low-risk change, prefer `direct_execute` over keeping the user inside a heavier workflow.
+- When re-entering tracked workflow after direct execution, perform the minimum reconcile or sync needed to align `.wilco` state with current repository reality.
+
 ## Verification Authority
 
 - `Status`, checklist completion, and index linkage are operational planning signals, not final proof of completion.

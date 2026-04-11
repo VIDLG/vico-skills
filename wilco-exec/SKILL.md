@@ -41,6 +41,7 @@ Prefer the plan as the long-lived execution anchor. Use temporary reconcile stat
 Treat the active plan as the primary execution anchor in both `plan_only` and `prd_backed` modes. In `prd_backed`, consult the PRD for scope and intent drift, but keep execution centered on the plan.
 
 If the plan is stale, the current temporary reconcile state is stale, or the current implementation is unclear, route back through `wilco-plan` for reconcile instead of exposing a separate resume step by default.
+Treat direct-execution detours as normal: if execution resumes after out-of-band changes, reconcile against current repository reality before trusting the previous plan state.
 
 ## Multi-Active Safety Rules
 

@@ -53,6 +53,9 @@ Do not let a user factual guess silently override stronger repository evidence.
 
 `wilco-probe` should organize its work around lightweight session-local state:
 
+- `Program Objective`
+  - the stable work object currently being probed
+  - the highest-level problem bundle the user intends to solve in this pass
 - `Intent Overlay`
   - current user steering, focus shifts, stop requests, and temporary constraints
 - `Evidence Bank`
@@ -67,6 +70,7 @@ Do not let a user factual guess silently override stronger repository evidence.
 The `Issue Bank` is the main working state.
 The `Topic Map` is a derived scheduling view, not the primary truth source.
 Do not persist internal probe state to repo files by default. Keep it session-local unless the user explicitly asks to write conclusions back into plan, PRD, or architecture docs.
+Do not let the currently active grilled issue silently replace the `Program Objective` unless the user explicitly changes scope.
 
 ## Issue Classes
 
@@ -144,6 +148,8 @@ Do not use the shortcut for:
 - Rebuild or refresh the topic candidate list whenever new evidence or a new answer changes the decision tree.
 - After every answered question, reassess the best next candidate across all top-level topics.
 - Only stay in the current top-level topic when it still owns the highest-value next question.
+- Treat `scan` findings, user-stated goals, previously accepted conclusions, and newly exposed issues as one combined problem bundle for scheduling.
+- Use `grill` to clarify or rank the problem bundle, not to silently narrow the mission to the last active issue.
 - Favor topic switching when:
   - another top-level topic now has a higher-priority unresolved question
   - the current topic has already consumed multiple consecutive questions
@@ -389,6 +395,7 @@ Use `grill` when the next best action is sustained user questioning rather than 
 
 - prefer entering `grill` after `scan` has already built an issue bank
 - if `grill` is invoked without a usable current issue bank, run a lightweight bootstrap scan first instead of rejecting the request
+- keep the `Program Objective` visible in session state while grilling so local clarification does not become accidental scope rewrite
 - if a bounded, low-risk issue becomes immediately solvable during `grill`, you may briefly solve it, refresh the evidence and issue state, and then continue `grill`
 - only take that shortcut when solving the issue does not require broad implementation, tracked-planning mode changes, or a fresh user preference decision
 - support short answer modifiers so the user can answer and control immediate action in one line
@@ -407,6 +414,7 @@ Use `grill` when the next best action is sustained user questioning rather than 
 - focus on high-impact `ask` issues first
 - keep one question active at a time
 - re-rank the full topic map after every answer
+- treat each grilled answer as clarification input for the whole work object unless the user explicitly says to split scope or defer the larger bundle
 - use direct recommendation instead of questioning when an issue becomes recommendation-grade
 - do not re-run full scan on every turn unless new evidence or new user steering invalidates the current issue bank
 - if bootstrap triage produces no real `ask-user` issue, downgrade cleanly into recommendation or `review` instead of forcing a performative questioning loop
@@ -446,6 +454,7 @@ Use `resolve` when the goal is to converge the current probe state into a stable
 - do not open a fresh `Question N` during `resolve`
 - prefer `resolve` over an extra confirmation turn when the next useful action is clearly to hand work back to `wilco-plan`
 - if a handoff is emitted, include all strong input fields explicitly
+- if the pass started from a broad scan or repo review, keep the full problem bundle visible in the handoff instead of collapsing it to the last grilled topic
 - if major `ask-user` issues still remain after bootstrap triage, keep them in `Unresolved decisions` and `Recommended resolutions` rather than opening a new question during `resolve`
 
 ### Concise Mode
@@ -633,9 +642,11 @@ Use this shape:
 
 - `## Probe Handoff`
 - `Target`
+- optional `Program objective`
 - optional `Slug`
 - optional `Issue classes`
 - `Accepted decisions`
+- optional `Problem bundle`
 - optional `Resolved during probe`
 - `Unresolved decisions`
 - `Suggested edits`
@@ -646,9 +657,11 @@ Use this shape:
 `wilco-plan` should treat these as strong inputs:
 
 - `Target`
+- optional `Program objective`
 - optional `Slug`
 - optional `Issue classes`
 - `Accepted decisions`
+- optional `Problem bundle`
 - optional `Resolved during probe`
 - `Unresolved decisions`
 - `Suggested edits`
@@ -672,6 +685,7 @@ Do not:
 - keep one top-level topic active indefinitely once its critical and important questions are already resolved
 - keep drilling into one top-level topic without re-ranking the best next question across the full topic map
 - starve `unvisited` top-level topics because two adjacent topics keep outranking each other on local detail
+- let the last grilled issue become the de facto scope of a broader repo or plan pass without explicit user authorization
 - hard-code one system's topic taxonomy as if it were the universal topic map for all grilled objects
 - treat the topic map as uneditable hidden state when the user explicitly wants to inspect or change it
 

@@ -36,6 +36,8 @@ For `wilco-probe` output examples, see [wilco-probe/references/output-format.md]
 - probing can scale from direct clarification to `wilco-probe`, `scan`, and `grill`
 - execution can scale from direct vibe execution to `wilco-plan`, `prd_backed`, and `wilco-exec`
 - heavier modes exist to reduce ambiguity and coordination cost, not to front-load process onto every task
+- workflow re-entry is first-class: work may move from vibe execution into tracked workflow and back again without being treated as an error state
+- direct execution may happen before, during, or after tracked workflow; when tracked workflow resumes, the active Wilco route should reconcile against repository reality before trusting `.wilco` state
 
 See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, distribution assumptions, and validator responsibilities.
 
@@ -59,6 +61,20 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 - use `wilco-probe` when the object is unclear, contested, or likely to benefit from evidence-first questioning before planning
 - use `wilco-plan` when the work should become a tracked execution contract under `.wilco/`
 - use `wilco-exec` only when an active plan already exists and the user wants persistent execution until complete or a real blocker
+- if tracked work shrinks back into a local, low-risk change, prefer de-escalating back to `direct_execute`
+
+## Route Shifts
+
+- `direct_execute -> wilco-plan`: when local execution grows into tracked work, `wilco-plan` should perform the minimum reconcile or sync needed to re-anchor on current repository reality
+- `wilco-plan -> direct_execute`: when the remaining work is small and low-risk, prefer a lighter route instead of keeping the user inside a heavier Wilco path
+- `wilco-probe -> direct_execute`: when probe concludes that the next safe action is local implementation, route directly instead of forcing planning
+- if tracked work shrinks back into a local, low-risk change, prefer de-escalating back to `direct_execute`
+
+## Route Shifts
+
+- `direct_execute -> wilco-plan`: when local execution grows into tracked work, `wilco-plan` should perform the minimum reconcile or sync needed to re-anchor on current repository reality
+- `wilco-plan -> direct_execute`: when the remaining work is small and low-risk, prefer a lighter route instead of keeping the user inside a heavier Wilco path
+- `wilco-probe -> direct_execute`: when probe concludes that the next safe action is local implementation, route directly instead of forcing planning
 
 ## Natural Triggers
 

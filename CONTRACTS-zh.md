@@ -29,6 +29,26 @@
   - `wilco-plan`
   - `wilco-plan -> wilco-exec`
 
+## Route Shift 策略
+
+- 升级和降级都应是合法的 workflow move。
+- 当工作超出安全的局部执行范围时，应按需要升级到 `wilco-plan` 或 `wilco-exec`。
+- 当工作又缩回到局部、低风险修改时，应优先回到 `direct_execute`，而不是继续把用户困在更重的流程里。
+- 当 direct execution 之后重新回到 tracked workflow 时，应自动执行最小 reconcile / sync，让 `.wilco` 状态重新对齐当前代码现实。
+
+## Workflow Re-entry 规则
+
+- workflow re-entry 是一等支持路径，不是异常路径。
+- direct execution 可以发生在 tracked workflow 之前、之中或之后。
+- 当 tracked workflow 恢复时，当前 Wilco 路由应先根据仓库现实做 reconcile，再决定是否继续信任已经变旧的 `.wilco` 状态。
+
+## Route Shift 策略
+
+- 升级和降级都应是合法的 workflow move。
+- 当工作超出安全的局部执行范围时，应按需要升级到 `wilco-plan` 或 `wilco-exec`。
+- 当工作又缩回到局部、低风险修改时，应优先回到 `direct_execute`，而不是继续把用户困在更重的流程里。
+- 当 direct execution 之后重新回到 tracked workflow 时，应自动执行最小 reconcile / sync，让 `.wilco` 状态重新对齐当前代码现实。
+
 ## 核验权威性
 
 - `Status`、checklist 完成情况、以及 index linkage 只是 operational planning signals，不是最终完成证明。

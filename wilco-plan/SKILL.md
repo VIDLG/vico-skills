@@ -33,6 +33,8 @@ Default to `plan_only` when that is sufficient. A PRD is an escalation, not a ba
 When a slug is `prd_backed`, this skill owns the plan side of that contract and keeps its execution details current.
 When the current state is unclear, this skill performs the minimum reconcile needed before rewriting the plan.
 When a recent `wilco-probe` handoff block exists in the current conversation, this skill should consume that probe handoff by default.
+When work re-enters tracked planning after direct execution, perform the minimum reconcile or sync needed to align active docs with current repository reality before planning further.
+Treat that re-entry behavior as first-class rather than exceptional; do not assume the user stayed inside tracked workflow the whole time.
 
 ## Input Sources
 
@@ -44,6 +46,7 @@ When a recent `wilco-probe` handoff block exists in the current conversation, th
 - the latest `wilco-probe` handoff block in the current conversation
 
 Treat these as ordered inputs, not as peer truth sources.
+Treat them as one planning input bundle after precedence has been resolved; do not let the last conversational subtopic silently replace the broader work object.
 
 ## Input Precedence
 
@@ -68,6 +71,7 @@ Treat any `Issue classes` in the handoff as strong routing hints:
 - `durable_truth` may justify `wilco-plan truth`
 
 If the latest probe handoff clearly targets a different active slug or work object than the current request, do not absorb it implicitly.
+If a matching probe handoff came from a broad repo scan or architectural pass, treat it as describing the whole tracked work object rather than just the last grilled issue.
 
 ## Mode Contract
 
@@ -119,9 +123,11 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 6. If `prd_backed`, ensure the paired PRD exists and its header points back to the plan.
 7. If a recent `wilco-probe` handoff block exists, absorb these as strong inputs:
    - `Target`
+   - optional `Program objective`
    - optional `Slug`
    - optional `Issue classes`
    - `Accepted decisions`
+   - optional `Problem bundle`
    - optional `Resolved during probe`
    - `Unresolved decisions`
    - `Suggested edits`
@@ -158,6 +164,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - Prefer one fresh dated slug over complicated overlap handling when the existing active slug is no longer the clearest execution contract.
 - Keep implementation plans repo-local; do not default to `./plans/`.
 - Use tracer-bullet vertical slices, not horizontal batches of layer-specific work.
+- Keep the tracked scope anchored to the full accepted work object; do not let one clarified issue collapse a broader refactor or cleanup program unless the user explicitly narrows scope.
 - Acceptance criteria should describe observable outcomes, not implementation chores.
 - Put status and dates in the header so age and freshness remain obvious to humans and agents.
 - Mark the plan mode explicitly:
@@ -171,6 +178,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - Treat PRD creation as an internal escalation path, not as a separate default user-facing step.
 - Treat new-slug bootstrap as an internal planning capability, not as a separate default user-facing step.
 - Prefer checklist items that are small, behavior-oriented, and verifiable.
+- A broad scan plus grill sequence should usually produce one coordinated plan with multiple slices, not a single-issue plan, unless the user explicitly requests a narrower contract.
 - If tracked work advances, even via a tiny "vibe" change, sync the plan checklist and `Updated` date instead of silently relying on code state.
 - If scope, goals, or acceptance moved enough that the plan is no longer the right execution contract, upgrade or update the paired PRD inside this workflow.
 - If a request introduces a clearly new or cleaner execution contract, start a new dated slug instead of stretching the old one.

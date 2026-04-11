@@ -40,6 +40,8 @@ English version: [README.md](README.md)
 - probing 可以从直接澄清逐步升级到 `wilco-probe`、`scan`、`grill`
 - execution 可以从直接 vibe 式执行逐步升级到 `wilco-plan`、`prd_backed`、`wilco-exec`
 - 更重的模式是为了降低歧义和协作成本，不是为了给每个任务预先加流程
+- workflow re-entry 是一等能力：工作可以在 vibe execution 与 tracked workflow 之间往返，而不应被视为异常状态
+- direct execution 可以发生在 tracked workflow 之前、之中或之后；当 workflow 恢复时，当前 Wilco 路由应先根据仓库现实做 reconcile，再决定是否继续信任 `.wilco` 状态
 
 owner map、派生层、同步边界、分发前提和 validator 责任见 [CONTRACTS-zh.md](CONTRACTS-zh.md)。
 
@@ -63,6 +65,20 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 - 当对象不清晰、有争议，或明显适合先做 evidence-first 追问时，使用 `wilco-probe`
 - 当工作应升级为 `.wilco/` 下的 tracked execution contract 时，使用 `wilco-plan`
 - 只有在 active plan 已经存在、且用户希望持续推进直到真正完成或遇到真实阻塞时，才进入 `wilco-exec`
+- 如果 tracked work 又缩回到局部、低风险修改，优先降级回 `direct_execute`
+
+## Route Shifts
+
+- `direct_execute -> wilco-plan`：当轻量执行演化成 tracked work 时，`wilco-plan` 应自动做最小 reconcile / sync，重新锚定当前代码现实
+- `wilco-plan -> direct_execute`：当剩余工作已经足够小且低风险时，优先回到更轻的执行路径，而不是继续把用户留在重流程里
+- `wilco-probe -> direct_execute`：当 probe 已经确认下一步是局部实现时，直接路由去做，不要强行再过 planning
+- 如果 tracked work 又缩回到局部、低风险修改，优先降级回 `direct_execute`
+
+## Route Shifts
+
+- `direct_execute -> wilco-plan`：当轻量执行演化成 tracked work 时，`wilco-plan` 应自动做最小 reconcile / sync，重新锚定当前代码现实
+- `wilco-plan -> direct_execute`：当剩余工作已经足够小且低风险时，优先回到更轻的执行路径，而不是继续把用户留在重流程里
+- `wilco-probe -> direct_execute`：当 probe 已经确认下一步是局部实现时，直接路由去做，不要强行再过 planning
 
 ## 自然触发词
 
