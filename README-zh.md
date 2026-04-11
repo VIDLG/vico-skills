@@ -74,8 +74,8 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 - 一旦选中了某个 Wilco skill，第一条可见 update 应显式展示当前 skill 和路由原因。
 - 推荐形状：
-  - `Skill route: wilco-probe`
-  - `Route reason: natural trigger "scan the repo"`
+  - `Skill route: <skill-name>`
+  - `Route reason: <natural trigger | explicit skill request>`
 - 如果是显式 skill 调用，也应说明这是显式 skill 请求，而不是自然触发命中。
 
 ## 什么时候用哪个 Skill

@@ -71,8 +71,8 @@ If a natural-language request could reasonably mean more than one of these route
 
 - When a Wilco skill is selected, the first visible update should surface the active skill and the route reason.
 - Suggested shape:
-  - `Skill route: wilco-probe`
-  - `Route reason: natural trigger "scan the repo"`
+  - `Skill route: <skill-name>`
+  - `Route reason: <natural trigger | explicit skill request>`
 - For explicit skill invocations, surface that the route came from an explicit skill request rather than a natural trigger.
 
 ## When To Use What
