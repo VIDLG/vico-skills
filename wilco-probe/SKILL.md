@@ -378,6 +378,7 @@ Use `grill` when the user wants a sustained interrogation loop or when the curre
 
 Use `scan` to establish the problem map, not to start a long questioning chain.
 Every `Finding` should be grounded in evidence, not just speculation.
+Default `Findings` should use a compact per-item shape of `- [priority] Title: explanation` so each finding is easy to scan.
 The internal `Issue Bank` still tracks the fuller issue set, but default `scan` output should emphasize user-facing findings over raw triage state.
 Only expose full issue-bank style detail when the user asks for it or when unresolved issue structure materially affects the next decision.
 - `scan` may legitimately suggest another narrower `scan` when the next missing input is repository evidence rather than user intent.

@@ -163,6 +163,7 @@ def validate_wilco_probe_contract(root: Path) -> list[str]:
         "`scan` may legitimately suggest another narrower `scan`",
         "controlled recursive narrowing process",
         "Suggested next target",
+        "`- [priority] Title: explanation`",
     )
     for marker in required_skill_markers:
         if marker not in skill_text:
@@ -191,6 +192,7 @@ def validate_wilco_probe_contract(root: Path) -> list[str]:
             "Evidence",
             "This probe is ready to hand to `wilco-plan`.",
             "Recommended action",
+            "[critical] Controller-driven default:",
             "validator hard-fail rules still change the install model",
             "Accepted short replies",
             "`1 do cont`",
