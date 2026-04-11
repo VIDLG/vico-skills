@@ -1,6 +1,7 @@
 # Wilco Contracts
 
-This document is a governance map. It does not become a new source of workflow, skill, or template truth.
+This document is the governance map for ownership, derivation, and validation boundaries.
+It is not the user-facing workflow guide and not a second source of skill behavior truth.
 
 ## Distribution Assumptions
 
@@ -23,6 +24,21 @@ This document is a governance map. It does not become a new source of workflow, 
 - Keep machine-consumed fields stable even when surrounding prose is optimized for user readability.
 - When a Wilco skill is selected, expose the active skill route and route reason in the first visible update so the user can distinguish skill-routed behavior from generic model behavior.
 
+## Verification Authority
+
+- `Status`, checklist completion, and index linkage are operational planning signals, not final proof of completion.
+- Final close-out decisions should be gated by current repository evidence via `wilco-plan verify`.
+
+## Public Modes Vs Status Values
+
+- Public workflow actions should use stable mode names such as `close`, `cancel`, `verify`, `sync`, and `replan`.
+- Status and progress literals such as `done`, `partial`, and `not_started` remain state vocabulary rather than public close-out command names.
+
+## External Side Effects
+
+- External side effects such as creating, reopening, commenting on, or closing GitHub issues require explicit user confirmation by default.
+- Draft generation and duplicate checking are safe defaults; mutating external systems is not.
+
 ## Contract Layers
 
 1. `Global workflow constitution`
@@ -41,6 +57,7 @@ This document is a governance map. It does not become a new source of workflow, 
 | Shared scripts | owner script file, currently under `wilco-plan/scripts/` | skill-local wrapper entries under `<skill>/scripts/` when still needed | ensure owner source exists, local wrapper entry points exist where required, and runtime references do not point across skill boundaries |
 | Shared status and decision rules | owner reference file, currently under `wilco-plan/references/` | skill-local full reference copies where runtime visibility is required | ensure owner files exist, local copies exist where required, and copies are treated as derived content |
 | Strong templates | owner template file, such as `plan-template.md`, `prd-template.md`, `reconcile-output-template.md` | skill-local visible copies or references needed for runtime closure | ensure owner templates exist, required local closures exist, and key structure remains stable |
+| Feedback / issue templates | owner template file under `wilco-feedback/references/` | issue drafts and filing behavior in `wilco-feedback` | ensure draft templates exist, stay concise, and keep confirmation boundaries explicit |
 | Contract map | `CONTRACTS.md` and `CONTRACTS-zh.md` | README links | ensure the map exists and keeps owner/derived/validation responsibilities aligned |
 
 ## Sync Policy
@@ -69,5 +86,5 @@ Validator checks should be explicit rather than generic. At minimum they should 
 
 ## Notes
 
-- This document maps ownership and synchronization. It does not replace the owner files.
+- This document maps governance boundaries. It does not replace README, SKILL.md, or owner templates.
 - When a contract changes, update the owner source first, then refresh derived forms, then update validator coverage.

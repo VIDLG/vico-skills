@@ -93,6 +93,24 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 `wilco-feedback` 默认应根据用户表达和上下文自动归类为 `bug`、`ux_friction`、`contract_gap` 或 `feature_request`，只有类别确实不清楚时才反问用户。
 
+## 反馈流程
+
+如果你在 `wilco-skills` 里遇到 bug、工作流不顺、命名别扭，或者发现 feature gap，就用 `wilco-feedback`。
+
+典型流程：
+
+1. 用自然语言描述问题。
+2. 让 `wilco-feedback` 自动归类并生成 issue 草稿。
+3. 先检查草稿内容。
+4. 只有当你真的想发到 GitHub 时，再说 `create it`。
+
+示例输入：
+
+- `我对 wilco-skills 有反馈`
+- `这个 workflow 有点别扭`
+- `报告 wilco-plan 的一个 bug`
+- `把这个整理成 GitHub issue`
+
 ## 自动化脚本
 
 - `wilco-plan/scripts/bootstrap_wilco_slug.py`
@@ -136,6 +154,11 @@ npx skills@latest add VIDLG/wilco-skills --list
 
 `skills` CLI 也支持直接接 GitHub URL。
 如果是 Claude Code，把命令里的 `--agent codex` 改成 `--agent claude-code` 即可。
+
+参考链接：
+
+- Vercel Skills 文档：https://vercel.com/docs/agent-resources/skills
+- Vercel skills 使用指南：https://vercel.com/kb/guide/agent-skills-creating-installing-and-sharing-reusable-agent-context
 
 ### 开发期 Link
 

@@ -89,6 +89,24 @@ If a natural-language request could reasonably mean more than one of these route
 
 `wilco-feedback` should auto-classify the report as `bug`, `ux_friction`, `contract_gap`, or `feature_request` unless the category is genuinely ambiguous.
 
+## Feedback Flow
+
+If you hit a bug, confusing workflow, naming problem, or feature gap in `wilco-skills`, use `wilco-feedback`.
+
+Typical flow:
+
+1. Describe the problem in natural language.
+2. Let `wilco-feedback` classify it and draft the issue.
+3. Review the suggested issue draft.
+4. Say `create it` only if you want the issue created on GitHub.
+
+Example prompts:
+
+- `I have feedback about wilco-skills`
+- `this workflow feels awkward`
+- `report a bug in wilco-plan`
+- `draft a GitHub issue for this`
+
 ## Automation
 
 - `wilco-plan/scripts/bootstrap_wilco_slug.py`
@@ -132,6 +150,11 @@ npx skills@latest add VIDLG/wilco-skills --list
 
 The `skills` CLI can also take a GitHub URL directly.
 For Claude Code, use the same commands with `--agent claude-code`.
+
+Reference:
+
+- Vercel Skills docs: https://vercel.com/docs/agent-resources/skills
+- Vercel skills guide: https://vercel.com/kb/guide/agent-skills-creating-installing-and-sharing-reusable-agent-context
 
 ### Uninstall With `npx skills@latest`
 
