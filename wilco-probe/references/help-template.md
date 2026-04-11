@@ -41,7 +41,6 @@ Keep commands and mode literals unchanged.
 - surface `Skill route` and `Route reason` in the first visible update when `wilco-probe` is selected
 - default to evidence-first probing
 - route by issue state instead of forcing questioning every time
-- surface `Skill route` and `Route reason` in the first visible update when `wilco-probe` is selected
 - bootstrap a light scan when explicit `grill`, `review`, or `resolve` is invoked without usable current probe state
 - enter `grill` when the next best action is sustained questioning
 - allow a brief solve-and-return inside `grill` for bounded low-risk issues
