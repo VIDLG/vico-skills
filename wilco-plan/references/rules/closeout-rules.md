@@ -23,7 +23,7 @@ Recommended minimums:
 
 ## Archive Steps
 
-1. Confirm the document is no longer an active source of truth.
+1. Confirm through `wilco-plan verify` or equivalent current-code evidence that the document is no longer an active source of truth.
 2. Extract any still-relevant facts into architecture docs.
 3. Record any important `Outcome`, `Deviations`, or `Follow-up` notes elsewhere if they still matter.
 4. Delete the active file.

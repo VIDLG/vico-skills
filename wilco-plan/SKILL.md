@@ -9,7 +9,7 @@ description: Default front door for Wilco-style repo-local planning. Decide whet
 
 `wilco-plan` is the only default front door for tracked Wilco work.
 
-Treat natural requests such as `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, or `how do I use wilco-plan` as valid `wilco-plan` entrypoints even when the user does not name the skill explicitly.
+Treat natural requests such as `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, or `how do I use wilco-plan` as valid `wilco-plan` entrypoints even when the user does not name the skill explicitly.
 If the user's intent could reasonably map to lightweight direct execution instead of tracked planning, and repository evidence does not clearly justify `.wilco` tracking, ask a short clarification question before creating tracked work.
 
 It owns four decisions before planning:
@@ -79,6 +79,8 @@ If the latest probe handoff clearly targets a different active slug or work obje
   - show the controller modes, input sources, and common examples
 - `review`
   - inspect the current active state and report it without writing any docs
+- `verify`
+  - check the active plan against current code and test evidence before close-out, without writing any docs
 - `sync`
   - update the active plan so it catches up to current code and tests
 - `prd`
@@ -95,6 +97,7 @@ If the latest probe handoff clearly targets a different active slug or work obje
   - delete active docs because the work is abandoned
 
 `review` must be strictly read-only.
+`verify` must be strictly read-only.
 `truth` is manual only. Do not trigger it automatically.
 Use `replan` as the single public mode for same-slug execution-contract rewrites. Do not expose a separate public `reset` mode.
 
@@ -188,6 +191,18 @@ Use `replan` as the single public mode for same-slug execution-contract rewrites
 - Prefer using probe handoff hints to sharpen the first execution slice when they materially reduce ambiguity.
 - Treat `Resolved during probe` as already handled work; do not reopen those items as unresolved planning questions unless repository evidence now conflicts with them.
 
+## Verification Rules
+
+- `verify` is the close-out readiness gate for tracked work.
+- `verify` must compare the active plan and optional PRD against current code and test evidence instead of trusting `.wilco` status alone.
+- Use `verify` when another agent claims the work is complete, when `Status` or checklist state may be stale, or before `done` deletes active docs.
+- `verify` should produce a completion verdict:
+  - `verified_complete`
+  - `not_complete`
+  - `ambiguous`
+- If the verdict is not `verified_complete`, prefer `sync`, `replan`, `prd`, or resumed execution over `done`.
+- In multi-active situations, `verify` should require an explicit slug unless the target is unambiguous from current-turn user steering.
+
 ## Sync Contract
 
 - `no-doc` with no slug hit: do not create a plan
@@ -236,6 +251,15 @@ For `review`:
 - show likely drift risk
 - do not write any docs
 
+For `verify`:
+
+- show the selected slug
+- show the completion verdict
+- show evidence from current code and tests
+- show open gaps between plan state and repository reality
+- show the recommended next mode
+- do not write any docs
+
 Use the full phased template for medium and large work. For small plan-only work, use the lighter plan-only template.
 
 ## References
@@ -245,6 +269,7 @@ Use the full phased template for medium and large work. For small plan-only work
 - Use [references/templates/prd-template.md](references/templates/prd-template.md) for the internal `prd_backed` upgrade path.
 - Use [references/templates/help-template.md](references/templates/help-template.md) for `wilco-plan help`.
 - Use [references/templates/review-template.md](references/templates/review-template.md) for `wilco-plan review`.
+- Use [references/templates/verify-template.md](references/templates/verify-template.md) for `wilco-plan verify`.
 - Use [references/templates/probe-handoff-template.md](references/templates/probe-handoff-template.md) for the expected `wilco-probe` handoff block shape.
 - Use [references/templates/truth-template.md](references/templates/truth-template.md) for `wilco-plan truth`.
 - Use [references/ops/reconcile.md](references/ops/reconcile.md) when reconcile is needed before planning.

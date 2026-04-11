@@ -25,6 +25,7 @@ PLAN_SKILL = SKILLS_ROOT / "wilco-plan" / "SKILL.md"
 PROBE_HANDOFF_TEMPLATE = SKILLS_ROOT / "wilco-plan" / "references" / "templates" / "probe-handoff-template.md"
 PLAN_HELP = SKILLS_ROOT / "wilco-plan" / "references" / "templates" / "help-template.md"
 PLAN_REVIEW = SKILLS_ROOT / "wilco-plan" / "references" / "templates" / "review-template.md"
+PLAN_VERIFY = SKILLS_ROOT / "wilco-plan" / "references" / "templates" / "verify-template.md"
 PLAN_TRUTH = SKILLS_ROOT / "wilco-plan" / "references" / "templates" / "truth-template.md"
 EXEC_SKILL = SKILLS_ROOT / "wilco-exec" / "SKILL.md"
 EXEC_HELP = SKILLS_ROOT / "wilco-exec" / "references" / "help-template.md"
@@ -292,6 +293,7 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("`wilco-probe grill plan -> wilco-plan`", readme)
         self.assertIn("how do I use wilco-probe", readme)
         self.assertIn("how do I use wilco-plan", readme)
+        self.assertIn("verify this plan", readme)
         self.assertIn("how do I use wilco-exec", readme)
         self.assertIn("`wilco-probe`: keep probe state session-local by default", readme)
         self.assertIn("`wilco-plan`: write or update active plan", readme)
@@ -318,6 +320,7 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("`wilco-probe grill plan -> wilco-plan`", readme_zh)
         self.assertIn("wilco-probe 如何使用", readme_zh)
         self.assertIn("wilco-plan 如何使用", readme_zh)
+        self.assertIn("verify this plan", readme_zh)
         self.assertIn("wilco-exec 如何使用", readme_zh)
         self.assertIn("优先用一句简短确认来消歧", readme_zh)
         self.assertIn("Skill route: wilco-probe", readme_zh)
@@ -365,11 +368,13 @@ class WilcoAutomationTests(unittest.TestCase):
         plan_only_template = self.read(SKILLS_ROOT / "wilco-plan" / "references" / "templates" / "plan-only-template.md")
 
         self.assertIn("## Execution Readiness Rules", plan_skill)
+        self.assertIn("## Verification Rules", plan_skill)
         self.assertIn("Recommended tracking mode", plan_skill)
         self.assertIn("Suggested first slice", plan_skill)
         self.assertIn("Execution readiness risks", plan_skill)
         self.assertIn("Resolved during probe", plan_skill)
         self.assertIn("make a plan", plan_skill)
+        self.assertIn("verify this plan", plan_skill)
         self.assertIn("how do I use wilco-plan", plan_skill)
         self.assertIn("If the user's intent could reasonably map to lightweight direct execution instead of tracked planning", plan_skill)
         self.assertIn("keep internal routing and reconciliation heuristics implicit by default", plan_skill)
@@ -388,7 +393,9 @@ class WilcoAutomationTests(unittest.TestCase):
         plan_help = self.read(PLAN_HELP)
 
         self.assertIn("`replan`", plan_skill)
+        self.assertIn("`verify`", plan_skill)
         self.assertIn("- replan", plan_help)
+        self.assertIn("- verify", plan_help)
         self.assertIn("Use `replan` as the single public mode for same-slug execution-contract rewrites.", plan_skill)
         self.assertNotIn("- `reset`", plan_skill)
         self.assertNotIn("- reset", plan_help)
@@ -587,12 +594,21 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("## Route Visibility", plan_help)
         self.assertIn("show `Skill route` and `Route reason` in the first visible update when `wilco-plan` is selected", plan_help)
         self.assertIn("## Mode Hints", plan_help)
+        self.assertIn("`verify`: use when you need to check completion against real code and test evidence before close-out", plan_help)
         self.assertIn("`sync`: use when code moved and the current plan should catch up", plan_help)
         self.assertIn("`replan`: use when the same slug still applies", plan_help)
         self.assertIn("`prd`: use when the work now needs or updates `prd_backed` framing", plan_help)
 
         self.assertIn("user's primary working language", plan_review)
         self.assertIn("Keep commands, mode literals, status literals, and slug/path literals unchanged.", plan_review)
+
+        plan_verify = self.read(PLAN_VERIFY)
+        self.assertIn("## Plan Verify", plan_verify)
+        self.assertIn("`verified_complete` | `not_complete` | `ambiguous`", plan_verify)
+        self.assertIn("## Evidence", plan_verify)
+        self.assertIn("## Open Gaps", plan_verify)
+        self.assertIn("## Recommended Next Mode", plan_verify)
+        self.assertIn("`verify` must be read-only", plan_verify)
 
         self.assertIn("user's primary working language", plan_truth)
         self.assertIn("Keep commands, path literals, and stable field labels unchanged when another workflow consumes them.", plan_truth)

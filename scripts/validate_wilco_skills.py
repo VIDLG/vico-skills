@@ -338,6 +338,7 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
     skill_path = root / "wilco-plan" / "SKILL.md"
     help_path = root / "wilco-plan" / "references" / "templates" / "help-template.md"
     review_path = root / "wilco-plan" / "references" / "templates" / "review-template.md"
+    verify_path = root / "wilco-plan" / "references" / "templates" / "verify-template.md"
     truth_path = root / "wilco-plan" / "references" / "templates" / "truth-template.md"
     handoff_path = root / "wilco-plan" / "references" / "templates" / "probe-handoff-template.md"
     agent_path = root / "wilco-plan" / "agents" / "openai.yaml"
@@ -347,6 +348,7 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
     for path, label in (
         (help_path, "help template"),
         (review_path, "review template"),
+        (verify_path, "verify template"),
         (truth_path, "truth template"),
         (handoff_path, "probe handoff template"),
         (agent_path, "agent prompt"),
@@ -358,13 +360,19 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
     for marker in (
         "## Mode Contract",
         "## Execution Readiness Rules",
+        "## Verification Rules",
         "Recommended tracking mode",
         "Suggested first slice",
         "Execution readiness risks",
         "Resolved during probe",
+        "`verify` is the close-out readiness gate",
+        "`verified_complete`",
+        "`not_complete`",
+        "`ambiguous`",
         "A plan is `wilco-exec` ready only when the next smallest unblocked slice can be chosen without guessing",
         "If the current plan is too coarse, too stale, or too ambiguous",
         "make a plan",
+        "verify this plan",
         "how do I use wilco-plan",
         "If the user's intent could reasonably map to lightweight direct execution instead of tracked planning",
         "user's primary working language",
@@ -398,6 +406,7 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
             failures.append("wilco-plan/references/templates/help-template.md should not expose `reset` as a public mode")
         for marker in (
             "## Mode Hints",
+            "`verify`: use when you need to check completion against real code and test evidence before close-out",
             "`sync`: use when code moved and the current plan should catch up",
             "`replan`: use when the same slug still applies",
             "`prd`: use when the work now needs or updates `prd_backed` framing",
@@ -409,6 +418,19 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
         review_text = review_path.read_text(encoding="utf-8")
         if "`review` must be read-only" not in review_text:
             failures.append("wilco-plan/references/templates/review-template.md missing marker: `review` must be read-only")
+
+    if verify_path.exists():
+        verify_text = verify_path.read_text(encoding="utf-8")
+        for marker in (
+            "## Plan Verify",
+            "`verified_complete` | `not_complete` | `ambiguous`",
+            "## Evidence",
+            "## Open Gaps",
+            "## Recommended Next Mode",
+            "`verify` must be read-only",
+        ):
+            if marker not in verify_text:
+                failures.append(f"wilco-plan/references/templates/verify-template.md missing marker: {marker}")
 
     if truth_path.exists():
         truth_text = truth_path.read_text(encoding="utf-8")
@@ -448,6 +470,7 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "## Route Visibility",
             "## Install And Uninstall",
             "`wilco-probe grill plan -> wilco-plan`",
+            "verify this plan",
             "how do I use wilco-probe",
             "how do I use wilco-plan",
             "how do I use wilco-exec",
@@ -482,12 +505,14 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "most recent substantive message",
             "machine-consumed handoff field names stable",
             "## Execution Readiness Rules",
+            "## Verification Rules",
             "Recommended tracking mode",
             "Suggested first slice",
             "Execution readiness risks",
             "Resolved during probe",
             "Use [references/templates/help-template.md]",
             "Use [references/templates/review-template.md]",
+            "Use [references/templates/verify-template.md]",
         ),
         root / "wilco-exec" / "SKILL.md": (
             "not final close-out deletion",
@@ -565,6 +590,7 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "## Route Visibility",
             "show `Skill route` and `Route reason` in the first visible update when `wilco-plan` is selected",
             "## Safety Rules",
+            "verify",
             "## Examples",
         ),
         root / "wilco-plan" / "references" / "templates" / "review-template.md": (
@@ -574,6 +600,14 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "## Current State",
             "## Recommended Next Step",
             "`review` must be read-only",
+        ),
+        root / "wilco-plan" / "references" / "templates" / "verify-template.md": (
+            "## Plan Verify",
+            "Completion verdict",
+            "## Evidence",
+            "## Open Gaps",
+            "## Recommended Next Mode",
+            "`verify` must be read-only",
         ),
         root / "wilco-plan" / "references" / "templates" / "truth-template.md": (
             "## Truth Extraction",

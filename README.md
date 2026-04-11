@@ -62,7 +62,7 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 ## Natural Triggers
 
 - `wilco-probe`: `scan the repo`, `inspect the codebase`, `grill this plan`, `refine this plan`, `how do I use wilco-probe`
-- `wilco-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `how do I use wilco-plan`
+- `wilco-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `how do I use wilco-plan`
 - `wilco-exec`: `keep going`, `continue until done`, `execute the active plan`, `carry this through unless blocked`, `how do I use wilco-exec`
 
 If a natural-language request could reasonably mean more than one of these routes, prefer a short clarification over guessing the wrong workflow.
@@ -78,6 +78,7 @@ If a natural-language request could reasonably mean more than one of these route
 ## When To Use What
 
 - Need to start, update, reconcile, or reshape tracked work: `wilco-plan`
+- Need to verify that a plan is really complete against the current codebase before close-out: `wilco-plan verify`
 - Continue implementation against an active plan: `wilco-exec`
 - Need to mark work done or cancelled and remove active docs: `wilco-plan`
 - Need architecture truth extraction or boundary handling: `wilco-plan`
@@ -162,6 +163,12 @@ wilco-plan
 
 ```text
 wilco-plan review
+```
+
+### Verify Before Close-Out
+
+```text
+wilco-plan verify
 ```
 
 ### Show Available Modes

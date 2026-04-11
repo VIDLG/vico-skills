@@ -15,6 +15,7 @@ Keep commands and mode literals unchanged.
 
 - default
 - review
+- verify
 - sync
 - prd
 - replan
@@ -44,12 +45,14 @@ Keep commands and mode literals unchanged.
 ## Safety Rules
 
 - `review` is read-only
+- `verify` is read-only
 - `truth` is manual only
 - `replace`, `done`, and `cancel` require explicit slug when multiple active slugs exist
 
 ## Mode Hints
 
 - `sync`: use when code moved and the current plan should catch up
+- `verify`: use when you need to check completion against real code and test evidence before close-out
 - `replan`: use when the same slug still applies, but the execution contract itself should be rewritten
 - `prd`: use when the work now needs or updates `prd_backed` framing
 
@@ -57,6 +60,7 @@ Keep commands and mode literals unchanged.
 
 - `wilco-plan`
 - `wilco-plan review`
+- `wilco-plan verify`
 - `wilco-plan sync`
 - `wilco-plan prd`
 - `wilco-plan replace`
