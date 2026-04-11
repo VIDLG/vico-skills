@@ -7,7 +7,7 @@ Contract map: [CONTRACTS.md](CONTRACTS.md)
 
 ## Why Vico?
 
-`Vico` is a mutation of the earlier `Wilco` name.
+`Vico` is a mutation of `Wilco`.
 
 - it keeps the recognizable `-co` sound from `Wilco`, so the name still feels related rather than completely reset
 - it drops the heavier `Wil` feel and replaces it with `Vi`, which points more toward vibe, lighter interaction, and lower-friction workflow

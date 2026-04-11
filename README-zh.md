@@ -7,7 +7,7 @@ English version: [README.md](README.md)
 
 ## 为什么叫 Vico？
 
-`Vico` 可以看作更早 `Wilco` 这个名字的一个变体。
+`Vico` 可以看作 `Wilco` 的一个变体。
 
 - 它保留了 `Wilco` 里最有辨识度的 `-co` 发音骨架，所以名字虽然变了，但不会让人觉得完全断裂
 - 它把更重、更硬的 `Wil` 感受换成了 `Vi`，让整体气质更靠近 vibe、轻量交互和低摩擦工作流
