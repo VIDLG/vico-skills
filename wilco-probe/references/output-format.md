@@ -359,6 +359,8 @@ Not covered in this pass
 ```md
 ## Probe Handoff
 
+This probe is ready to hand to `wilco-plan`.
+
 Target
 - wilco-skills
 

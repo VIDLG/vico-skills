@@ -591,6 +591,10 @@ When a stop condition is met, do not ask one more confirmation question about wh
 
 At the end of a substantial probing pass, produce a final summary.
 
+- If the next clear consumer is not `wilco-plan`, emit the normal final summary.
+- If the next clear consumer is `wilco-plan`, emit a self-contained `## Probe Handoff` block instead of a duplicated summary-plus-handoff pair.
+- Do not use `see above` or other relative references inside a `Probe Handoff`; keep the handoff self-contained even when it compresses earlier detail.
+
 ### Core Summary Sections
 
 - `Accepted decisions`
@@ -613,6 +617,9 @@ At the end of a substantial probing pass, produce a final summary.
 ## Plan Handoff Contract
 
 When the probe should feed directly into `wilco-plan`, emit a final handoff block.
+
+- Treat `## Probe Handoff` as the planning-facing final summary shape, not as a second appendix after another summary.
+- Do not emit a parallel top-level final summary that simply duplicates the same sections when `Probe Handoff` is already the next consumer-facing output.
 
 Use this shape:
 
