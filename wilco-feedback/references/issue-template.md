@@ -25,6 +25,9 @@ Why it matters
 
 Possible direction
 - ...
+
+Recommended issue action
+- create_new_issue | reopen_existing_issue | comment_on_existing_issue
 ```
 
 Keep drafts concise but specific enough that another maintainer can understand the problem without replaying the whole conversation.

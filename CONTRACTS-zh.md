@@ -23,6 +23,11 @@
 - 不要把完整的内部调度图、issue bank 或执行启发式默认直接摊给用户，除非用户明确要求这些细节，或这些细节会实质影响下一步决策。
 - 即使外围文案为了用户可读性做了优化，机器消费字段也应保持稳定。
 - 一旦选中了某个 Wilco skill，应在第一条可见 update 中显式展示当前 skill 路由和路由原因，让用户能区分 skill 路由行为与普通模型行为。
+- 当输出的是面向用户的 checkpoint、summary、verification result 或 handoff 时，如果下一步动作并不显而易见，优先给出 `Recommended action`。
+- `Recommended action` 的标准取值统一为：
+  - `direct_execute`
+  - `wilco-plan`
+  - `wilco-plan -> wilco-exec`
 
 ## 核验权威性
 

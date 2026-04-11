@@ -363,6 +363,8 @@ def validate_wilco_feedback_contract(root: Path) -> list[str]:
         "gh issue create",
         "only create the issue after explicit user confirmation",
         "Default to automatic classification",
+        "reopen the matching issue with `gh issue reopen`",
+        "gh issue comment",
         "Skill route",
         "Route reason",
         "how do I use wilco-feedback",
@@ -376,6 +378,7 @@ def validate_wilco_feedback_contract(root: Path) -> list[str]:
             "## Wilco Feedback Help",
             "GitHub issue draft",
             "classify the feedback automatically",
+            "suggest `create`, `reopen`, or `comment`",
             "surface `Skill route` and `Route reason`",
             "how do I use wilco-feedback",
         ):
@@ -391,6 +394,7 @@ def validate_wilco_feedback_contract(root: Path) -> list[str]:
             "Current behavior",
             "Expected behavior",
             "Why it matters",
+            "Recommended issue action",
         ):
             if marker not in issue_text:
                 failures.append(f"wilco-feedback/references/issue-template.md missing marker: {marker}")
@@ -509,6 +513,9 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
             "`verified_complete` | `not_complete` | `ambiguous`",
             "## Evidence",
             "## Open Gaps",
+            "## Recommended Action",
+            "`direct_execute`",
+            "`wilco-plan -> wilco-exec`",
             "## Recommended Next Mode",
             "`verify close`",
             "`verify sync`",

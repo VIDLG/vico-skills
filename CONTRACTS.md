@@ -23,6 +23,11 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 - Do not dump the full internal scheduler, issue bank, or execution heuristics into default user-facing output unless the user asks for that detail or it materially affects the next decision.
 - Keep machine-consumed fields stable even when surrounding prose is optimized for user readability.
 - When a Wilco skill is selected, expose the active skill route and route reason in the first visible update so the user can distinguish skill-routed behavior from generic model behavior.
+- When a human-facing checkpoint, summary, verification result, or handoff is emitted, prefer a `Recommended action` when that action is not already obvious.
+- Standardize `Recommended action` on:
+  - `direct_execute`
+  - `wilco-plan`
+  - `wilco-plan -> wilco-exec`
 
 ## Verification Authority
 

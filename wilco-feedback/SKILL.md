@@ -40,12 +40,19 @@ Treat natural requests such as `file an issue`, `report a bug`, `this workflow f
    - optional proposed direction
 3. If key issue fields are missing, ask only the shortest clarifying question needed to complete the draft.
 4. When useful, check for likely duplicates before filing.
+   - when a likely duplicate is still open, prefer commenting or linking instead of opening a fresh issue
+   - when a likely duplicate is closed but still clearly represents the same active problem, prefer suggesting `reopen`
 5. Produce an issue draft using [references/issue-template.md](references/issue-template.md).
 6. Do not create the GitHub issue until the user explicitly confirms with wording such as:
    - `create it`
    - `file it`
    - `open the issue`
+   - `reopen it`
+   - `comment there`
 7. If the user confirms creation, create the issue with `gh issue create` against `VIDLG/wilco-skills`.
+8. If the user confirms a duplicate-aware action:
+   - reopen the matching issue with `gh issue reopen`
+   - or add context with `gh issue comment`
 
 ## Safety Rules
 
@@ -53,6 +60,7 @@ Treat natural requests such as `file an issue`, `report a bug`, `this workflow f
 - do not create or edit GitHub issues without explicit user confirmation
 - if `gh` authentication is missing or creation fails, return the draft and the failure reason instead of silently dropping the feedback
 - do not over-triage; if the user just wants a quick issue draft, keep the draft concise
+- do not reopen or comment on an existing issue unless the user explicitly confirms that action
 
 ## Output Contract
 
@@ -63,12 +71,13 @@ For draft mode, prefer this shape:
 - `Affected skills`
 - `Issue draft`
 - optional `Likely duplicates`
+- optional `Recommended issue action`
 - `Next action`
 
-For confirmed creation, prefer this shape:
+For confirmed external actions, prefer this shape:
 
 - `Feedback type`
-- `Issue created`
+- `Issue action`
 - `Issue URL`
 - optional `Likely duplicates`
 

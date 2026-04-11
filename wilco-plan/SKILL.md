@@ -266,6 +266,10 @@ For `verify`:
 - show the completion verdict
 - show evidence from current code and tests
 - show open gaps between plan state and repository reality
+- show `Recommended action` using one of:
+  - `direct_execute`
+  - `wilco-plan`
+  - `wilco-plan -> wilco-exec`
 - show the recommended next mode
 - do not write any docs
 

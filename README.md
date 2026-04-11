@@ -88,6 +88,7 @@ If a natural-language request could reasonably mean more than one of these route
 - Need to turn feedback into a GitHub issue draft or file it after confirmation: `wilco-feedback`
 
 `wilco-feedback` should auto-classify the report as `bug`, `ux_friction`, `contract_gap`, or `feature_request` unless the category is genuinely ambiguous.
+When likely duplicates exist, `wilco-feedback` should prefer a draft recommendation of `create`, `reopen`, or `comment` rather than always assuming a new issue.
 
 ## Feedback Flow
 
@@ -97,8 +98,8 @@ Typical flow:
 
 1. Describe the problem in natural language.
 2. Let `wilco-feedback` classify it and draft the issue.
-3. Review the suggested issue draft.
-4. Say `create it` only if you want the issue created on GitHub.
+3. Review the suggested draft and duplicate handling recommendation.
+4. Say `create it`, `reopen it`, or `comment there` only if you want the external GitHub action to happen.
 
 Example prompts:
 
@@ -198,6 +199,11 @@ wilco-plan review
 ```text
 wilco-plan verify
 ```
+
+`verify` should recommend both:
+
+- a human-facing `Recommended action`
+- an internal `Recommended Next Mode`
 
 ### Verify Then Close Out
 

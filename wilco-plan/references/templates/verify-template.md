@@ -21,6 +21,12 @@ Keep commands, verdict literals, status literals, and slug/path literals unchang
 - unchecked or weakly-supported plan items
 - stale docs or ambiguous completion claims
 
+## Recommended Action
+
+- `direct_execute`
+- `wilco-plan`
+- `wilco-plan -> wilco-exec`
+
 ## Recommended Next Mode
 
 - `close`

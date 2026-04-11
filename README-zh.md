@@ -92,6 +92,7 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 - 需要把反馈整理成 GitHub issue 草稿，或确认后直接发 issue：`wilco-feedback`
 
 `wilco-feedback` 默认应根据用户表达和上下文自动归类为 `bug`、`ux_friction`、`contract_gap` 或 `feature_request`，只有类别确实不清楚时才反问用户。
+如果存在明显重复的 issue，`wilco-feedback` 应优先建议 `create`、`reopen` 或 `comment`，而不是默认新建。
 
 ## 反馈流程
 
@@ -101,8 +102,8 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 1. 用自然语言描述问题。
 2. 让 `wilco-feedback` 自动归类并生成 issue 草稿。
-3. 先检查草稿内容。
-4. 只有当你真的想发到 GitHub 时，再说 `create it`。
+3. 先检查草稿内容和重复 issue 处理建议。
+4. 只有当你真的想对 GitHub 执行动作时，再说 `create it`、`reopen it` 或 `comment there`。
 
 示例输入：
 
@@ -200,6 +201,11 @@ wilco-plan review
 ```text
 wilco-plan verify
 ```
+
+`verify` 的结果应同时给出：
+
+- 面向用户的 `Recommended action`
+- 面向 workflow 的 `Recommended Next Mode`
 
 ### Verify 通过后直接 Close
 

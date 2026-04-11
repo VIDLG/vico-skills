@@ -16,6 +16,7 @@ Keep commands, labels, and GitHub literals unchanged.
 - classify the feedback automatically from the user's wording unless the category is genuinely ambiguous
 - draft an issue before creating anything
 - check likely duplicates when useful
+- suggest `create`, `reopen`, or `comment` when a duplicate check finds a likely existing issue
 - create the GitHub issue only after explicit user confirmation
 - surface `Skill route` and `Route reason` in the first visible update
 
@@ -25,6 +26,7 @@ Keep commands, labels, and GitHub literals unchanged.
 - `Suggested title`
 - `Affected skills`
 - `Issue draft`
+- `Recommended issue action`
 - `Next action`
 
 ## Examples
