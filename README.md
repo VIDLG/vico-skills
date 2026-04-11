@@ -100,40 +100,55 @@ If a natural-language request could reasonably mean more than one of these route
 
 ## Install And Uninstall
 
-This repo does not ship a dedicated `npx` installer. For local development, prefer linking the skill folders directly instead of copying them.
+Recommended install path: use `npx skills@latest`.
+
+### Install With `npx skills@latest`
+
+Install one skill for a specific agent:
+
+```bash
+npx skills@latest add VIDLG/wilco-skills --skill wilco-probe --agent codex
+npx skills@latest add VIDLG/wilco-skills --skill wilco-plan --agent codex
+npx skills@latest add VIDLG/wilco-skills --skill wilco-exec --agent codex
+```
+
+Install all Wilco skills for all supported agents:
+
+```bash
+npx skills@latest add VIDLG/wilco-skills --all
+```
+
+List available skills without installing:
+
+```bash
+npx skills@latest add VIDLG/wilco-skills --list
+```
+
+The `skills` CLI can also take a GitHub URL directly.
+For Claude Code, use the same commands with `--agent claude-code`.
+
+### Uninstall With `npx skills@latest`
+
+Remove one skill:
+
+```bash
+npx skills@latest remove wilco-probe
+npx skills@latest remove wilco-plan
+npx skills@latest remove wilco-exec
+```
 
 ### Development Link
 
-PowerShell examples:
+For local development, link the skill directories into your agent's skills folder instead of copying them.
 
-```powershell
-New-Item -ItemType SymbolicLink -Force -Path .codex\skills\wilco-probe -Target wilco-skills\wilco-probe | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path .codex\skills\wilco-plan  -Target wilco-skills\wilco-plan  | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path .codex\skills\wilco-exec  -Target wilco-skills\wilco-exec  | Out-Null
-
-New-Item -ItemType SymbolicLink -Force -Path .claude\skills\wilco-probe -Target wilco-skills\wilco-probe | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path .claude\skills\wilco-plan  -Target wilco-skills\wilco-plan  | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path .claude\skills\wilco-exec  -Target wilco-skills\wilco-exec  | Out-Null
-```
+- Codex: link into `.codex/skills/`
+- Claude Code: link into `.claude/skills/`
+- Unix-like systems: use `ln -s`
+- Windows: use symbolic links or junctions
 
 ### Uninstall
 
-Remove the links or installed skill directories:
-
-```powershell
-Remove-Item .codex\skills\wilco-probe,.codex\skills\wilco-plan,.codex\skills\wilco-exec -Force
-Remove-Item .claude\skills\wilco-probe,.claude\skills\wilco-plan,.claude\skills\wilco-exec -Force
-```
-
-### Optional Codex Installer Route
-
-If you use Codex's built-in `skill-installer`, install these skill paths from `VIDLG/wilco-skills`:
-
-- `wilco-probe`
-- `wilco-plan`
-- `wilco-exec`
-
-Use that route when you want a copied install under `$CODEX_HOME/skills` instead of a repo-local link.
+Remove the installed skill directories or delete the development links from your agent's skills folder.
 
 ## Typical Flows
 

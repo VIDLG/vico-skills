@@ -103,40 +103,53 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 ## 安装与卸载
 
-这个仓库本身不提供专门的 `npx` 安装器。对于本地开发，推荐把 skill 目录直接 link 到目标位置，而不是复制内容。
+推荐安装方式：使用 `npx skills@latest`。
+
+### 用 `npx skills@latest` 安装
+
+为指定 agent 安装单个 skill：
+
+```bash
+npx skills@latest add VIDLG/wilco-skills --skill wilco-probe --agent codex
+npx skills@latest add VIDLG/wilco-skills --skill wilco-plan --agent codex
+npx skills@latest add VIDLG/wilco-skills --skill wilco-exec --agent codex
+```
+
+为所有受支持的 agents 安装全部 Wilco skills：
+
+```bash
+npx skills@latest add VIDLG/wilco-skills --all
+```
+
+只列出可安装的 skills，不实际安装：
+
+```bash
+npx skills@latest add VIDLG/wilco-skills --list
+```
+
+`skills` CLI 也支持直接接 GitHub URL。
+如果是 Claude Code，把命令里的 `--agent codex` 改成 `--agent claude-code` 即可。
 
 ### 开发期 Link
 
-PowerShell 示例：
+本地开发时，推荐把 skill 目录 link 到目标 agent 的 skills 目录，而不是复制内容。
 
-```powershell
-New-Item -ItemType SymbolicLink -Force -Path .codex\skills\wilco-probe -Target wilco-skills\wilco-probe | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path .codex\skills\wilco-plan  -Target wilco-skills\wilco-plan  | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path .codex\skills\wilco-exec  -Target wilco-skills\wilco-exec  | Out-Null
-
-New-Item -ItemType SymbolicLink -Force -Path .claude\skills\wilco-probe -Target wilco-skills\wilco-probe | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path .claude\skills\wilco-plan  -Target wilco-skills\wilco-plan  | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path .claude\skills\wilco-exec  -Target wilco-skills\wilco-exec  | Out-Null
-```
+- Codex：link 到 `.codex/skills/`
+- Claude Code：link 到 `.claude/skills/`
+- Unix-like 系统：使用 `ln -s`
+- Windows：使用 symbolic link 或 junction
 
 ### 卸载
 
-删除这些 link 或已安装的 skill 目录：
+用 `npx skills@latest` 卸载单个 skill：
 
-```powershell
-Remove-Item .codex\skills\wilco-probe,.codex\skills\wilco-plan,.codex\skills\wilco-exec -Force
-Remove-Item .claude\skills\wilco-probe,.claude\skills\wilco-plan,.claude\skills\wilco-exec -Force
+```bash
+npx skills@latest remove wilco-probe
+npx skills@latest remove wilco-plan
+npx skills@latest remove wilco-exec
 ```
 
-### 可选的 Codex Installer 路径
-
-如果你使用 Codex 内置的 `skill-installer`，可从 `VIDLG/wilco-skills` 安装这些 skill 路径：
-
-- `wilco-probe`
-- `wilco-plan`
-- `wilco-exec`
-
-当你希望把 skill 复制安装到 `$CODEX_HOME/skills`，而不是做 repo-local link 时，再使用这条路径。
+如果你走的是开发期 link，直接删除对应 agent skills 目录里的 link 即可。
 
 ## 常见流程
 
