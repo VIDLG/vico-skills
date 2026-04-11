@@ -69,7 +69,7 @@ Stop when:
 When all planned work is complete:
 
 - update the plan so completion is explicit
-- if the user expects end-to-end completion, route directly to `wilco-plan done`
+- if the user expects end-to-end completion, route directly to `wilco-plan close`
 - do not perform close-out deletion inside `wilco-exec`
 
 ## Required Output At Any Stop Point

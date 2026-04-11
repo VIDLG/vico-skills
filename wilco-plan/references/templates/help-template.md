@@ -21,7 +21,7 @@ Keep commands and mode literals unchanged.
 - replan
 - replace
 - truth
-- done
+- close
 - cancel
 
 ## Input Sources
@@ -47,13 +47,13 @@ Keep commands and mode literals unchanged.
 - `review` is read-only
 - `verify` is read-only
 - `truth` is manual only
-- `replace`, `done`, and `cancel` require explicit slug when multiple active slugs exist
+- `replace`, `close`, and `cancel` require explicit slug when multiple active slugs exist
 
 ## Mode Hints
 
 - `sync`: use when code moved and the current plan should catch up
 - `verify`: use when you need to check completion against real code and test evidence before close-out
-- `verify done`: use when you want verification to gate an immediate close-out
+- `verify close`: use when you want verification to gate an immediate close-out
 - `verify sync`: use when you want verification to gate an immediate state refresh
 - `verify replan`: use when you want verification to gate an immediate execution-contract rewrite
 - `replan`: use when the same slug still applies, but the execution contract itself should be rewritten
@@ -69,7 +69,7 @@ Keep commands and mode literals unchanged.
 - `wilco-plan sync`
 - `wilco-plan prd`
 - `wilco-plan replace`
-- `wilco-plan done`
+- `wilco-plan close`
 - `wilco-plan cancel`
 ```
 

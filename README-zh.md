@@ -21,7 +21,7 @@ English version: [README.md](README.md)
 - `wilco-skills` 是强意见、强路由的工作流，不是松散工具箱
 - `wilco-plan` 是唯一默认入口
 - `wilco-plan` 内部负责 bootstrap、轻量 reconcile、PRD 升级和 active slug 替换
-- `wilco-plan` 还应暴露显式模式，例如 `help`、`review`、`sync`、`prd`、`replace`、`done`、`cancel`
+- `wilco-plan` 还应暴露显式模式，例如 `help`、`review`、`sync`、`prd`、`replace`、`close`、`cancel`
 - `plan_only` 是默认的 tracked workflow
 - `PRD` 是内部升级路径，不是默认入口
 - slug 一旦升级到 `prd_backed`，就不再原地降级
@@ -53,19 +53,19 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 - 先检查再规划：`wilco-probe -> wilco-plan`
 - 继续细化现有 plan：`wilco-probe grill plan -> wilco-plan`
 - 只做 tracked planning：`wilco-plan`
-- 端到端 tracked execution：`wilco-plan -> wilco-exec -> wilco-plan done`
+- 端到端 tracked execution：`wilco-plan -> wilco-exec -> wilco-plan close`
 
 ## 升级提示
 
 - 当任务局部、低风险、且不需要跨轮 tracked 协调时，停留在直接 vibe 式执行
 - 当对象不清晰、有争议，或明显适合先做 evidence-first 追问时，使用 `wilco-probe`
 - 当工作应升级为 `.wilco/` 下的 tracked execution contract 时，使用 `wilco-plan`
-- 只有在 active plan 已经存在、且用户希望持续推进直到完成或遇到真实阻塞时，才进入 `wilco-exec`
+- 只有在 active plan 已经存在、且用户希望持续推进直到真正完成或遇到真实阻塞时，才进入 `wilco-exec`
 
 ## 自然触发词
 
 - `wilco-probe`：`scan 仓库`、`inspect codebase`、`grill 这个 plan`、`继续细化这个 plan`、`wilco-probe 如何使用`
-- `wilco-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify done`、`verify sync`、`verify replan`、`wilco-plan 如何使用`
+- `wilco-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify close`、`verify sync`、`verify replan`、`wilco-plan 如何使用`
 - `wilco-exec`：`继续做`、`一直做到完成`、`执行 active plan`、`除非阻塞否则继续`、`wilco-exec 如何使用`
 
 如果一条自然语言请求同时可能落到多个 route 上，优先用一句简短确认来消歧，不要直接猜。
@@ -83,7 +83,7 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 - 需要开始、更新、对账或重建 tracked work：`wilco-plan`
 - 需要在 close-out 前根据真实代码库核实 plan 是否真的完成：`wilco-plan verify`
 - 基于 active plan 继续实现：`wilco-exec`
-- 需要把工作标记为 done / cancel 并删除 active docs：`wilco-plan`
+- 需要对 tracked work 做 close-out 或 cancel 并删除 active docs：`wilco-plan`
 - 需要判断怎么做架构沉淀：`wilco-plan`
 - 需要先对 plan、设计或代码库做深入检查：`wilco-probe`
 
@@ -172,10 +172,10 @@ wilco-plan review
 wilco-plan verify
 ```
 
-### Verify 通过后直接 Done
+### Verify 通过后直接 Close
 
 ```text
-wilco-plan verify done
+wilco-plan verify close
 ```
 
 ### Verify 后直接 Sync
@@ -229,14 +229,14 @@ wilco-probe help
 ### 执行并完成
 
 ```text
-wilco-exec -> wilco-plan done
+wilco-exec -> wilco-plan close
 ```
 
 即使用户表达的是“做到真正完成”，生命周期仍然保持简单：
 
 - `wilco-exec` 负责完成实现并同步 plan
-- `wilco-plan done` 负责 close-out 删除
-- agent 可以在执行结束后自动路由到 `wilco-plan done`，不要求用户手动记住第二步
+- `wilco-plan close` 负责 close-out 删除
+- agent 可以在执行结束后自动路由到 `wilco-plan close`，不要求用户手动记住第二步
 
 ## 开发说明
 

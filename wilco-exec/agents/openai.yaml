@@ -1,4 +1,4 @@
 interface:
   display_name: "Wilco Exec"
-  short_description: "Execute the active Wilco plan until done or truly blocked"
-  default_prompt: "Read the active Wilco plan, use temporary handoff or reconcile state only when it is actually needed, execute the smallest unblocked next step, verify it, update the plan, and clear stale temporary linkage once execution is steady again. Keep close-out deletion out of this skill and route to `wilco-plan done` automatically when implementation is complete and the user expects end-to-end completion."
+  short_description: "Execute the active Wilco plan until complete or truly blocked"
+  default_prompt: "Read the active Wilco plan, use temporary handoff or reconcile state only when it is actually needed, execute the smallest unblocked next step, verify it, update the plan, and clear stale temporary linkage once execution is steady again. Keep close-out deletion out of this skill and route to `wilco-plan close` automatically when implementation is complete and the user expects end-to-end completion."

@@ -22,7 +22,7 @@ Keep commands and mode literals unchanged.
 - execute the smallest unblocked next step
 - verify after each meaningful step
 - keep the plan current while executing
-- route to `wilco-plan done` when end-to-end completion is requested
+- route to `wilco-plan close` when end-to-end completion is requested
 - show `Skill route` and `Route reason` in the first visible update when `wilco-exec` is selected
 
 ## Safety Rules

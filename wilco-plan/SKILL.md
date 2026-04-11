@@ -21,7 +21,7 @@ It owns four decisions before planning:
 
 It also owns two terminal state transitions:
 
-5. is this tracked work `done`
+5. is this tracked work `close`
 6. is this tracked work `cancelled`
 
 After that, it writes or updates the active plan under `.wilco/plans/active/`.
@@ -91,7 +91,7 @@ If the latest probe handoff clearly targets a different active slug or work obje
   - delete the current active docs and continue with one fresh dated slug
 - `truth`
   - explicitly extract durable truth into `docs/architecture/`
-- `done`
+- `close`
   - delete active docs because the work is complete
 - `cancel`
   - delete active docs because the work is abandoned
@@ -100,7 +100,7 @@ If the latest probe handoff clearly targets a different active slug or work obje
 `verify` must be strictly read-only.
 `truth` is manual only. Do not trigger it automatically.
 Use `replan` as the single public mode for same-slug execution-contract rewrites. Do not expose a separate public `reset` mode.
-Use `verify done` as the explicit combined path when the user wants verification followed immediately by close-out if and only if the verdict is `verified_complete`.
+Use `verify close` as the explicit combined path when the user wants verification followed immediately by close-out if and only if the verdict is `verified_complete`.
 Use `verify sync` when the user wants verification to gate an immediate plan-state refresh, and `verify replan` when they want verification to gate an immediate execution-contract rewrite.
 
 ## Workflow
@@ -138,7 +138,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 14. If there is a source PRD, update the PRD header so `Execution Plan` points to the new plan path.
 15. If overlap handling is more complex than a clean rewrite, delete the active docs and rebuild one fresh dated slug instead of preserving a confusing lineage.
 16. If the user intent is to stop rather than continue, support these explicit terminal actions:
-   - `done`: delete active docs because the work is complete
+   - `close`: delete active docs because the work is complete
    - `cancel`: delete active docs because the work is abandoned
 17. If durable truth should be extracted into `docs/architecture/`, do that as part of this workflow instead of routing to a separate docs skill.
 
@@ -146,7 +146,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 
 - If more than one active slug exists, destructive modes must require an explicit slug:
   - `replace`
-  - `done`
+  - `close`
   - `cancel`
 - Do not guess a destructive target from loose context when multiple active slugs exist.
 - `review` may summarize all active slugs, but should identify which one appears most relevant and why.
@@ -180,7 +180,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - Treat truth extraction into `docs/architecture/` as an internal sub-step of planning or close-out, not as a separate default workflow.
 - Keep `truth` manual. Only perform truth extraction when the user explicitly asks for it or when a higher-level workflow explicitly enters `wilco-plan truth`.
 - Support explicit terminal actions inside this workflow:
-  - `done` = delete-and-exit because work is complete
+  - `close` = delete-and-exit because work is complete
   - `cancel` = delete-and-exit because work is abandoned
 - Treat the plan as the main human-readable execution artifact. The index is supporting metadata, not peer-level prose.
 
@@ -197,7 +197,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 
 - `verify` is the close-out readiness gate for tracked work.
 - `verify` must compare the active plan and optional PRD against current code and test evidence instead of trusting `.wilco` status alone.
-- Use `verify` when another agent claims the work is complete, when `Status` or checklist state may be stale, or before `done` deletes active docs.
+- Use `verify` when another agent claims the work is complete, when `Status` or checklist state may be stale, or before `close` deletes active docs.
 - `verify` should produce a completion verdict:
   - `verified_complete`
   - `not_complete`
@@ -205,9 +205,12 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - `verify` alone must not delete active docs or silently close out the slug.
 - If the user explicitly invokes `verify sync`, allow plan-state refresh only when the verification evidence shows the current execution contract still applies and mainly needs doc/state alignment.
 - If the user explicitly invokes `verify replan`, allow replan only when the verification evidence shows the same slug still applies but the execution contract itself is no longer reliable.
-- If the user explicitly invokes `verify done`, allow close-out only when the verdict is `verified_complete`; otherwise stop with the verification result and recommend the correct next mode.
-- If the verdict is not `verified_complete`, prefer `sync`, `replan`, `prd`, or resumed execution over `done`.
+- If the user explicitly invokes `verify close`, allow close-out only when the verdict is `verified_complete`; otherwise stop with the verification result and recommend the correct next mode.
+- If the verdict is not `verified_complete`, prefer `sync`, `replan`, `prd`, or resumed execution over `close`.
 - In multi-active situations, `verify` should require an explicit slug unless the target is unambiguous from current-turn user steering.
+- If the user explicitly says `close` or `close out` and the target slug is unambiguous, treat that as authorization to close out immediately when completion evidence is already strong from the current turn or a recent verification.
+- In that case, do not stop just to re-explain that `close` deletes active docs; execute the close-out directly.
+- Only stop instead of executing `close` when completion is not yet verified strongly enough, a blocker prevents safe close-out, multiple active slugs make the destructive target ambiguous, or the user explicitly asks to keep the active docs.
 
 ## Sync Contract
 
@@ -216,7 +219,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - existing slug, implementation advance only: update the plan and minimally refresh the index
 - existing slug, plan no longer matches implementation: perform `diverge-replan`
 - existing slug, plan no longer sufficient for scope framing: perform `upgrade-to-prd-backed` here
-- existing slug, task completed: run `done` here
+- existing slug, task completed: run `close` here
 - existing slug, task abandoned: run `cancel` here
 
 ## Output Contract
@@ -231,7 +234,7 @@ Write plans with at least:
 - optional `Manifest`
 - optional `Source PRD`
 - optional `Unresolved decisions`
-- optional terminal status note when using `done` or `cancel`
+- optional terminal status note when using `close` or `cancel`
 - architectural decisions section
 - phased slices
 - acceptance criteria per phase

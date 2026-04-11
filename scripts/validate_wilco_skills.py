@@ -273,7 +273,7 @@ def validate_wilco_exec_contract(root: Path) -> list[str]:
         "## Mode Contract",
         "## Output Contract",
         "smallest unblocked next step",
-        "route to `wilco-plan done` automatically",
+        "route to `wilco-plan close` automatically",
         "keep going",
         "how do I use wilco-exec",
         "If the user sounds like they want persistent execution but no active plan exists",
@@ -325,7 +325,7 @@ def validate_wilco_exec_contract(root: Path) -> list[str]:
             "smallest unblocked next step",
             "verify it",
             "update the plan",
-            "route to `wilco-plan done` automatically",
+            "route to `wilco-plan close` automatically",
         ):
             if marker not in agent_text:
                 failures.append(f"wilco-exec/agents/openai.yaml missing marker: {marker}")
@@ -366,7 +366,7 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
         "Execution readiness risks",
         "Resolved during probe",
         "`verify` is the close-out readiness gate",
-        "`verify done`",
+        "`verify close`",
         "`verify sync`",
         "`verify replan`",
         "`verified_complete`",
@@ -376,7 +376,7 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
         "If the current plan is too coarse, too stale, or too ambiguous",
         "make a plan",
         "verify this plan",
-        "verify done",
+        "verify close",
         "verify sync",
         "verify replan",
         "how do I use wilco-plan",
@@ -413,7 +413,7 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
         for marker in (
             "## Mode Hints",
             "`verify`: use when you need to check completion against real code and test evidence before close-out",
-            "`verify done`: use when you want verification to gate an immediate close-out",
+            "`verify close`: use when you want verification to gate an immediate close-out",
             "`verify sync`: use when you want verification to gate an immediate state refresh",
             "`verify replan`: use when you want verification to gate an immediate execution-contract rewrite",
             "`sync`: use when code moved and the current plan should catch up",
@@ -436,7 +436,7 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
             "## Evidence",
             "## Open Gaps",
             "## Recommended Next Mode",
-            "`verify done`",
+            "`verify close`",
             "`verify sync`",
             "`verify replan`",
             "`verify` must be read-only",
@@ -471,7 +471,7 @@ def validate_workflow_invariants(root: Path) -> list[str]:
         root / "README.md": (
             "`wilco-plan` is the only default user-facing entrypoint",
             "every tracked slug should have an `.wilco/index/<slug>.json` linkage file",
-            "agents may route automatically from `wilco-exec` into `wilco-plan done`",
+            "agents may route automatically from `wilco-exec` into `wilco-plan close`",
             "lightweight workflow invariant checks",
             "Default Light, Escalate When Needed.",
             "probing and execution are separate escalation axes",
@@ -483,7 +483,7 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "## Install And Uninstall",
             "`wilco-probe grill plan -> wilco-plan`",
             "verify this plan",
-            "verify done",
+            "verify close",
             "verify sync",
             "verify replan",
             "how do I use wilco-probe",
@@ -509,7 +509,7 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "Mode: plan_only",
             "probe handoff",
             "Use [scripts/bootstrap_wilco_slug.py]",
-            "`done` = delete-and-exit",
+            "`close` = delete-and-exit",
             "`cancel` = delete-and-exit",
             "## Mode Contract",
             "## Input Precedence",
@@ -531,7 +531,7 @@ def validate_workflow_invariants(root: Path) -> list[str]:
         ),
         root / "wilco-exec" / "SKILL.md": (
             "not final close-out deletion",
-            "route to `wilco-plan done`",
+            "route to `wilco-plan close`",
             "route back through `wilco-plan` for reconcile",
             "Prefer `scripts/sync_wilco_index.py`",
             "Use [references/status-vocabulary.md]",
@@ -678,7 +678,7 @@ def validate_workflow_invariants(root: Path) -> list[str]:
         ),
         root / "wilco-exec" / "references" / "execute-loop.md": (
             "do not perform close-out deletion inside `wilco-exec`",
-            "route directly to `wilco-plan done`",
+            "route directly to `wilco-plan close`",
         ),
         root / "wilco-exec" / "references" / "execution-report-template.md": (
             "user's primary working language",

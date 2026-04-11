@@ -69,5 +69,5 @@ When `.wilco` artifacts are outdated or disagree with code, start with `wilco-pl
 - changed scope or acceptance: `wilco-plan`
 - `plan_only` slug now needs durable scope framing: `wilco-plan` for `upgrade-to-prd-backed`
 - stale architecture truth: `wilco-plan` with internal truth extraction
-- effectively complete work still marked active: `wilco-plan done`
-- implementation done and the user expects end-to-end completion: `wilco-exec` then `wilco-plan done`
+- effectively complete work still marked active: `wilco-plan close`
+- implementation done and the user expects end-to-end completion: `wilco-exec` then `wilco-plan close`

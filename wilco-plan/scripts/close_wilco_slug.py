@@ -20,7 +20,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Delete active Wilco docs for a closed slug and clear temporary state.")
     parser.add_argument("slug", help="Slug to close and delete from active Wilco docs.")
     parser.add_argument("--repo-root", help="Repository root. Defaults to the current working directory.")
-    parser.add_argument("--reason", choices=["done", "cancel"], default="done", help="Why the active docs are being removed.")
+    parser.add_argument("--reason", choices=["close", "cancel"], default="close", help="Why the active docs are being removed.")
     parser.add_argument("--dry-run", action="store_true", help="Print planned changes without writing files.")
     parser.add_argument("--keep-resume", action="store_true", help="Keep the current temporary reconcile file instead of deleting it.")
     args = parser.parse_args()

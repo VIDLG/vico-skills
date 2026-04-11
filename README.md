@@ -8,7 +8,7 @@ Contract map: [CONTRACTS.md](CONTRACTS.md)
 ## Skill Set
 
 - `wilco-plan`: the only default front door; decide `no-doc / plan_only / prd_backed`, reconcile state, create or update the active plan, and absorb probe handoff
-- `wilco-exec`: execute the active plan until done or truly blocked
+- `wilco-exec`: execute the active plan until complete or truly blocked
 - `wilco-probe`: inspect a plan, design, or codebase; scan for issues; grill where needed; and emit a handoff block that `wilco-plan` can consume
 
 For `wilco-probe` output examples, see [wilco-probe/references/output-format.md](wilco-probe/references/output-format.md).
@@ -18,7 +18,7 @@ For `wilco-probe` output examples, see [wilco-probe/references/output-format.md]
 - `wilco-skills` is a strongly routed workflow, not a loose toolbelt
 - `wilco-plan` is the only default user-facing entrypoint
 - `wilco-plan` internally handles bootstrap, lightweight reconcile, PRD escalation, and active-slug replacement decisions
-- `wilco-plan` also exposes explicit controller modes such as `help`, `review`, `sync`, `prd`, `replace`, `done`, and `cancel`
+- `wilco-plan` also exposes explicit controller modes such as `help`, `review`, `sync`, `prd`, `replace`, `close`, and `cancel`
 - `plan_only` is the default tracked workflow
 - `PRD` is an internal escalation path, not a separate default entrypoint
 - once upgraded to `prd_backed`, a slug does not downgrade in place
@@ -50,20 +50,20 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 - inspect before planning: `wilco-probe -> wilco-plan`
 - refine an existing plan: `wilco-probe grill plan -> wilco-plan`
 - tracked planning only: `wilco-plan`
-- end-to-end tracked execution: `wilco-plan -> wilco-exec -> wilco-plan done`
+- end-to-end tracked execution: `wilco-plan -> wilco-exec -> wilco-plan close`
 
 ## Escalation Hints
 
 - stay in direct vibe execution when the task is local, low-risk, and does not need tracked cross-turn coordination
 - use `wilco-probe` when the object is unclear, contested, or likely to benefit from evidence-first questioning before planning
 - use `wilco-plan` when the work should become a tracked execution contract under `.wilco/`
-- use `wilco-exec` only when an active plan already exists and the user wants persistent execution until done or a real blocker
+- use `wilco-exec` only when an active plan already exists and the user wants persistent execution until complete or a real blocker
 
 ## Natural Triggers
 
 - `wilco-probe`: `scan the repo`, `inspect the codebase`, `grill this plan`, `refine this plan`, `how do I use wilco-probe`
-- `wilco-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `verify done`, `verify sync`, `verify replan`, `how do I use wilco-plan`
-- `wilco-exec`: `keep going`, `continue until done`, `execute the active plan`, `carry this through unless blocked`, `how do I use wilco-exec`
+- `wilco-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `verify close`, `verify sync`, `verify replan`, `how do I use wilco-plan`
+- `wilco-exec`: `keep going`, `continue until complete`, `execute the active plan`, `carry this through unless blocked`, `how do I use wilco-exec`
 
 If a natural-language request could reasonably mean more than one of these routes, prefer a short clarification over guessing the wrong workflow.
 
@@ -80,7 +80,7 @@ If a natural-language request could reasonably mean more than one of these route
 - Need to start, update, reconcile, or reshape tracked work: `wilco-plan`
 - Need to verify that a plan is really complete against the current codebase before close-out: `wilco-plan verify`
 - Continue implementation against an active plan: `wilco-exec`
-- Need to mark work done or cancelled and remove active docs: `wilco-plan`
+- Need to close out or cancel tracked work and remove active docs: `wilco-plan`
 - Need architecture truth extraction or boundary handling: `wilco-plan`
 - Need to inspect a plan, design, or codebase before planning: `wilco-probe`
 
@@ -174,7 +174,7 @@ wilco-plan verify
 ### Verify Then Close Out
 
 ```text
-wilco-plan verify done
+wilco-plan verify close
 ```
 
 ### Verify Then Sync
@@ -228,14 +228,14 @@ wilco-probe help
 ### Execute And Finish
 
 ```text
-wilco-exec -> wilco-plan done
+wilco-exec -> wilco-plan close
 ```
 
 The lifecycle remains simple even when the user wants end-to-end completion:
 
 - `wilco-exec` finishes implementation and keeps the plan current
-- `wilco-plan done` performs close-out deletion handling
-- agents may route automatically from `wilco-exec` into `wilco-plan done` so the user does not need to remember the second step
+- `wilco-plan close` performs close-out deletion handling
+- agents may route automatically from `wilco-exec` into `wilco-plan close` so the user does not need to remember the second step
 
 ## Development Notes
 

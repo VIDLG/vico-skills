@@ -23,8 +23,8 @@ Keep commands, verdict literals, status literals, and slug/path literals unchang
 
 ## Recommended Next Mode
 
-- `done`
-- `verify done`
+- `close`
+- `verify close`
 - `verify sync`
 - `verify replan`
 - `sync`

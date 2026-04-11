@@ -26,7 +26,7 @@ Keep commands, mode literals, status literals, and slug/path literals unchanged.
 - replan the current slug
 - replace the active slug
 - upgrade to `prd_backed`
-- mark as `done` or `cancel`
+- mark as `close` or `cancel`
 ```
 
 `review` must be read-only. It should not rewrite plan state, update index metadata, or mutate active docs.

@@ -1,6 +1,6 @@
 ---
 name: wilco-exec
-description: Execute the current Wilco plan continuously until completion or a real blocker is reached. Use when the user wants the agent to keep going without stopping after each small step, carry out an active plan under `.wilco/plans/active/` item by item, continue from temporary reconcile state when needed, keep going until done, or follow a Ralph-like persistent execution loop. For Claude Code, this skill can be paired with bundled hooks; for Codex, use the same execute loop directly.
+description: Execute the current Wilco plan continuously until completion or a real blocker is reached. Use when the user wants the agent to keep going without stopping after each small step, carry out an active plan under `.wilco/plans/active/` item by item, continue from temporary reconcile state when needed, keep going until complete, or follow a Ralph-like persistent execution loop. For Claude Code, this skill can be paired with bundled hooks; for Codex, use the same execute loop directly.
 ---
 
 # Wilco Exec
@@ -23,9 +23,9 @@ Do not stop just because one small slice completed. Stop only when:
 - a user decision is required
 - the current plan is stale enough that execution would be misleading
 
-This skill owns implementation progress and plan synchronization, not final close-out deletion. When the work is truly complete, route to `wilco-plan done`.
+This skill owns implementation progress and plan synchronization, not final close-out deletion. When the work is truly complete, route to `wilco-plan close`.
 
-Treat natural requests such as `keep going`, `continue until done`, `execute the active plan`, `carry this through unless blocked`, or `how do I use wilco-exec` as valid `wilco-exec` entrypoints when an active plan already exists.
+Treat natural requests such as `keep going`, `continue until complete`, `execute the active plan`, `carry this through unless blocked`, or `how do I use wilco-exec` as valid `wilco-exec` entrypoints when an active plan already exists.
 If the user sounds like they want persistent execution but no active plan exists, ask a short clarification question or route them through `wilco-plan` instead of guessing.
 
 ## Inputs
@@ -67,7 +67,7 @@ For each meaningful execution pass:
 - keep commands, status literals, blocker types, file paths, and other machine-meaningful literals stable unless that downstream contract is explicitly changed
 - persist plan, index, or temporary reconcile updates to disk when the user expects docs to stay current or when continuation depends on accurate execution state
 - do not fabricate disk writes when no execution-state change is needed
-- route to `wilco-plan done` automatically when implementation is complete and the user expects end-to-end completion
+- route to `wilco-plan close` automatically when implementation is complete and the user expects end-to-end completion
 - include the active source, active slug, and continuation basis in the execution report so the user can see why execution continued or stopped
 - keep deeper continuation heuristics implicit by default unless the user asks for execution internals or a blocker requires them to understand the exact boundary
 
@@ -88,7 +88,7 @@ High-level rules:
 - When a blocker is real, say exactly why execution cannot continue and what decision or input is needed.
 - Continue after each completed slice when another unblocked step exists.
 - Do not stop merely because one checklist item finished.
-- If the user intent is end-to-end completion and implementation is now done, automatically route to `wilco-plan done` rather than making the user remember that extra step.
+- If the user intent is end-to-end completion and implementation is now complete, automatically route to `wilco-plan close` rather than making the user remember that extra step.
 
 For each execution pass, produce a compact execution report using [references/execution-report-template.md](references/execution-report-template.md).
 When blocked, classify the blocker and use the blocked output shape in [references/blocker-taxonomy.md](references/blocker-taxonomy.md).
@@ -101,7 +101,7 @@ For Claude Code, this skill can be paired with bundled hook scripts:
 - `scripts/session_start_hook.ps1`
 - `scripts/stop_hook.ps1`
 
-The hooks are optional but useful when you want to bias Claude toward continuing until the plan is actually done or a real blocker is reached.
+The hooks are optional but useful when you want to bias Claude toward continuing until the plan is actually complete or a real blocker is reached.
 
 ## Codex
 
@@ -109,7 +109,7 @@ Codex does not have equivalent event hooks. Use the same execute loop directly a
 
 - this skill
 - repository `AGENTS.md`
-- explicit instruction to continue until done or blocked
+- explicit instruction to continue until complete or blocked
 
 ## References
 
