@@ -65,7 +65,7 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 ## 自然触发词
 
 - `wilco-probe`：`scan 仓库`、`inspect codebase`、`grill 这个 plan`、`继续细化这个 plan`、`wilco-probe 如何使用`
-- `wilco-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify done`、`wilco-plan 如何使用`
+- `wilco-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify done`、`verify sync`、`verify replan`、`wilco-plan 如何使用`
 - `wilco-exec`：`继续做`、`一直做到完成`、`执行 active plan`、`除非阻塞否则继续`、`wilco-exec 如何使用`
 
 如果一条自然语言请求同时可能落到多个 route 上，优先用一句简短确认来消歧，不要直接猜。
@@ -176,6 +176,18 @@ wilco-plan verify
 
 ```text
 wilco-plan verify done
+```
+
+### Verify 后直接 Sync
+
+```text
+wilco-plan verify sync
+```
+
+### Verify 后直接 Replan
+
+```text
+wilco-plan verify replan
 ```
 
 ### 查看可用模式

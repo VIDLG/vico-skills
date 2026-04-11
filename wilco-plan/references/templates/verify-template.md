@@ -25,6 +25,8 @@ Keep commands, verdict literals, status literals, and slug/path literals unchang
 
 - `done`
 - `verify done`
+- `verify sync`
+- `verify replan`
 - `sync`
 - `replan`
 - `prd`

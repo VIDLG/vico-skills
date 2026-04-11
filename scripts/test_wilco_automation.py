@@ -376,6 +376,8 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("make a plan", plan_skill)
         self.assertIn("verify this plan", plan_skill)
         self.assertIn("`verify done`", plan_skill)
+        self.assertIn("`verify sync`", plan_skill)
+        self.assertIn("`verify replan`", plan_skill)
         self.assertIn("how do I use wilco-plan", plan_skill)
         self.assertIn("If the user's intent could reasonably map to lightweight direct execution instead of tracked planning", plan_skill)
         self.assertIn("keep internal routing and reconciliation heuristics implicit by default", plan_skill)
@@ -395,6 +397,8 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("## Open Gaps", plan_verify)
         self.assertIn("## Recommended Next Mode", plan_verify)
         self.assertIn("`verify done`", plan_verify)
+        self.assertIn("`verify sync`", plan_verify)
+        self.assertIn("`verify replan`", plan_verify)
         self.assertIn("`verify` must be read-only", plan_verify)
 
     def test_plan_public_modes_drop_reset_and_keep_replan(self) -> None:
@@ -406,6 +410,8 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("- replan", plan_help)
         self.assertIn("- verify", plan_help)
         self.assertIn("`verify done`: use when you want verification to gate an immediate close-out", plan_help)
+        self.assertIn("`verify sync`: use when you want verification to gate an immediate state refresh", plan_help)
+        self.assertIn("`verify replan`: use when you want verification to gate an immediate execution-contract rewrite", plan_help)
         self.assertIn("Use `replan` as the single public mode for same-slug execution-contract rewrites.", plan_skill)
         self.assertNotIn("- `reset`", plan_skill)
         self.assertNotIn("- reset", plan_help)

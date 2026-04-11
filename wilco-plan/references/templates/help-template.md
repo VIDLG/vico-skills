@@ -54,6 +54,8 @@ Keep commands and mode literals unchanged.
 - `sync`: use when code moved and the current plan should catch up
 - `verify`: use when you need to check completion against real code and test evidence before close-out
 - `verify done`: use when you want verification to gate an immediate close-out
+- `verify sync`: use when you want verification to gate an immediate state refresh
+- `verify replan`: use when you want verification to gate an immediate execution-contract rewrite
 - `replan`: use when the same slug still applies, but the execution contract itself should be rewritten
 - `prd`: use when the work now needs or updates `prd_backed` framing
 
@@ -62,6 +64,8 @@ Keep commands and mode literals unchanged.
 - `wilco-plan`
 - `wilco-plan review`
 - `wilco-plan verify`
+- `wilco-plan verify sync`
+- `wilco-plan verify replan`
 - `wilco-plan sync`
 - `wilco-plan prd`
 - `wilco-plan replace`

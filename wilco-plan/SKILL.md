@@ -101,6 +101,7 @@ If the latest probe handoff clearly targets a different active slug or work obje
 `truth` is manual only. Do not trigger it automatically.
 Use `replan` as the single public mode for same-slug execution-contract rewrites. Do not expose a separate public `reset` mode.
 Use `verify done` as the explicit combined path when the user wants verification followed immediately by close-out if and only if the verdict is `verified_complete`.
+Use `verify sync` when the user wants verification to gate an immediate plan-state refresh, and `verify replan` when they want verification to gate an immediate execution-contract rewrite.
 
 ## Workflow
 
@@ -202,6 +203,8 @@ Use `verify done` as the explicit combined path when the user wants verification
   - `not_complete`
   - `ambiguous`
 - `verify` alone must not delete active docs or silently close out the slug.
+- If the user explicitly invokes `verify sync`, allow plan-state refresh only when the verification evidence shows the current execution contract still applies and mainly needs doc/state alignment.
+- If the user explicitly invokes `verify replan`, allow replan only when the verification evidence shows the same slug still applies but the execution contract itself is no longer reliable.
 - If the user explicitly invokes `verify done`, allow close-out only when the verdict is `verified_complete`; otherwise stop with the verification result and recommend the correct next mode.
 - If the verdict is not `verified_complete`, prefer `sync`, `replan`, `prd`, or resumed execution over `done`.
 - In multi-active situations, `verify` should require an explicit slug unless the target is unambiguous from current-turn user steering.

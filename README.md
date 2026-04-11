@@ -62,7 +62,7 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 ## Natural Triggers
 
 - `wilco-probe`: `scan the repo`, `inspect the codebase`, `grill this plan`, `refine this plan`, `how do I use wilco-probe`
-- `wilco-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `verify done`, `how do I use wilco-plan`
+- `wilco-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `verify done`, `verify sync`, `verify replan`, `how do I use wilco-plan`
 - `wilco-exec`: `keep going`, `continue until done`, `execute the active plan`, `carry this through unless blocked`, `how do I use wilco-exec`
 
 If a natural-language request could reasonably mean more than one of these routes, prefer a short clarification over guessing the wrong workflow.
@@ -175,6 +175,18 @@ wilco-plan verify
 
 ```text
 wilco-plan verify done
+```
+
+### Verify Then Sync
+
+```text
+wilco-plan verify sync
+```
+
+### Verify Then Replan
+
+```text
+wilco-plan verify replan
 ```
 
 ### Show Available Modes
