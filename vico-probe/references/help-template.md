@@ -40,6 +40,7 @@ Keep commands and mode literals unchanged.
 - derive issues from evidence before asking the user
 - surface `Skill route` and `Route reason` in the first visible update when `vico-probe` is selected
 - default to evidence-first probing
+- keep freeform idea grilling in `vico-grill`; use `vico-probe` when the target is a repo plan, PRD, design, codebase, slug, file, or `.vico` artifact
 - route by issue state instead of forcing questioning every time
 - bootstrap a light scan when explicit `grill`, `review`, or `resolve` is invoked without usable current probe state
 - enter `grill` when the next best action is sustained questioning
@@ -81,6 +82,7 @@ Keep commands and mode literals unchanged.
 - `vico-probe scan`
 - `vico-probe grill`
 - `vico-probe grill plan`
+- `grill this PRD`
 - `vico-probe review`
 - `vico-probe resolve`
 - `vico-probe help`

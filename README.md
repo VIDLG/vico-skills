@@ -17,6 +17,7 @@ The repo still uses `vico-*` skill names today. `vico-skills` is the broader pro
 
 ## Skill Set
 
+- `vico-grill`: freeform sustained questioning for ideas, tradeoffs, and decisions before repository evidence matters
 - `vico-plan`: the only default front door; decide `no-doc / plan_only / prd_backed`, reconcile state, create or update the active plan, and absorb probe handoff
 - `vico-exec`: execute the active plan until complete or truly blocked
 - `vico-probe`: inspect a plan, design, or codebase; scan for issues; grill where needed; and emit a handoff block that `vico-plan` can consume
@@ -42,7 +43,9 @@ For `vico-probe` output examples, see [vico-probe/references/output-format.md](v
 `Default Light, Escalate When Needed.`
 
 - `vico-skills` is designed to stay vibe-friendly at low complexity and become more structured only when the work actually needs it
+- freeform grilling is the lightest questioning lane; `vico-probe` is the repo-native questioning lane
 - probing and execution are separate escalation axes rather than one forced heavyweight workflow
+- freeform questioning can scale from `vico-grill` into `vico-probe` or `vico-plan` when repository reality or tracked execution becomes the next governing constraint
 - probing can scale from direct clarification to `vico-probe`, `scan`, and `grill`
 - execution can scale from direct vibe execution to `vico-plan`, `prd_backed`, and `vico-exec`
 - heavier modes exist to reduce ambiguity and coordination cost, not to front-load process onto every task
@@ -53,12 +56,16 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 
 ## Persistence Policy
 
+- `vico-grill`: keep freeform grill state session-local by default and do not write `.vico` artifacts
 - `vico-probe`: keep probe state session-local by default; write back only when the user explicitly asks to capture conclusions
 - `vico-plan`: write or update active plan, optional PRD, and derived index state by default when tracked work is being shaped
 - `vico-exec`: persist plan, index, or temporary reconcile updates when continuity depends on accurate execution state or when the user expects docs to stay current
 
 ## Most Common Paths
 
+- freeform questioning: `vico-grill`
+- freeform questioning into formal inspection: `vico-grill -> vico-probe`
+- freeform questioning into tracked work: `vico-grill -> vico-plan`
 - direct vibe execution: talk through the task and implement immediately when no tracked workflow is needed
 - inspect before planning: `vico-probe -> vico-plan`
 - refine an existing plan: `vico-probe grill plan -> vico-plan`
@@ -67,6 +74,7 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 
 ## Escalation Hints
 
+- use `vico-grill` when the user wants freeform sustained questioning on an idea, tradeoff, or decision before repository evidence matters
 - stay in direct vibe execution when the task is local, low-risk, and does not need tracked cross-turn coordination
 - use `vico-probe` when the object is unclear, contested, or likely to benefit from evidence-first questioning before planning
 - use `vico-plan` when the work should become a tracked execution contract under `.vico/`
@@ -75,6 +83,8 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 
 ## Route Shifts
 
+- `vico-grill -> vico-probe`: when freeform questioning hits a repo plan, PRD, design, codebase, or any question that now depends on repository evidence
+- `vico-grill -> vico-plan`: when the questioning is already sufficient to define tracked work under `.vico/`
 - `direct_execute -> vico-plan`: when local execution grows into tracked work, `vico-plan` should perform the minimum reconcile or sync needed to re-anchor on current repository reality
 - `vico-plan -> direct_execute`: when the remaining work is small and low-risk, prefer a lighter route instead of keeping the user inside a heavier Vico path
 - `vico-probe -> direct_execute`: when probe concludes that the next safe action is local implementation, route directly instead of forcing planning
@@ -82,12 +92,15 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 
 ## Natural Triggers
 
-- `vico-probe`: `scan the repo`, `inspect the codebase`, `grill this plan`, `refine this plan`, `how do I use vico-probe`
-- `vico-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `verify close`, `verify sync`, `verify replan`, `how do I use vico-plan`
+- `vico-grill`: `grill this idea`, `grill me`, `stress-test this decision`, `deep interview this`, `discuss this tradeoff`, `how do I use vico-grill`
+- `vico-probe`: `scan the repo`, `inspect the codebase`, `grill this plan`, `grill this PRD`, `refine this plan`, `how do I use vico-probe`
+- `vico-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `verify close`, `verify sync`, `verify replan`, `close this plan`, `how do I use vico-plan`
 - `vico-exec`: `keep going`, `continue until complete`, `execute the active plan`, `carry this through unless blocked`, `how do I use vico-exec`
 - `vico-feedback`: `file an issue`, `report a bug`, `I have feedback about vico-skills`, `draft a GitHub issue`, `how do I use vico-feedback`
 
 If a natural-language request could reasonably mean more than one of these routes, prefer a short clarification over guessing the wrong workflow.
+If the wording is just `grill this` or `grill this problem`, prefer `vico-grill` unless the user also names a repo object.
+If the wording is `grill this plan`, `grill this PRD`, or points at `.vico`, prefer `vico-probe`.
 
 ## Route Visibility
 
@@ -99,6 +112,7 @@ If a natural-language request could reasonably mean more than one of these route
 
 ## When To Use What
 
+- Need to pressure-test an idea, decision, or tradeoff before repository evidence matters: `vico-grill`
 - Need to start, update, reconcile, or reshape tracked work: `vico-plan`
 - Need to verify that a plan is really complete against the current codebase before close-out: `vico-plan verify`
 - Continue implementation against an active plan: `vico-exec`
@@ -152,9 +166,11 @@ Recommended install path: use `npx skills@latest`.
 Install one skill for a specific agent:
 
 ```bash
+npx skills@latest add VIDLG/vico-skills --skill vico-grill --agent codex
 npx skills@latest add VIDLG/vico-skills --skill vico-probe --agent codex
 npx skills@latest add VIDLG/vico-skills --skill vico-plan --agent codex
 npx skills@latest add VIDLG/vico-skills --skill vico-exec --agent codex
+npx skills@latest add VIDLG/vico-skills --skill vico-feedback --agent codex
 ```
 
 Install all Vico skills for all supported agents:
@@ -182,9 +198,11 @@ Reference:
 Remove one skill:
 
 ```bash
+npx skills@latest remove vico-grill
 npx skills@latest remove vico-probe
 npx skills@latest remove vico-plan
 npx skills@latest remove vico-exec
+npx skills@latest remove vico-feedback
 ```
 
 ### Development Link
@@ -279,17 +297,17 @@ vico-probe help
 - `vico-probe help`
   - show the modes and the intended usage flow
 
-### Execute And Finish
+### Execute Then Manually Close
 
 ```text
-vico-exec -> vico-plan close
+vico-exec -> user confirms -> vico-plan close
 ```
 
 The lifecycle remains simple even when the user wants end-to-end completion:
 
 - `vico-exec` finishes implementation and keeps the plan current
 - `vico-plan close` performs close-out deletion handling
-- agents may route automatically from `vico-exec` into `vico-plan close` so the user does not need to remember the second step
+- agents should stop after showing completion evidence and wait for the user to type the close command explicitly
 
 ## Development Notes
 

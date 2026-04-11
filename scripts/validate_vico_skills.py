@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -151,7 +153,11 @@ def validate_vico_probe_contract(root: Path) -> list[str]:
         "If the target object is an active plan",
         "scan the repo",
         "how do I use vico-probe",
+        "Do not absorb freeform requests such as `grill this idea`, `stress-test this decision`, `deep interview this`, or `discuss this tradeoff` into `vico-probe` unless the user explicitly anchors them to a repo object.",
         "If the user's intent could reasonably map to `probe`, `plan`, or `exec`",
+        "## Route Boundary With `vico-grill`",
+        "`vico-grill` owns freeform targets",
+        "if the target is freeform and repository evidence is not yet the governing constraint, prefer `vico-grill`",
         "validator hard-fail behavior",
         "system-wide contract boundary or enforcement boundary",
         "system-wide enforcement boundary or distribution/runtime contract",
@@ -253,6 +259,95 @@ def validate_vico_probe_contract(root: Path) -> list[str]:
         ):
             if marker not in help_text:
                 failures.append(f"vico-probe/references/help-template.md missing grill shortcut marker: {marker}")
+
+    return failures
+
+
+def validate_vico_grill_contract(root: Path) -> list[str]:
+    failures: list[str] = []
+    skill_path = root / "vico-grill" / "SKILL.md"
+    help_path = root / "vico-grill" / "references" / "help-template.md"
+    agent_path = root / "vico-grill" / "agents" / "openai.yaml"
+
+    if not skill_path.exists():
+        return [f"Missing vico-grill skill file: {skill_path}"]
+    for path, label in ((help_path, "help template"), (agent_path, "agent prompt")):
+        if not path.exists():
+            failures.append(f"Missing vico-grill {label}: {path}")
+
+    skill_text = skill_path.read_text(encoding="utf-8")
+    required_skill_markers = (
+        "Freeform questioning skill",
+        "Treat natural requests such as `grill this idea`, `grill me`, `stress-test this decision`, `deep interview this`, `discuss this tradeoff`, or `how do I use vico-grill`",
+        "## Distinction From `vico-probe`",
+        "route to `vico-probe` when the user wants to inspect a repo plan, PRD, design, or codebase",
+        "do not keep the conversation in `vico-grill` once the user points at a concrete repo object",
+        "if the request could reasonably mean either freeform grilling or repo-native probing",
+        "## Hard Route Boundary",
+        "freeform targets such as ideas, decisions, tradeoffs, positioning, prioritization, or strategy defaults belong in `vico-grill`",
+        "repo-native targets such as plans, PRDs, designs, codebases, slugs, files, and active `.vico` artifacts belong in `vico-probe`",
+        "## Workflow",
+        "keep one high-value question active at a time",
+        "keep one active question at a time",
+        "challenge assumptions directly instead of being agreeable by default",
+        "`推` or `rec` = choose the recommended option",
+        "`继续` or `cont` = continue grilling",
+        "`收口` or `close` = stop questioning and synthesize",
+        "`probe` = upgrade to `vico-probe`",
+        "`plan` = upgrade to `vico-plan`",
+        "route to `direct_execute` when questioning is done",
+        "do not claim repository-backed evidence when operating in `vico-grill`",
+        "for high-stakes domains such as finance, law, or medicine",
+        "keep persistent `.vico` writes out of this skill",
+        "Surface `Skill route` and `Route reason` in the first visible update when `vico-grill` is selected",
+        "## Output Contract",
+        "`Question N: <question text>`",
+        "`Recommended next route`",
+        "Use [references/help-template.md]",
+    )
+    for marker in required_skill_markers:
+        if marker not in skill_text:
+            failures.append(f"vico-grill/SKILL.md missing marker: {marker}")
+
+    if help_path.exists():
+        help_text = help_path.read_text(encoding="utf-8")
+        required_help_markers = (
+            "## Vico Grill Help",
+            "user's primary working language",
+            "Keep commands and route literals unchanged.",
+            "Axis position: the freeform questioning lane",
+            "surface `Skill route` and `Route reason` in the first visible update when `vico-grill` is selected",
+            "stay session-local by default",
+            "if the user points at a concrete repo plan, PRD, design, codebase, slug, or `.vico` artifact, do not stay in `vico-grill`",
+            "route to `vico-probe` when repository evidence should drive the next question",
+            "route to `vico-plan` when the topic is already ready to become tracked work",
+            "`推` / `rec`: choose the recommended option",
+            "`继续` / `cont`: continue grilling",
+            "`收口` / `close`: stop questioning and synthesize",
+            "`probe`: upgrade to `vico-probe`",
+            "`plan`: upgrade to `vico-plan`",
+            "`grill this idea`",
+            "`grill this problem`",
+            "`how do I use vico-grill`",
+        )
+        for marker in required_help_markers:
+            if marker not in help_text:
+                failures.append(f"vico-grill/references/help-template.md missing marker: {marker}")
+
+    if agent_path.exists():
+        agent_text = agent_path.read_text(encoding="utf-8")
+        required_agent_markers = (
+            "Vico Grill",
+            "one high-value question active at a time",
+            "challenge assumptions directly",
+            "`rec`, `cont`, `close`, `probe`, and `plan` shortcuts",
+            "stay session-only by default",
+            "do not claim repository-backed evidence",
+            "SKILL.md",
+        )
+        for marker in required_agent_markers:
+            if marker not in agent_text:
+                failures.append(f"vico-grill/agents/openai.yaml missing marker: {marker}")
 
     return failures
 
@@ -493,12 +588,13 @@ def validate_vico_plan_contract(root: Path) -> list[str]:
         for marker in (
             "## Mode Hints",
             "`verify`: use when you need to check completion against real code and test evidence before close-out",
-            "`verify close`: use when you want verification to gate an immediate close-out",
+            "`verify close`: use when you explicitly want verification to gate an immediate close-out",
             "`verify sync`: use when you want verification to gate an immediate state refresh",
             "`verify replan`: use when you want verification to gate an immediate execution-contract rewrite",
             "`sync`: use when code moved and the current plan should catch up",
             "`replan`: use when the same slug still applies",
             "`prd`: use when the work now needs or updates `prd_backed` framing",
+            "`close`: use only when you explicitly want active docs deleted after completion is verified",
         ):
             if marker not in help_text:
                 failures.append(f"vico-plan/references/templates/help-template.md missing mode hint marker: {marker}")
@@ -552,12 +648,15 @@ def validate_workflow_invariants(root: Path) -> list[str]:
     failures: list[str] = []
     required_markers: dict[Path, tuple[str, ...]] = {
         root / "README.md": (
+            "`vico-grill`",
             "`vico-plan` is the only default user-facing entrypoint",
             "every tracked slug should have an `.vico/index/<slug>.json` linkage file",
-            "agents may route automatically from `vico-exec` into `vico-plan close`",
+            "agents should stop after showing completion evidence and wait for the user to type the close command explicitly",
             "lightweight workflow invariant checks",
             "Default Light, Escalate When Needed.",
+            "freeform grilling is the lightest questioning lane",
             "probing and execution are separate escalation axes",
+            "freeform questioning can scale from `vico-grill` into `vico-probe` or `vico-plan`",
             "## Persistence Policy",
             "## Most Common Paths",
             "## Escalation Hints",
@@ -566,7 +665,14 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "## Route Visibility",
             "## Install And Uninstall",
             "## Feedback Flow",
+            "`vico-grill -> vico-probe`",
+            "`vico-grill -> vico-plan`",
             "`vico-probe grill plan -> vico-plan`",
+            "grill this idea",
+            "grill this problem",
+            "how do I use vico-grill",
+            "If the wording is just `grill this` or `grill this problem`, prefer `vico-grill` unless the user also names a repo object.",
+            "If the wording is `grill this plan`, `grill this PRD`, or points at `.vico`, prefer `vico-probe`.",
             "verify this plan",
             "verify close",
             "verify sync",
@@ -622,7 +728,7 @@ def validate_workflow_invariants(root: Path) -> list[str]:
         ),
         root / "vico-exec" / "SKILL.md": (
             "not final close-out deletion",
-            "route to `vico-plan close`",
+            "recommend `vico-plan close`",
             "route back through `vico-plan` for reconcile",
             "Prefer `scripts/sync_vico_index.py`",
             "Use [references/status-vocabulary.md]",
@@ -731,7 +837,12 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "## 路由可见性",
             "## 安装与卸载",
             "## 反馈流程",
+            "`vico-grill`",
+            "freeform grilling 是最轻的追问通道",
+            "`vico-grill -> vico-probe`",
+            "`vico-grill -> vico-plan`",
             "`vico-probe grill plan -> vico-plan`",
+            "vico-grill 如何使用",
             "vico-probe 如何使用",
             "vico-plan 如何使用",
             "vico-exec 如何使用",
@@ -751,6 +862,29 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "Vercel skills 使用指南：",
             "默认从轻，按需升级。",
         ),
+        root / "vico-grill" / "SKILL.md": (
+            "## Distinction From `vico-probe`",
+            "## Hard Route Boundary",
+            "keep one high-value question active at a time",
+            "keep `vico-grill` state session-local by default",
+            "do not claim repository-backed evidence",
+            "`probe` = upgrade to `vico-probe`",
+            "`plan` = upgrade to `vico-plan`",
+            "Use [references/help-template.md]",
+        ),
+        root / "vico-grill" / "references" / "help-template.md": (
+            "## Vico Grill Help",
+            "user's primary working language",
+            "Keep commands and route literals unchanged.",
+            "Axis position: the freeform questioning lane",
+            "surface `Skill route` and `Route reason` in the first visible update when `vico-grill` is selected",
+            "if the user points at a concrete repo plan, PRD, design, codebase, slug, or `.vico` artifact, do not stay in `vico-grill`",
+            "route to `vico-probe` when repository evidence should drive the next question",
+            "route to `vico-plan` when the topic is already ready to become tracked work",
+            "## Shortcuts",
+            "## Examples",
+            "`grill this problem`",
+        ),
         root / "vico-probe" / "references" / "help-template.md": (
             "## Vico Probe Help",
             "## Modes",
@@ -758,9 +892,11 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "## Internal State",
             "## Behavior",
             "surface `Skill route` and `Route reason` in the first visible update when `vico-probe` is selected",
+            "keep freeform idea grilling in `vico-grill`",
             "## Topic Map Controls",
             "## Plan Targets",
             "## Examples",
+            "`grill this PRD`",
             "user's primary working language",
             "Keep commands and mode literals unchanged.",
             "Axis position: the probing axis",
@@ -775,7 +911,7 @@ def validate_workflow_invariants(root: Path) -> list[str]:
         ),
         root / "vico-exec" / "references" / "execute-loop.md": (
             "do not perform close-out deletion inside `vico-exec`",
-            "route directly to `vico-plan close`",
+            "wait for explicit user confirmation before any close-out deletion step",
         ),
         root / "vico-exec" / "references" / "execution-report-template.md": (
             "user's primary working language",
@@ -842,6 +978,8 @@ def validate_contract_map(root: Path) -> list[str]:
             "## User-Facing Vs Internal",
             "## Route Shift Policy",
             "Escalation and de-escalation are both valid workflow moves.",
+            "`vico-grill` state is session-local by default",
+            "`vico-grill` may upgrade into `vico-probe` or `vico-plan`",
             "## Verification Authority",
             "## Public Modes Vs Status Values",
             "## External Side Effects",
@@ -860,6 +998,8 @@ def validate_contract_map(root: Path) -> list[str]:
             "## 面向用户 vs 内部状态",
             "## Route Shift 策略",
             "升级和降级都应是合法的 workflow move。",
+            "`vico-grill` 的状态默认仅存在于会话中",
+            "`vico-grill` 可以升级到 `vico-probe` 或 `vico-plan`",
             "## 核验权威性",
             "## 公开模式名 vs 状态值",
             "## 外部副作用",
@@ -971,11 +1111,24 @@ def main() -> int:
             print(f"[ok] quick_validate {skill_dir.name}")
 
     if python_files:
-        compile_result = run([sys.executable, "-m", "py_compile", *[str(path) for path in python_files]], root)
+        pycache_prefix = root / ".tmp-pycache"
+        shutil.rmtree(pycache_prefix, ignore_errors=True)
+        pycache_prefix.mkdir(exist_ok=True)
+        compile_env = dict(os.environ)
+        compile_env["PYTHONPYCACHEPREFIX"] = str(pycache_prefix)
+        compile_result = subprocess.run(
+            [sys.executable, "-m", "py_compile", *[str(path) for path in python_files]],
+            cwd=root,
+            text=True,
+            capture_output=True,
+            env=compile_env,
+        )
         if compile_result.returncode != 0:
             failures.append(f"py_compile failed:\n{compile_result.stdout}{compile_result.stderr}".strip())
+            shutil.rmtree(pycache_prefix, ignore_errors=True)
         else:
             print(f"[ok] py_compile {len(python_files)} python files")
+            shutil.rmtree(pycache_prefix, ignore_errors=True)
             remove_pycache_dirs(root)
 
     test_file = root / "scripts" / "test_vico_automation.py"
@@ -999,6 +1152,12 @@ def main() -> int:
         failures.append("vico-probe contract validation failed:\n" + "\n".join(probe_failures))
     else:
         print("[ok] vico-probe contract")
+
+    grill_failures = validate_vico_grill_contract(root)
+    if grill_failures:
+        failures.append("vico-grill contract validation failed:\n" + "\n".join(grill_failures))
+    else:
+        print("[ok] vico-grill contract")
 
     feedback_failures = validate_vico_feedback_contract(root)
     if feedback_failures:

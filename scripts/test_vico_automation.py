@@ -21,6 +21,8 @@ WORKSPACE_VALIDATE_SCRIPT = PLAN_SCRIPTS / "validate_vico_workspace.py"
 PROBE_SKILL = SKILLS_ROOT / "vico-probe" / "SKILL.md"
 PROBE_HELP = SKILLS_ROOT / "vico-probe" / "references" / "help-template.md"
 PROBE_OUTPUT = SKILLS_ROOT / "vico-probe" / "references" / "output-format.md"
+GRILL_SKILL = SKILLS_ROOT / "vico-grill" / "SKILL.md"
+GRILL_HELP = SKILLS_ROOT / "vico-grill" / "references" / "help-template.md"
 PLAN_SKILL = SKILLS_ROOT / "vico-plan" / "SKILL.md"
 PROBE_HANDOFF_TEMPLATE = SKILLS_ROOT / "vico-plan" / "references" / "templates" / "probe-handoff-template.md"
 PLAN_HELP = SKILLS_ROOT / "vico-plan" / "references" / "templates" / "help-template.md"
@@ -51,7 +53,9 @@ class VicoAutomationTests(unittest.TestCase):
         return path.read_text(encoding="utf-8")
 
     def make_repo(self) -> Path:
-        temp_dir = WORKSPACE_ROOT / f"vico-automation-{uuid.uuid4().hex[:8]}"
+        temp_root = SKILLS_ROOT / ".tmp-tests"
+        temp_root.mkdir(exist_ok=True)
+        temp_dir = temp_root / f"vico-automation-{uuid.uuid4().hex[:8]}"
         temp_dir.mkdir()
         self.addCleanup(shutil.rmtree, temp_dir, ignore_errors=True)
         (temp_dir / ".vico").mkdir()
@@ -258,9 +262,12 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("recommendation-grade", probe_skill)
         self.assertIn("ask-user", probe_skill)
         self.assertIn("Do not force `grill` as the default", probe_skill)
+        self.assertIn("Do not absorb freeform requests such as `grill this idea`", probe_skill)
+        self.assertIn("## Route Boundary With `vico-grill`", probe_skill)
 
         self.assertIn("route by issue state instead of forcing questioning every time", probe_help)
         self.assertIn("do a light scan first, then route into recommendation, one question, review, grill, or resolve", probe_help)
+        self.assertIn("keep freeform idea grilling in `vico-grill`", probe_help)
 
         self.assertIn("recommends, asks one question, reviews, or resolves based on issue state", readme)
         self.assertIn("根据 issue state 决定是直接建议、发一问、进入 `review`，还是直接收口", readme_zh)
@@ -269,6 +276,7 @@ class VicoAutomationTests(unittest.TestCase):
         readme = self.read(README)
         readme_zh = self.read(README_ZH)
         probe_help = self.read(PROBE_HELP)
+        grill_help = self.read(GRILL_HELP)
         plan_help = self.read(PLAN_HELP)
         exec_help = self.read(SKILLS_ROOT / "vico-exec" / "references" / "help-template.md")
 
@@ -277,6 +285,7 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("默认从轻，按需升级。", readme_zh)
         self.assertIn("probing 和 execution 是两条独立的升级轴", readme_zh)
 
+        self.assertIn("Axis position: the freeform questioning lane", grill_help)
         self.assertIn("Axis position: the probing axis", probe_help)
         self.assertIn("Axis position: the tracked-execution front door", plan_help)
         self.assertIn("Axis position: the heavy end of the execution axis", exec_help)
@@ -295,6 +304,15 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("## Route Visibility", readme)
         self.assertIn("## Install And Uninstall", readme)
         self.assertIn("## Feedback Flow", readme)
+        self.assertIn("`vico-grill`", readme)
+        self.assertIn("grill this idea", readme)
+        self.assertIn("grill this problem", readme)
+        self.assertIn("how do I use vico-grill", readme)
+        self.assertIn("`vico-grill`: keep freeform grill state session-local by default", readme)
+        self.assertIn("`vico-grill -> vico-probe`", readme)
+        self.assertIn("`vico-grill -> vico-plan`", readme)
+        self.assertIn("If the wording is just `grill this` or `grill this problem`, prefer `vico-grill` unless the user also names a repo object.", readme)
+        self.assertIn("If the wording is `grill this plan`, `grill this PRD`, or points at `.vico`, prefer `vico-probe`.", readme)
         self.assertIn("`vico-probe grill plan -> vico-plan`", readme)
         self.assertIn("how do I use vico-probe", readme)
         self.assertIn("how do I use vico-plan", readme)
@@ -332,6 +350,10 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("## 路由可见性", readme_zh)
         self.assertIn("## 安装与卸载", readme_zh)
         self.assertIn("## 反馈流程", readme_zh)
+        self.assertIn("`vico-grill`", readme_zh)
+        self.assertIn("vico-grill 如何使用", readme_zh)
+        self.assertIn("`vico-grill -> vico-probe`", readme_zh)
+        self.assertIn("`vico-grill -> vico-plan`", readme_zh)
         self.assertIn("`vico-probe grill plan -> vico-plan`", readme_zh)
         self.assertIn("vico-probe 如何使用", readme_zh)
         self.assertIn("vico-plan 如何使用", readme_zh)
@@ -359,6 +381,8 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("## User-Facing Vs Internal", contracts)
         self.assertIn("`direct_execute`", contracts)
         self.assertIn("`vico-plan -> vico-exec`", contracts)
+        self.assertIn("`vico-grill` state is session-local by default", contracts)
+        self.assertIn("`vico-grill` may upgrade into `vico-probe` or `vico-plan`", contracts)
         self.assertIn("## Route Shift Policy", contracts)
         self.assertIn("Workflow re-entry is a first-class supported path", contracts)
         self.assertIn("## Verification Authority", contracts)
@@ -368,6 +392,8 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("## 面向用户 vs 内部状态", contracts_zh)
         self.assertIn("`direct_execute`", contracts_zh)
         self.assertIn("`vico-plan -> vico-exec`", contracts_zh)
+        self.assertIn("`vico-grill` 的状态默认仅存在于会话中", contracts_zh)
+        self.assertIn("`vico-grill` 可以升级到 `vico-probe` 或 `vico-plan`", contracts_zh)
         self.assertIn("## Route Shift 策略", contracts_zh)
         self.assertIn("workflow re-entry 是一等支持路径", contracts_zh)
         self.assertIn("## 核验权威性", contracts_zh)
@@ -451,9 +477,10 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("`verify`", plan_skill)
         self.assertIn("- replan", plan_help)
         self.assertIn("- verify", plan_help)
-        self.assertIn("`verify close`: use when you want verification to gate an immediate close-out", plan_help)
+        self.assertIn("`verify close`: use when you explicitly want verification to gate an immediate close-out", plan_help)
         self.assertIn("`verify sync`: use when you want verification to gate an immediate state refresh", plan_help)
         self.assertIn("`verify replan`: use when you want verification to gate an immediate execution-contract rewrite", plan_help)
+        self.assertIn("`close`: use only when you explicitly want active docs deleted after completion is verified", plan_help)
         self.assertIn("Use `replan` as the single public mode for same-slug execution-contract rewrites.", plan_skill)
         self.assertNotIn("- `reset`", plan_skill)
         self.assertNotIn("- reset", plan_help)
@@ -625,10 +652,40 @@ class VicoAutomationTests(unittest.TestCase):
         probe_output = self.read(PROBE_OUTPUT)
 
         for text in (probe_skill, probe_help, probe_output):
-            self.assertNotIn("vico-grill", text)
             self.assertNotIn("Grill Handoff", text)
 
+        self.assertIn("## Route Boundary With `vico-grill`", probe_skill)
+        self.assertIn("keep freeform idea grilling in `vico-grill`", probe_help)
         self.assertIn("# Vico Probe Output Format", probe_output)
+
+    def test_grill_skill_is_present_freeform_and_distinct_from_probe(self) -> None:
+        grill_skill = self.read(GRILL_SKILL)
+        grill_help = self.read(GRILL_HELP)
+        probe_skill = self.read(PROBE_SKILL)
+
+        self.assertIn("Freeform questioning skill", grill_skill)
+        self.assertIn("## Distinction From `vico-probe`", grill_skill)
+        self.assertIn("## Hard Route Boundary", grill_skill)
+        self.assertIn("keep one high-value question active at a time", grill_skill)
+        self.assertIn("do not claim repository-backed evidence when operating in `vico-grill`", grill_skill)
+        self.assertIn("do not keep the conversation in `vico-grill` once the user points at a concrete repo object", grill_skill)
+        self.assertIn("`probe` = upgrade to `vico-probe`", grill_skill)
+        self.assertIn("`plan` = upgrade to `vico-plan`", grill_skill)
+        self.assertIn("for high-stakes domains such as finance, law, or medicine", grill_skill)
+        self.assertIn("Use [references/help-template.md]", grill_skill)
+
+        self.assertIn("## Vico Grill Help", grill_help)
+        self.assertIn("Axis position: the freeform questioning lane", grill_help)
+        self.assertIn("surface `Skill route` and `Route reason` in the first visible update when `vico-grill` is selected", grill_help)
+        self.assertIn("if the user points at a concrete repo plan, PRD, design, codebase, slug, or `.vico` artifact, do not stay in `vico-grill`", grill_help)
+        self.assertIn("route to `vico-probe` when repository evidence should drive the next question", grill_help)
+        self.assertIn("route to `vico-plan` when the topic is already ready to become tracked work", grill_help)
+        self.assertIn("`probe`: upgrade to `vico-probe`", grill_help)
+        self.assertIn("`plan`: upgrade to `vico-plan`", grill_help)
+        self.assertIn("`grill this problem`", grill_help)
+        self.assertIn("## Route Boundary With `vico-grill`", probe_skill)
+        probe_help = self.read(PROBE_HELP)
+        self.assertIn("`grill this PRD`", probe_help)
 
     def test_probe_contract_no_longer_supports_batch_mode(self) -> None:
         probe_skill = self.read(PROBE_SKILL)

@@ -69,7 +69,8 @@ Stop when:
 When all planned work is complete:
 
 - update the plan so completion is explicit
-- if the user expects end-to-end completion, route directly to `vico-plan close`
+- recommend `vico-plan close` or `vico-plan verify close` only after showing the completion evidence
+- wait for explicit user confirmation before any close-out deletion step
 - do not perform close-out deletion inside `vico-exec`
 
 ## Required Output At Any Stop Point

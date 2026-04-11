@@ -23,7 +23,7 @@ Do not stop just because one small slice completed. Stop only when:
 - a user decision is required
 - the current plan is stale enough that execution would be misleading
 
-This skill owns implementation progress and plan synchronization, not final close-out deletion. When the work is truly complete, route to `vico-plan close`.
+This skill owns implementation progress and plan synchronization, not final close-out deletion. When the work is truly complete, stop with the plan updated and recommend `vico-plan close`; do not delete active docs without explicit user confirmation.
 
 Treat natural requests such as `keep going`, `continue until complete`, `execute the active plan`, `carry this through unless blocked`, or `how do I use vico-exec` as valid `vico-exec` entrypoints when an active plan already exists.
 If the user sounds like they want persistent execution but no active plan exists, ask a short clarification question or route them through `vico-plan` instead of guessing.
@@ -68,7 +68,7 @@ For each meaningful execution pass:
 - keep commands, status literals, blocker types, file paths, and other machine-meaningful literals stable unless that downstream contract is explicitly changed
 - persist plan, index, or temporary reconcile updates to disk when the user expects docs to stay current or when continuation depends on accurate execution state
 - do not fabricate disk writes when no execution-state change is needed
-- route to `vico-plan close` automatically when implementation is complete and the user expects end-to-end completion
+- when implementation is complete, route to `vico-plan close` automatically only as a recommendation handoff, or recommend `vico-plan verify`, but do not route into close-out deletion without explicit user confirmation
 - include the active source, active slug, and continuation basis in the execution report so the user can see why execution continued or stopped
 - keep deeper continuation heuristics implicit by default unless the user asks for execution internals or a blocker requires them to understand the exact boundary
 
@@ -89,7 +89,7 @@ High-level rules:
 - When a blocker is real, say exactly why execution cannot continue and what decision or input is needed.
 - Continue after each completed slice when another unblocked step exists.
 - Do not stop merely because one checklist item finished.
-- If the user intent is end-to-end completion and implementation is now complete, automatically route to `vico-plan close` rather than making the user remember that extra step.
+- If the user intent is end-to-end completion and implementation is now complete, stop with completion evidence and recommend `vico-plan close` rather than deleting active docs automatically.
 
 For each execution pass, produce a compact execution report using [references/execution-report-template.md](references/execution-report-template.md).
 When blocked, classify the blocker and use the blocked output shape in [references/blocker-taxonomy.md](references/blocker-taxonomy.md).

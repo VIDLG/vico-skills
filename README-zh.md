@@ -17,6 +17,8 @@ English version: [README.md](README.md)
 
 ## 技能列表
 
+- `vico-grill`
+  面向任意主题的持续追问；在仓库证据还没成为主约束之前，用来拷问想法、决策和取舍。
 - `vico-plan`
   唯一默认入口；负责判断 `no-doc / plan_only / prd_backed`、轻量对账、创建或更新 active plan，并吸收 probe handoff。
 - `vico-exec`
@@ -46,7 +48,9 @@ English version: [README.md](README.md)
 `默认从轻，按需升级。`
 
 - `vico-skills` 的目标是在低复杂度下保持 vibe-friendly，只在工作真正需要时才升级到更正式的流程
+- freeform grilling 是最轻的追问通道，`vico-probe` 是面向仓库对象的正式追问通道
 - probing 和 execution 是两条独立的升级轴，不是单条强制的重流程
+- freeform questioning 可以从 `vico-grill` 升级到 `vico-probe` 或 `vico-plan`，当下一个关键约束变成仓库现实或 tracked execution 时再升级
 - probing 可以从直接澄清逐步升级到 `vico-probe`、`scan`、`grill`
 - execution 可以从直接 vibe 式执行逐步升级到 `vico-plan`、`prd_backed`、`vico-exec`
 - 更重的模式是为了降低歧义和协作成本，不是为了给每个任务预先加流程
@@ -57,12 +61,16 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 ## 落盘原则
 
+- `vico-grill`：默认把 freeform grill state 保持在会话内，不写 `.vico` artifact
 - `vico-probe`：默认把 probe state 保持在会话内；只有用户明确要求写回时才落盘
 - `vico-plan`：只要在塑造 tracked work，就默认写入或更新 active plan、可选 PRD 和派生 index
 - `vico-exec`：当连续执行依赖准确状态，或用户希望文档保持最新时，落盘 plan、index 或临时 reconcile 更新
 
 ## 最常用路径
 
+- 自由追问：`vico-grill`
+- 自由追问后进入正式检查：`vico-grill -> vico-probe`
+- 自由追问后直接立项：`vico-grill -> vico-plan`
 - 直接 vibe 式执行：不需要 tracked workflow 时，直接对话并立即实现
 - 先检查再规划：`vico-probe -> vico-plan`
 - 继续细化现有 plan：`vico-probe grill plan -> vico-plan`
@@ -71,6 +79,7 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 ## 升级提示
 
+- 当你想围绕一个想法、决策或取舍做自由追问，而仓库证据还没成为核心约束时，使用 `vico-grill`
 - 当任务局部、低风险、且不需要跨轮 tracked 协调时，停留在直接 vibe 式执行
 - 当对象不清晰、有争议，或明显适合先做 evidence-first 追问时，使用 `vico-probe`
 - 当工作应升级为 `.vico/` 下的 tracked execution contract 时，使用 `vico-plan`
@@ -79,6 +88,8 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 ## Route Shifts
 
+- `vico-grill -> vico-probe`：当 freeform 追问已经碰到 repo plan、PRD、design、codebase，或下一个判断必须依赖仓库证据时升级
+- `vico-grill -> vico-plan`：当追问结果已经足以定义 `.vico/` 下的 tracked work 时升级
 - `direct_execute -> vico-plan`：当轻量执行演化成 tracked work 时，`vico-plan` 应自动做最小 reconcile / sync，重新锚定当前代码现实
 - `vico-plan -> direct_execute`：当剩余工作已经足够小且低风险时，优先回到更轻的执行路径，而不是继续把用户留在重流程里
 - `vico-probe -> direct_execute`：当 probe 已经确认下一步是局部实现时，直接路由去做，不要强行再过 planning
@@ -86,12 +97,15 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 ## 自然触发词
 
-- `vico-probe`：`scan 仓库`、`inspect codebase`、`grill 这个 plan`、`继续细化这个 plan`、`vico-probe 如何使用`
-- `vico-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify close`、`verify sync`、`verify replan`、`vico-plan 如何使用`
+- `vico-grill`：`grill 这个想法`、`grill 我`、`拷问这个决策`、`deep interview 这个问题`、`discuss 这个取舍`、`vico-grill 如何使用`
+- `vico-probe`：`scan 仓库`、`inspect codebase`、`grill 这个 plan`、`grill 这个 PRD`、`继续细化这个 plan`、`vico-probe 如何使用`
+- `vico-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify close`、`verify sync`、`verify replan`、`close 这个 plan`、`vico-plan 如何使用`
 - `vico-exec`：`继续做`、`一直做到完成`、`执行 active plan`、`除非阻塞否则继续`、`vico-exec 如何使用`
 - `vico-feedback`：`提个 issue`、`报告 bug`、`我对 vico-skills 有反馈`、`整理成 GitHub issue`、`vico-feedback 如何使用`
 
 如果一条自然语言请求同时可能落到多个 route 上，优先用一句简短确认来消歧，不要直接猜。
+如果用户只说 `grill 这个`、`grill 这个问题`，且没有点名 repo object，优先走 `vico-grill`。
+如果用户说的是 `grill 这个 plan`、`grill 这个 PRD`，或直接指向 `.vico` artifact，优先走 `vico-probe`。
 
 ## 路由可见性
 
@@ -103,6 +117,7 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 ## 什么时候用哪个 Skill
 
+- 需要先围绕想法、决策或取舍做高强度自由追问：`vico-grill`
 - 需要开始、更新、对账或重建 tracked work：`vico-plan`
 - 需要在 close-out 前根据真实代码库核实 plan 是否真的完成：`vico-plan verify`
 - 基于 active plan 继续实现：`vico-exec`
@@ -156,9 +171,11 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 为指定 agent 安装单个 skill：
 
 ```bash
+npx skills@latest add VIDLG/vico-skills --skill vico-grill --agent codex
 npx skills@latest add VIDLG/vico-skills --skill vico-probe --agent codex
 npx skills@latest add VIDLG/vico-skills --skill vico-plan --agent codex
 npx skills@latest add VIDLG/vico-skills --skill vico-exec --agent codex
+npx skills@latest add VIDLG/vico-skills --skill vico-feedback --agent codex
 ```
 
 为所有受支持的 agents 安装全部 Vico skills：
@@ -195,9 +212,11 @@ npx skills@latest add VIDLG/vico-skills --list
 用 `npx skills@latest` 卸载单个 skill：
 
 ```bash
+npx skills@latest remove vico-grill
 npx skills@latest remove vico-probe
 npx skills@latest remove vico-plan
 npx skills@latest remove vico-exec
+npx skills@latest remove vico-feedback
 ```
 
 如果你走的是开发期 link，直接删除对应 agent skills 目录里的 link 即可。
@@ -281,17 +300,17 @@ vico-probe help
 - `vico-probe help`
   - 查看模式和推荐使用方式
 
-### 执行并完成
+### 执行后手动 Close
 
 ```text
-vico-exec -> vico-plan close
+vico-exec -> 用户确认 -> vico-plan close
 ```
 
 即使用户表达的是“做到真正完成”，生命周期仍然保持简单：
 
 - `vico-exec` 负责完成实现并同步 plan
 - `vico-plan close` 负责 close-out 删除
-- agent 可以在执行结束后自动路由到 `vico-plan close`，不要求用户手动记住第二步
+- agent 应在展示完成证据后停下，等待用户手动输入 close 命令
 
 ## 开发说明
 

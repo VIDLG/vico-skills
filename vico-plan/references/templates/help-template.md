@@ -53,11 +53,12 @@ Keep commands and mode literals unchanged.
 
 - `sync`: use when code moved and the current plan should catch up
 - `verify`: use when you need to check completion against real code and test evidence before close-out
-- `verify close`: use when you want verification to gate an immediate close-out
+- `verify close`: use when you explicitly want verification to gate an immediate close-out
 - `verify sync`: use when you want verification to gate an immediate state refresh
 - `verify replan`: use when you want verification to gate an immediate execution-contract rewrite
 - `replan`: use when the same slug still applies, but the execution contract itself should be rewritten
 - `prd`: use when the work now needs or updates `prd_backed` framing
+- `close`: use only when you explicitly want active docs deleted after completion is verified
 
 ## Examples
 

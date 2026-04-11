@@ -1,6 +1,6 @@
 # Close-Out Rules
 
-Delete an active PRD or plan when one of these is true. The default close-out action is to delete active docs, not archive them.
+Delete an active PRD or plan only after explicit user close-out confirmation and when one of these is true. The default close-out action is to delete active docs, not archive them.
 
 - the work is complete
 - the work was cancelled
@@ -24,10 +24,11 @@ Recommended minimums:
 ## Archive Steps
 
 1. Confirm through `vico-plan verify` or equivalent current-code evidence that the document is no longer an active source of truth.
-2. Extract any still-relevant facts into architecture docs.
-3. Record any important `Outcome`, `Deviations`, or `Follow-up` notes elsewhere if they still matter.
-4. Delete the active file.
-5. Remove stale temporary reconcile snapshots and delete the index once no active artifact set remains.
+2. Confirm that the user explicitly asked for close-out in the current turn.
+3. Extract any still-relevant facts into architecture docs.
+4. Record any important `Outcome`, `Deviations`, or `Follow-up` notes elsewhere if they still matter.
+5. Delete the active file.
+6. Remove stale temporary reconcile snapshots and delete the index once no active artifact set remains.
 
 ## Completion Summary Template
 
@@ -46,7 +47,8 @@ Recommended minimums:
 ## Anti-Patterns
 
 - treating `verify` as if it automatically performs close-out deletion
-- leaving a completed plan in an active directory without deleting it
+- deleting active docs just because an agent believes the work is complete
+- leaving a completed plan in an active directory without either a clear pending-manual-close state or a justified reason to keep it active
 - relying on deleted PRD content in memory instead of extracting needed truth into architecture docs
 - treating `.vico/resume/` as a history store instead of a current-state handoff location
 - treating `.vico/index/` as if it were the primary source of scope or execution truth

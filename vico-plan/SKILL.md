@@ -104,7 +104,7 @@ If a matching probe handoff came from a broad repo scan or architectural pass, t
 `verify` must be strictly read-only.
 `truth` is manual only. Do not trigger it automatically.
 Use `replan` as the single public mode for same-slug execution-contract rewrites. Do not expose a separate public `reset` mode.
-Use `verify close` as the explicit combined path when the user wants verification followed immediately by close-out if and only if the verdict is `verified_complete`.
+Use `verify close` as the explicit combined path when the user manually asks for verification followed immediately by close-out and the verdict is `verified_complete`.
 Use `verify sync` when the user wants verification to gate an immediate plan-state refresh, and `verify replan` when they want verification to gate an immediate execution-contract rewrite.
 
 ## Workflow
@@ -143,7 +143,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 13. Write or update the plan at `.vico/plans/active/<slug>.md` using [references/templates/plan-template.md](references/templates/plan-template.md). Prefer [scripts/sync_vico_headers.py](scripts/sync_vico_headers.py) when header cross-links drift.
 14. If there is a source PRD, update the PRD header so `Execution Plan` points to the new plan path.
 15. If overlap handling is more complex than a clean rewrite, delete the active docs and rebuild one fresh dated slug instead of preserving a confusing lineage.
-16. If the user intent is to stop rather than continue, support these explicit terminal actions:
+16. If the user intent is to stop rather than continue, support these explicit terminal actions only when the user asks for them explicitly in the current turn:
    - `close`: delete active docs because the work is complete
    - `cancel`: delete active docs because the work is abandoned
 17. If durable truth should be extracted into `docs/architecture/`, do that as part of this workflow instead of routing to a separate docs skill.
@@ -190,6 +190,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - Support explicit terminal actions inside this workflow:
   - `close` = delete-and-exit because work is complete
   - `cancel` = delete-and-exit because work is abandoned
+- Never infer `close` from end-to-end completion, completed checklist state, or agent expectation alone. Wait for explicit user confirmation in the current turn before deleting active docs.
 - Treat the plan as the main human-readable execution artifact. The index is supporting metadata, not peer-level prose.
 
 ## Execution Readiness Rules
@@ -216,8 +217,8 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - If the user explicitly invokes `verify close`, allow close-out only when the verdict is `verified_complete`; otherwise stop with the verification result and recommend the correct next mode.
 - If the verdict is not `verified_complete`, prefer `sync`, `replan`, `prd`, or resumed execution over `close`.
 - In multi-active situations, `verify` should require an explicit slug unless the target is unambiguous from current-turn user steering.
+- If completion evidence is strong but the user has not explicitly asked for `close`, stop after `verify` and recommend `close` instead of deleting active docs.
 - If the user explicitly says `close` or `close out` and the target slug is unambiguous, treat that as authorization to close out immediately when completion evidence is already strong from the current turn or a recent verification.
-- In that case, do not stop just to re-explain that `close` deletes active docs; execute the close-out directly.
 - Only stop instead of executing `close` when completion is not yet verified strongly enough, a blocker prevents safe close-out, multiple active slugs make the destructive target ambiguous, or the user explicitly asks to keep the active docs.
 
 ## Sync Contract
@@ -227,7 +228,8 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - existing slug, implementation advance only: update the plan and minimally refresh the index
 - existing slug, plan no longer matches implementation: perform `diverge-replan`
 - existing slug, plan no longer sufficient for scope framing: perform `upgrade-to-prd-backed` here
-- existing slug, task completed: run `close` here
+- existing slug, task completed without explicit close confirmation: keep the active docs, mark completion clearly, and recommend `close`
+- existing slug, task completed with explicit close confirmation: run `close` here
 - existing slug, task abandoned: run `cancel` here
 
 ## Output Contract

@@ -12,6 +12,7 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 
 ## Persistence Policy
 
+- `vico-grill` state is session-local by default and should not write `.vico` artifacts.
 - `vico-probe` state is session-local by default and should not be written back unless the user explicitly asks.
 - `vico-plan` owns tracked-doc writes for active plan, optional PRD, and derived index state.
 - `vico-exec` may write plan, index, or temporary reconcile state when execution continuity depends on accurate persisted state.
@@ -21,6 +22,7 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 - User-facing output should prioritize the smallest set of conclusions, decisions, and next steps needed for productive continuation.
 - Internal state may remain richer than user-facing output when that extra detail mainly serves routing, continuity, or validation.
 - Do not dump the full internal scheduler, issue bank, or execution heuristics into default user-facing output unless the user asks for that detail or it materially affects the next decision.
+- Do not present freeform `vico-grill` conclusions as if they were repository-backed findings or tracked-plan commitments.
 - Keep machine-consumed fields stable even when surrounding prose is optimized for user readability.
 - When a Vico skill is selected, expose the active skill route and route reason in the first visible update so the user can distinguish skill-routed behavior from generic model behavior.
 - When a human-facing checkpoint, summary, verification result, or handoff is emitted, prefer a `Recommended action` when that action is not already obvious.
@@ -32,6 +34,7 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 ## Route Shift Policy
 
 - Escalation and de-escalation are both valid workflow moves.
+- `vico-grill` may upgrade into `vico-probe` or `vico-plan` when repository reality or tracked execution becomes the next governing constraint.
 - If work grows beyond safe local execution, route into `vico-plan` or `vico-exec` as needed.
 - If work shrinks back into a local, low-risk change, prefer `direct_execute` over keeping the user inside a heavier workflow.
 - When re-entering tracked workflow after direct execution, perform the minimum reconcile or sync needed to align `.vico` state with current repository reality.
