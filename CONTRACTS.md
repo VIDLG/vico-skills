@@ -15,6 +15,13 @@ This document is a governance map. It does not become a new source of workflow, 
 - `wilco-plan` owns tracked-doc writes for active plan, optional PRD, and derived index state.
 - `wilco-exec` may write plan, index, or temporary reconcile state when execution continuity depends on accurate persisted state.
 
+## User-Facing Vs Internal
+
+- User-facing output should prioritize the smallest set of conclusions, decisions, and next steps needed for productive continuation.
+- Internal state may remain richer than user-facing output when that extra detail mainly serves routing, continuity, or validation.
+- Do not dump the full internal scheduler, issue bank, or execution heuristics into default user-facing output unless the user asks for that detail or it materially affects the next decision.
+- Keep machine-consumed fields stable even when surrounding prose is optimized for user readability.
+
 ## Contract Layers
 
 1. `Global workflow constitution`

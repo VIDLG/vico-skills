@@ -361,7 +361,7 @@ Use `grill` when the user wants a sustained interrogation loop or when the curre
 - `Mode: concise | available: concise, detailed`
 - optional `Priority: critical|important|detail`
 - optional `Intent overlay`
-- `Observed issues`
+- `Findings`
 - `Evidence`
 - `Topic map snapshot`
 - `High-risk gaps`
@@ -370,7 +370,9 @@ Use `grill` when the user wants a sustained interrogation loop or when the curre
 - `Suggested next mode`
 
 Use `scan` to establish the problem map, not to start a long questioning chain.
-Every `Observed issue` should be grounded in evidence, not just speculation.
+Every `Finding` should be grounded in evidence, not just speculation.
+The internal `Issue Bank` still tracks the fuller issue set, but default `scan` output should emphasize user-facing findings over raw triage state.
+Only expose full issue-bank style detail when the user asks for it or when unresolved issue structure materially affects the next decision.
 
 ### Grill Contract
 

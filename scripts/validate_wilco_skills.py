@@ -153,6 +153,9 @@ def validate_wilco_probe_contract(root: Path) -> list[str]:
         "system-wide enforcement boundary or distribution/runtime contract",
         "low-risk aliases",
         "folded `scan` items",
+        "`Findings`",
+        "default `scan` output should emphasize user-facing findings over raw triage state",
+        "Only expose full issue-bank style detail when the user asks for it",
     )
     for marker in required_skill_markers:
         if marker not in skill_text:
@@ -177,7 +180,7 @@ def validate_wilco_probe_contract(root: Path) -> list[str]:
             "Recommendation 18:",
             "Target",
             "Issue classes",
-            "Observed issues",
+            "Findings",
             "Evidence",
             "validator hard-fail rules still change the install model",
             "Accepted short replies",
@@ -276,6 +279,7 @@ def validate_wilco_exec_contract(root: Path) -> list[str]:
         "## Multi-Active Safety Rules",
         "do not guess. Ask for an explicit slug or route back through `wilco-plan review`",
         "include the active source, active slug, and continuation basis in the execution report",
+        "keep deeper continuation heuristics implicit by default",
         "[references/execution-report-template.md](references/execution-report-template.md)",
     )
     for marker in required_skill_markers:
@@ -358,6 +362,7 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
         "If the user's intent could reasonably map to lightweight direct execution instead of tracked planning",
         "user's primary working language",
         "machine-consumed handoff field names stable",
+        "keep internal routing and reconciliation heuristics implicit by default",
     ):
         if marker not in skill_text:
             failures.append(f"wilco-plan/SKILL.md missing marker: {marker}")
@@ -654,6 +659,7 @@ def validate_contract_map(root: Path) -> list[str]:
         root / "CONTRACTS.md": (
             "## Distribution Assumptions",
             "## Persistence Policy",
+            "## User-Facing Vs Internal",
             "## Contract Layers",
             "## Owners And Derived Forms",
             "## Sync Policy",
@@ -665,6 +671,7 @@ def validate_contract_map(root: Path) -> list[str]:
         root / "CONTRACTS-zh.md": (
             "## 分发前提",
             "## 落盘原则",
+            "## 面向用户 vs 内部状态",
             "## 契约层级",
             "## Owner 与派生层",
             "## 同步策略",

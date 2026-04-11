@@ -220,6 +220,7 @@ For user-facing textual output:
 - use the user's primary working language when it is clear from the conversation
 - if the user's preferred language is unclear, mirror the user's most recent substantive message
 - keep commands, mode names, file paths, code literals, and machine-consumed handoff field names stable unless that downstream contract is explicitly changed
+- keep internal routing and reconciliation heuristics implicit by default unless they materially affect the user's next planning decision
 
 For `help`:
 

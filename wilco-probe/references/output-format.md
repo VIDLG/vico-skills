@@ -70,7 +70,7 @@ Intent overlay
 
 - inspect current `wilco-probe` design for contract gaps
 
-Observed issues
+Findings
 
 - default routing must remain controller-driven rather than always dropping into `grill`
 - `grill` should stay a sustained-questioning submode rather than the default path

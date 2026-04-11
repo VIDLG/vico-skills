@@ -69,6 +69,7 @@ For each meaningful execution pass:
 - do not fabricate disk writes when no execution-state change is needed
 - route to `wilco-plan done` automatically when implementation is complete and the user expects end-to-end completion
 - include the active source, active slug, and continuation basis in the execution report so the user can see why execution continued or stopped
+- keep deeper continuation heuristics implicit by default unless the user asks for execution internals or a blocker requires them to understand the exact boundary
 
 ## Execution Loop
 

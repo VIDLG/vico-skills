@@ -307,7 +307,9 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("wilco-exec 如何使用", readme_zh)
         self.assertIn("优先用一句简短确认来消歧", readme_zh)
         self.assertIn("## Persistence Policy", contracts)
+        self.assertIn("## User-Facing Vs Internal", contracts)
         self.assertIn("## 落盘原则", contracts_zh)
+        self.assertIn("## 面向用户 vs 内部状态", contracts_zh)
 
     def test_probe_handoff_strong_inputs_align_between_probe_and_plan(self) -> None:
         probe_skill = self.read(PROBE_SKILL)
@@ -347,6 +349,7 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("make a plan", plan_skill)
         self.assertIn("how do I use wilco-plan", plan_skill)
         self.assertIn("If the user's intent could reasonably map to lightweight direct execution instead of tracked planning", plan_skill)
+        self.assertIn("keep internal routing and reconciliation heuristics implicit by default", plan_skill)
         self.assertIn("A plan is `wilco-exec` ready only when the next smallest unblocked slice can be chosen without guessing", plan_skill)
         self.assertIn("If the current plan is too coarse, too stale, or too ambiguous", plan_skill)
 
@@ -390,6 +393,7 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertNotIn("review` and `resolve` are not formal modes yet", probe_output)
         self.assertNotIn("handoff template lacks `Target`", probe_output)
         self.assertIn("Issue classes", probe_output)
+        self.assertIn("Findings", probe_output)
 
     def test_probe_mode_set_is_consistent_across_skill_help_and_readme(self) -> None:
         probe_skill = self.read(PROBE_SKILL)
@@ -495,7 +499,10 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("Resolved during probe", probe_skill)
         self.assertIn("umbrella verb for inspect + ask + targeted refinement", probe_skill)
         self.assertIn("If the target object is an active plan", probe_skill)
+        self.assertIn("Only expose full issue-bank style detail when the user asks for it", probe_skill)
         self.assertIn("accept short action modifiers in `grill`", probe_help)
+        self.assertIn("`Findings`", probe_skill)
+        self.assertIn("default `scan` output should emphasize user-facing findings over raw triage state", probe_skill)
 
     def test_probe_priority_rubric_covers_enforcement_boundaries_and_folded_scan_items(self) -> None:
         probe_skill = self.read(PROBE_SKILL)
@@ -583,6 +590,7 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("## Multi-Active Safety Rules", exec_skill)
         self.assertIn("do not guess. Ask for an explicit slug or route back through `wilco-plan review`", exec_skill)
         self.assertIn("include the active source, active slug, and continuation basis in the execution report", exec_skill)
+        self.assertIn("keep deeper continuation heuristics implicit by default", exec_skill)
 
         self.assertIn("user's primary working language", exec_report)
         self.assertIn("Keep commands, status literals, blocker types, and path literals unchanged.", exec_report)
