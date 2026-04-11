@@ -1,6 +1,6 @@
 ---
 name: wilco-plan
-description: Default front door for Wilco-style repo-local planning. Decide whether work should stay `no-doc`, become `plan_only`, or upgrade to `prd_backed`; reconcile active state when needed; then create or update the active plan under `.wilco/plans/active/`. Use when the user wants to start tracked work, continue tracked work, recover from Wilco drift, or turn probed decisions into an executable plan.
+description: Default front door for Wilco-style repo-local planning. Decide whether work should stay `no-doc`, become `plan_only`, or upgrade to `prd_backed`; reconcile active state when needed; then create or update the active plan under `.wilco/plans/active/`. Use when the user wants to start tracked work, make a plan, create a tracked plan, continue tracked work, recover from Wilco drift, or turn probed decisions into an executable plan.
 ---
 
 # Wilco Plan
@@ -8,6 +8,9 @@ description: Default front door for Wilco-style repo-local planning. Decide whet
 ## Overview
 
 `wilco-plan` is the only default front door for tracked Wilco work.
+
+Treat natural requests such as `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, or `how do I use wilco-plan` as valid `wilco-plan` entrypoints even when the user does not name the skill explicitly.
+If the user's intent could reasonably map to lightweight direct execution instead of tracked planning, and repository evidence does not clearly justify `.wilco` tracking, ask a short clarification question before creating tracked work.
 
 It owns four decisions before planning:
 

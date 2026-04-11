@@ -51,6 +51,7 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 - 直接 vibe 式执行：不需要 tracked workflow 时，直接对话并立即实现
 - 先检查再规划：`wilco-probe -> wilco-plan`
+- 继续细化现有 plan：`wilco-probe grill plan -> wilco-plan`
 - 只做 tracked planning：`wilco-plan`
 - 端到端 tracked execution：`wilco-plan -> wilco-exec -> wilco-plan done`
 
@@ -60,6 +61,14 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 - 当对象不清晰、有争议，或明显适合先做 evidence-first 追问时，使用 `wilco-probe`
 - 当工作应升级为 `.wilco/` 下的 tracked execution contract 时，使用 `wilco-plan`
 - 只有在 active plan 已经存在、且用户希望持续推进直到完成或遇到真实阻塞时，才进入 `wilco-exec`
+
+## 自然触发词
+
+- `wilco-probe`：`scan 仓库`、`inspect codebase`、`grill 这个 plan`、`继续细化这个 plan`、`wilco-probe 如何使用`
+- `wilco-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`wilco-plan 如何使用`
+- `wilco-exec`：`继续做`、`一直做到完成`、`执行 active plan`、`除非阻塞否则继续`、`wilco-exec 如何使用`
+
+如果一条自然语言请求同时可能落到多个 route 上，优先用一句简短确认来消歧，不要直接猜。
 
 ## 什么时候用哪个 Skill
 
@@ -125,6 +134,8 @@ wilco-probe help
   - 只做深度检查；建立 evidence、issues 和 topic map，不进入长追问
 - `wilco-probe grill`
   - 强制进入持续性的高强度追问模式，围绕最重要的未决问题连续发问
+- `wilco-probe grill plan`
+  - 把当前 active plan 当作被 grill 的对象；当低风险澄清可以立即落地时，直接 refine plan 文本
 - `wilco-probe review`
   - 查看当前已接受结论、未决问题和推荐下一步
 - `wilco-probe resolve`

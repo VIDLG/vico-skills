@@ -50,6 +50,12 @@ Keep commands and mode literals unchanged.
 - keep internal probe state session-local by default
 - emit a `Probe Handoff` block for `wilco-plan`
 
+## Plan Targets
+
+- `grill plan`: grill the current active plan as the target object
+- `grill <slug>`: grill a specific tracked plan when multiple active slugs exist
+- when the target is a plan, bounded low-risk clarifications may directly refine plan text before continuing `grill`
+
 ## Topic Map Controls
 
 - show
@@ -73,6 +79,7 @@ Keep commands and mode literals unchanged.
 - `wilco-probe`
 - `wilco-probe scan`
 - `wilco-probe grill`
+- `wilco-probe grill plan`
 - `wilco-probe review`
 - `wilco-probe resolve`
 - `wilco-probe help`

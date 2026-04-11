@@ -48,6 +48,7 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 
 - direct vibe execution: talk through the task and implement immediately when no tracked workflow is needed
 - inspect before planning: `wilco-probe -> wilco-plan`
+- refine an existing plan: `wilco-probe grill plan -> wilco-plan`
 - tracked planning only: `wilco-plan`
 - end-to-end tracked execution: `wilco-plan -> wilco-exec -> wilco-plan done`
 
@@ -57,6 +58,14 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 - use `wilco-probe` when the object is unclear, contested, or likely to benefit from evidence-first questioning before planning
 - use `wilco-plan` when the work should become a tracked execution contract under `.wilco/`
 - use `wilco-exec` only when an active plan already exists and the user wants persistent execution until done or a real blocker
+
+## Natural Triggers
+
+- `wilco-probe`: `scan the repo`, `inspect the codebase`, `grill this plan`, `refine this plan`, `how do I use wilco-probe`
+- `wilco-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `how do I use wilco-plan`
+- `wilco-exec`: `keep going`, `continue until done`, `execute the active plan`, `carry this through unless blocked`, `how do I use wilco-exec`
+
+If a natural-language request could reasonably mean more than one of these routes, prefer a short clarification over guessing the wrong workflow.
 
 ## When To Use What
 
@@ -122,6 +131,8 @@ wilco-probe help
   - deep inspection only; build evidence, issues, and a topic map without entering a long questioning loop
 - `wilco-probe grill`
   - force sustained high-intensity questioning on the most important unresolved issues
+- `wilco-probe grill plan`
+  - grill the current active plan as the target object and refine plan text when low-risk clarifications can be applied immediately
 - `wilco-probe review`
   - show the current accepted decisions, unresolved issues, and suggested next mode
 - `wilco-probe resolve`

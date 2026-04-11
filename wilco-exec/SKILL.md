@@ -1,6 +1,6 @@
 ---
 name: wilco-exec
-description: Execute the current Wilco plan continuously until completion or a real blocker is reached. Use when the user wants the agent to keep going without stopping after each small step, carry out an active plan under `.wilco/plans/active/` item by item, continue from temporary reconcile state when needed, or follow a Ralph-like persistent execution loop. For Claude Code, this skill can be paired with bundled hooks; for Codex, use the same execute loop directly.
+description: Execute the current Wilco plan continuously until completion or a real blocker is reached. Use when the user wants the agent to keep going without stopping after each small step, carry out an active plan under `.wilco/plans/active/` item by item, continue from temporary reconcile state when needed, keep going until done, or follow a Ralph-like persistent execution loop. For Claude Code, this skill can be paired with bundled hooks; for Codex, use the same execute loop directly.
 ---
 
 # Wilco Exec
@@ -24,6 +24,9 @@ Do not stop just because one small slice completed. Stop only when:
 - the current plan is stale enough that execution would be misleading
 
 This skill owns implementation progress and plan synchronization, not final close-out deletion. When the work is truly complete, route to `wilco-plan done`.
+
+Treat natural requests such as `keep going`, `continue until done`, `execute the active plan`, `carry this through unless blocked`, or `how do I use wilco-exec` as valid `wilco-exec` entrypoints when an active plan already exists.
+If the user sounds like they want persistent execution but no active plan exists, ask a short clarification question or route them through `wilco-plan` instead of guessing.
 
 ## Inputs
 
