@@ -101,6 +101,43 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 - `scripts/validate_wilco_skills.py`
   校验整个 Wilco skill 仓库、辅助脚本和测试。
 
+## 安装与卸载
+
+这个仓库本身不提供专门的 `npx` 安装器。对于本地开发，推荐把 skill 目录直接 link 到目标位置，而不是复制内容。
+
+### 开发期 Link
+
+PowerShell 示例：
+
+```powershell
+New-Item -ItemType SymbolicLink -Force -Path .codex\skills\wilco-probe -Target wilco-skills\wilco-probe | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path .codex\skills\wilco-plan  -Target wilco-skills\wilco-plan  | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path .codex\skills\wilco-exec  -Target wilco-skills\wilco-exec  | Out-Null
+
+New-Item -ItemType SymbolicLink -Force -Path .claude\skills\wilco-probe -Target wilco-skills\wilco-probe | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path .claude\skills\wilco-plan  -Target wilco-skills\wilco-plan  | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path .claude\skills\wilco-exec  -Target wilco-skills\wilco-exec  | Out-Null
+```
+
+### 卸载
+
+删除这些 link 或已安装的 skill 目录：
+
+```powershell
+Remove-Item .codex\skills\wilco-probe,.codex\skills\wilco-plan,.codex\skills\wilco-exec -Force
+Remove-Item .claude\skills\wilco-probe,.claude\skills\wilco-plan,.claude\skills\wilco-exec -Force
+```
+
+### 可选的 Codex Installer 路径
+
+如果你使用 Codex 内置的 `skill-installer`，可从 `VIDLG/wilco-skills` 安装这些 skill 路径：
+
+- `wilco-probe`
+- `wilco-plan`
+- `wilco-exec`
+
+当你希望把 skill 复制安装到 `$CODEX_HOME/skills`，而不是做 repo-local link 时，再使用这条路径。
+
 ## 常见流程
 
 ### 开始或对账工作

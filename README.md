@@ -98,6 +98,43 @@ If a natural-language request could reasonably mean more than one of these route
 - `scripts/validate_wilco_skills.py`
   Validates all Wilco skills, helper scripts, tests, and basic content hygiene.
 
+## Install And Uninstall
+
+This repo does not ship a dedicated `npx` installer. For local development, prefer linking the skill folders directly instead of copying them.
+
+### Development Link
+
+PowerShell examples:
+
+```powershell
+New-Item -ItemType SymbolicLink -Force -Path .codex\skills\wilco-probe -Target wilco-skills\wilco-probe | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path .codex\skills\wilco-plan  -Target wilco-skills\wilco-plan  | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path .codex\skills\wilco-exec  -Target wilco-skills\wilco-exec  | Out-Null
+
+New-Item -ItemType SymbolicLink -Force -Path .claude\skills\wilco-probe -Target wilco-skills\wilco-probe | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path .claude\skills\wilco-plan  -Target wilco-skills\wilco-plan  | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path .claude\skills\wilco-exec  -Target wilco-skills\wilco-exec  | Out-Null
+```
+
+### Uninstall
+
+Remove the links or installed skill directories:
+
+```powershell
+Remove-Item .codex\skills\wilco-probe,.codex\skills\wilco-plan,.codex\skills\wilco-exec -Force
+Remove-Item .claude\skills\wilco-probe,.claude\skills\wilco-plan,.claude\skills\wilco-exec -Force
+```
+
+### Optional Codex Installer Route
+
+If you use Codex's built-in `skill-installer`, install these skill paths from `VIDLG/wilco-skills`:
+
+- `wilco-probe`
+- `wilco-plan`
+- `wilco-exec`
+
+Use that route when you want a copied install under `$CODEX_HOME/skills` instead of a repo-local link.
+
 ## Typical Flows
 
 ### Start Or Reconcile Work
