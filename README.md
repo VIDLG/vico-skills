@@ -67,6 +67,14 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 
 If a natural-language request could reasonably mean more than one of these routes, prefer a short clarification over guessing the wrong workflow.
 
+## Route Visibility
+
+- When a Wilco skill is selected, the first visible update should surface the active skill and the route reason.
+- Suggested shape:
+  - `Skill route: wilco-probe`
+  - `Route reason: natural trigger "scan the repo"`
+- For explicit skill invocations, surface that the route came from an explicit skill request rather than a natural trigger.
+
 ## When To Use What
 
 - Need to start, update, reconcile, or reshape tracked work: `wilco-plan`

@@ -37,6 +37,10 @@ Keep commands and mode literals unchanged.
 3. active plan / optional PRD
 4. code reality
 
+## Route Visibility
+
+- show `Skill route` and `Route reason` in the first visible update when `wilco-plan` is selected
+
 ## Safety Rules
 
 - `review` is read-only
