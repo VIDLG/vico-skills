@@ -1,4 +1,0 @@
-interface:
-  display_name: "Wilco Resume"
-  short_description: "Produce temporary handoff and recovery snapshots"
-  default_prompt: "Compare the current PRD, plan, code, and tests only when handoff, recovery, divergence review, or closure checking is needed. Treat resume as a temporary current snapshot, prefer the derived index as a coordination entrypoint rather than a truth source, and recommend the smallest correct next step."

@@ -12,12 +12,27 @@ import uuid
 
 SKILLS_ROOT = Path(__file__).resolve().parents[1]
 WORKSPACE_ROOT = SKILLS_ROOT.parent
-DOCS_SCRIPTS = SKILLS_ROOT / "wilco-docs" / "scripts"
-INIT_SCRIPT = SKILLS_ROOT / "wilco-init" / "scripts" / "bootstrap_wilco_slug.py"
-HEADERS_SCRIPT = DOCS_SCRIPTS / "sync_wilco_headers.py"
-INDEX_SCRIPT = DOCS_SCRIPTS / "sync_wilco_index.py"
-CLOSE_SCRIPT = DOCS_SCRIPTS / "close_wilco_slug.py"
-WORKSPACE_VALIDATE_SCRIPT = DOCS_SCRIPTS / "validate_wilco_workspace.py"
+PLAN_SCRIPTS = SKILLS_ROOT / "wilco-plan" / "scripts"
+PLAN_BOOTSTRAP_SCRIPT = PLAN_SCRIPTS / "bootstrap_wilco_slug.py"
+HEADERS_SCRIPT = PLAN_SCRIPTS / "sync_wilco_headers.py"
+INDEX_SCRIPT = PLAN_SCRIPTS / "sync_wilco_index.py"
+CLOSE_SCRIPT = PLAN_SCRIPTS / "close_wilco_slug.py"
+WORKSPACE_VALIDATE_SCRIPT = PLAN_SCRIPTS / "validate_wilco_workspace.py"
+PROBE_SKILL = SKILLS_ROOT / "wilco-probe" / "SKILL.md"
+PROBE_HELP = SKILLS_ROOT / "wilco-probe" / "references" / "help-template.md"
+PROBE_OUTPUT = SKILLS_ROOT / "wilco-probe" / "references" / "output-format.md"
+PLAN_SKILL = SKILLS_ROOT / "wilco-plan" / "SKILL.md"
+PROBE_HANDOFF_TEMPLATE = SKILLS_ROOT / "wilco-plan" / "references" / "templates" / "probe-handoff-template.md"
+PLAN_HELP = SKILLS_ROOT / "wilco-plan" / "references" / "templates" / "help-template.md"
+PLAN_REVIEW = SKILLS_ROOT / "wilco-plan" / "references" / "templates" / "review-template.md"
+PLAN_TRUTH = SKILLS_ROOT / "wilco-plan" / "references" / "templates" / "truth-template.md"
+EXEC_SKILL = SKILLS_ROOT / "wilco-exec" / "SKILL.md"
+EXEC_HELP = SKILLS_ROOT / "wilco-exec" / "references" / "help-template.md"
+EXEC_AUTOMATION = SKILLS_ROOT / "wilco-exec" / "references" / "automation.md"
+EXEC_STATUS = SKILLS_ROOT / "wilco-exec" / "references" / "status-vocabulary.md"
+EXEC_SYNC_SCRIPT = SKILLS_ROOT / "wilco-exec" / "scripts" / "sync_wilco_index.py"
+README = SKILLS_ROOT / "README.md"
+README_ZH = SKILLS_ROOT / "README-zh.md"
 
 
 def run_ok(*args: str) -> subprocess.CompletedProcess[str]:
@@ -28,6 +43,9 @@ def run_ok(*args: str) -> subprocess.CompletedProcess[str]:
 
 
 class WilcoAutomationTests(unittest.TestCase):
+    def read(self, path: Path) -> str:
+        return path.read_text(encoding="utf-8")
+
     def make_repo(self) -> Path:
         temp_dir = WORKSPACE_ROOT / f"wilco-automation-{uuid.uuid4().hex[:8]}"
         temp_dir.mkdir()
@@ -36,98 +54,537 @@ class WilcoAutomationTests(unittest.TestCase):
         (temp_dir / "docs" / "architecture").mkdir(parents=True)
         return temp_dir
 
+    def dated_slug(self, date: str, slug: str) -> str:
+        return f"{date}-{slug}"
+
     def test_bootstrap_plan_only_creates_plan_and_index(self) -> None:
         root = self.make_repo()
-        run_ok(str(INIT_SCRIPT), "tiny-fix", "Tiny Fix", "--repo-root", str(root))
+        date = "2026-04-09"
+        slug = self.dated_slug(date, "tiny-fix")
+        run_ok(str(PLAN_BOOTSTRAP_SCRIPT), "tiny-fix", "Tiny Fix", "--repo-root", str(root), "--date", date)
 
-        plan = root / ".wilco" / "plans" / "active" / "tiny-fix.md"
-        index = root / ".wilco" / "index" / "tiny-fix.json"
+        plan = root / ".wilco" / "plans" / "active" / f"{slug}.md"
+        index = root / ".wilco" / "index" / f"{slug}.json"
         self.assertTrue(plan.exists())
         self.assertTrue(index.exists())
-        self.assertFalse((root / ".wilco" / "prd" / "active" / "tiny-fix.md").exists())
+        self.assertFalse((root / ".wilco" / "prd" / "active" / f"{slug}.md").exists())
 
         plan_text = plan.read_text(encoding="utf-8")
-        self.assertIn("> Slug: `tiny-fix`", plan_text)
-        self.assertIn("> Manifest: `.wilco/index/tiny-fix.json`", plan_text)
+        self.assertIn("> Mode: `plan_only`", plan_text)
+        self.assertIn(f"> Slug: `{slug}`", plan_text)
+        self.assertIn(f"> Manifest: `.wilco/index/{slug}.json`", plan_text)
         self.assertNotIn("Source PRD", plan_text)
 
         manifest = json.loads(index.read_text(encoding="utf-8"))
         self.assertEqual(manifest["state"]["progress"], "not_started")
-        self.assertEqual(manifest["artifacts"]["plan"], ".wilco/plans/active/tiny-fix.md")
+        self.assertEqual(manifest["state"]["tracking_mode"], "plan_only")
+        self.assertEqual(manifest["artifacts"]["plan"], f".wilco/plans/active/{slug}.md")
 
     def test_bootstrap_prd_plan_arch_creates_full_initial_set(self) -> None:
         root = self.make_repo()
+        date = "2026-04-09"
+        slug = self.dated_slug(date, "boundary-work")
         run_ok(
-            str(INIT_SCRIPT),
+            str(PLAN_BOOTSTRAP_SCRIPT),
             "boundary-work",
             "Boundary Work",
             "--repo-root",
             str(root),
             "--level",
-            "prd-plan-arch",
+            "prd_backed_arch",
+            "--date",
+            date,
         )
 
-        self.assertTrue((root / ".wilco" / "prd" / "active" / "boundary-work.md").exists())
-        self.assertTrue((root / ".wilco" / "plans" / "active" / "boundary-work.md").exists())
-        self.assertTrue((root / "docs" / "architecture" / "boundary-work.md").exists())
+        self.assertTrue((root / ".wilco" / "prd" / "active" / f"{slug}.md").exists())
+        self.assertTrue((root / ".wilco" / "plans" / "active" / f"{slug}.md").exists())
+        self.assertTrue((root / "docs" / "architecture" / f"{slug}.md").exists())
 
     def test_sync_headers_repairs_manifest_and_crosslinks(self) -> None:
         root = self.make_repo()
+        date = "2026-04-09"
+        slug = self.dated_slug(date, "sync-me")
         run_ok(
-            str(INIT_SCRIPT),
+            str(PLAN_BOOTSTRAP_SCRIPT),
             "sync-me",
             "Sync Me",
             "--repo-root",
             str(root),
             "--level",
-            "prd-plan",
+            "prd_backed",
             "--no-index",
+            "--date",
+            date,
         )
 
-        run_ok(str(INDEX_SCRIPT), "sync-me", "--repo-root", str(root))
-        run_ok(str(HEADERS_SCRIPT), "sync-me", "--repo-root", str(root))
+        run_ok(str(INDEX_SCRIPT), slug, "--repo-root", str(root))
+        run_ok(str(HEADERS_SCRIPT), slug, "--repo-root", str(root))
 
-        plan_text = (root / ".wilco" / "plans" / "active" / "sync-me.md").read_text(encoding="utf-8")
-        prd_text = (root / ".wilco" / "prd" / "active" / "sync-me.md").read_text(encoding="utf-8")
-        self.assertIn("> Manifest: `.wilco/index/sync-me.json`", plan_text)
-        self.assertIn("> Source PRD: `.wilco/prd/active/sync-me.md`", plan_text)
-        self.assertIn("Manifest: `.wilco/index/sync-me.json`", prd_text)
-        self.assertIn("Related plan: `.wilco/plans/active/sync-me.md`", prd_text)
+        plan_text = (root / ".wilco" / "plans" / "active" / f"{slug}.md").read_text(encoding="utf-8")
+        prd_text = (root / ".wilco" / "prd" / "active" / f"{slug}.md").read_text(encoding="utf-8")
+        self.assertIn("> Mode: `prd_backed`", plan_text)
+        self.assertIn(f"> Manifest: `.wilco/index/{slug}.json`", plan_text)
+        self.assertIn(f"> Source PRD: `.wilco/prd/active/{slug}.md`", plan_text)
+        self.assertIn("Mode: prd_backed", prd_text)
+        self.assertIn(f"Manifest: `.wilco/index/{slug}.json`", prd_text)
+        self.assertIn(f"Execution Plan: `.wilco/plans/active/{slug}.md`", prd_text)
 
-    def test_close_slug_archives_and_cleans(self) -> None:
+    def test_close_slug_deletes_active_docs_and_cleans(self) -> None:
         root = self.make_repo()
+        date = "2026-04-08"
+        slug = self.dated_slug(date, "done-work")
         run_ok(
-            str(INIT_SCRIPT),
+            str(PLAN_BOOTSTRAP_SCRIPT),
             "done-work",
             "Done Work",
             "--repo-root",
             str(root),
             "--level",
-            "prd-plan",
+            "prd_backed",
+            "--date",
+            date,
         )
-        (root / ".wilco" / "resume" / "done-work.md").write_text("## Resume Summary\n", encoding="utf-8")
-        run_ok(str(INDEX_SCRIPT), "done-work", "--repo-root", str(root))
-        run_ok(str(CLOSE_SCRIPT), "done-work", "--repo-root", str(root), "--completed-date", "2026-04-08")
+        (root / ".wilco" / "resume" / f"{slug}.md").write_text("## Resume Summary\n", encoding="utf-8")
+        run_ok(str(INDEX_SCRIPT), slug, "--repo-root", str(root))
+        run_ok(str(CLOSE_SCRIPT), slug, "--repo-root", str(root))
 
-        self.assertFalse((root / ".wilco" / "plans" / "active" / "done-work.md").exists())
-        self.assertFalse((root / ".wilco" / "prd" / "active" / "done-work.md").exists())
-        self.assertFalse((root / ".wilco" / "resume" / "done-work.md").exists())
-        self.assertFalse((root / ".wilco" / "index" / "done-work.json").exists())
-        archived_plan = (root / ".wilco" / "plans" / "archive" / "done-work.md").read_text(encoding="utf-8")
-        self.assertIn("> Status: `archived`", archived_plan)
+        self.assertFalse((root / ".wilco" / "plans" / "active" / f"{slug}.md").exists())
+        self.assertFalse((root / ".wilco" / "prd" / "active" / f"{slug}.md").exists())
+        self.assertFalse((root / ".wilco" / "resume" / f"{slug}.md").exists())
+        self.assertFalse((root / ".wilco" / "index" / f"{slug}.json").exists())
+        self.assertFalse((root / ".wilco" / "plans" / "archive" / f"{slug}.md").exists())
 
     def test_workspace_validator_passes_on_bootstrapped_repo(self) -> None:
         root = self.make_repo()
+        date = "2026-04-09"
         run_ok(
-            str(INIT_SCRIPT),
+            str(PLAN_BOOTSTRAP_SCRIPT),
             "validated-work",
             "Validated Work",
             "--repo-root",
             str(root),
             "--level",
-            "prd-plan",
+            "prd_backed",
+            "--date",
+            date,
         )
         run_ok(str(WORKSPACE_VALIDATE_SCRIPT), "--repo-root", str(root))
+
+    def test_close_slug_dry_run_surfaces_reason_and_does_not_mutate_files(self) -> None:
+        root = self.make_repo()
+        date = "2026-04-09"
+        slug = self.dated_slug(date, "cancel-me")
+        run_ok(
+            str(PLAN_BOOTSTRAP_SCRIPT),
+            "cancel-me",
+            "Cancel Me",
+            "--repo-root",
+            str(root),
+            "--date",
+            date,
+        )
+
+        plan = root / ".wilco" / "plans" / "active" / f"{slug}.md"
+        before = plan.read_text(encoding="utf-8")
+        result = run_ok(
+            str(CLOSE_SCRIPT),
+            slug,
+            "--repo-root",
+            str(root),
+            "--reason",
+            "cancel",
+            "--dry-run",
+        )
+        self.assertIn("[dry-run] reason=cancel", result.stdout)
+        self.assertTrue(plan.exists())
+        self.assertEqual(plan.read_text(encoding="utf-8"), before)
+
+    def test_close_slug_requires_exact_active_slug(self) -> None:
+        root = self.make_repo()
+        date = "2026-04-09"
+        slug = self.dated_slug(date, "exact-match")
+        run_ok(
+            str(PLAN_BOOTSTRAP_SCRIPT),
+            "exact-match",
+            "Exact Match",
+            "--repo-root",
+            str(root),
+            "--date",
+            date,
+        )
+
+        result = subprocess.run(
+            [sys.executable, str(CLOSE_SCRIPT), "exact-match", "--repo-root", str(root)],
+            text=True,
+            capture_output=True,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("No active plan or PRD found", result.stderr)
+        self.assertTrue((root / ".wilco" / "plans" / "active" / f"{slug}.md").exists())
+
+    def test_sync_headers_is_idempotent_without_touch_updated(self) -> None:
+        root = self.make_repo()
+        date = "2026-04-09"
+        slug = self.dated_slug(date, "idempotent")
+        run_ok(
+            str(PLAN_BOOTSTRAP_SCRIPT),
+            "idempotent",
+            "Idempotent",
+            "--repo-root",
+            str(root),
+            "--level",
+            "prd_backed",
+            "--date",
+            date,
+        )
+        plan = root / ".wilco" / "plans" / "active" / f"{slug}.md"
+        before = plan.read_text(encoding="utf-8")
+
+        result = run_ok(str(HEADERS_SCRIPT), slug, "--repo-root", str(root))
+        self.assertIn(f"Up to date: {slug}", result.stdout)
+        self.assertEqual(plan.read_text(encoding="utf-8"), before)
+
+    def test_probe_default_routing_contract_and_help_are_aligned(self) -> None:
+        probe_skill = self.read(PROBE_SKILL)
+        probe_help = self.read(PROBE_HELP)
+        readme = self.read(README)
+        readme_zh = self.read(README_ZH)
+
+        self.assertIn("## Default Routing Rules", probe_skill)
+        self.assertIn("recommendation-grade", probe_skill)
+        self.assertIn("ask-user", probe_skill)
+        self.assertIn("Do not force `grill` as the default", probe_skill)
+
+        self.assertIn("route by issue state instead of forcing questioning every time", probe_help)
+        self.assertIn("do a light scan first, then route into recommendation, one question, review, grill, or resolve", probe_help)
+
+        self.assertIn("recommends, asks one question, reviews, or resolves based on issue state", readme)
+        self.assertIn("根据 issue state 决定是直接建议、发一问、进入 `review`，还是直接收口", readme_zh)
+
+    def test_workflow_readme_and_help_templates_express_default_light_escalation_model(self) -> None:
+        readme = self.read(README)
+        readme_zh = self.read(README_ZH)
+        probe_help = self.read(PROBE_HELP)
+        plan_help = self.read(PLAN_HELP)
+        exec_help = self.read(SKILLS_ROOT / "wilco-exec" / "references" / "help-template.md")
+
+        self.assertIn("Default Light, Escalate When Needed.", readme)
+        self.assertIn("probing and execution are separate escalation axes", readme)
+        self.assertIn("默认从轻，按需升级。", readme_zh)
+        self.assertIn("probing 和 execution 是两条独立的升级轴", readme_zh)
+
+        self.assertIn("Axis position: the probing axis", probe_help)
+        self.assertIn("Axis position: the tracked-execution front door", plan_help)
+        self.assertIn("Axis position: the heavy end of the execution axis", exec_help)
+
+    def test_repo_docs_define_persistence_policy_and_common_paths(self) -> None:
+        readme = self.read(README)
+        readme_zh = self.read(README_ZH)
+        contracts = self.read(SKILLS_ROOT / "CONTRACTS.md")
+        contracts_zh = self.read(SKILLS_ROOT / "CONTRACTS-zh.md")
+
+        self.assertIn("## Persistence Policy", readme)
+        self.assertIn("## Most Common Paths", readme)
+        self.assertIn("## Escalation Hints", readme)
+        self.assertIn("`wilco-probe`: keep probe state session-local by default", readme)
+        self.assertIn("`wilco-plan`: write or update active plan", readme)
+        self.assertIn("`wilco-exec`: persist plan, index, or temporary reconcile updates", readme)
+        self.assertIn("use `wilco-exec` only when an active plan already exists", readme)
+
+        self.assertIn("## 落盘原则", readme_zh)
+        self.assertIn("## 最常用路径", readme_zh)
+        self.assertIn("## 升级提示", readme_zh)
+        self.assertIn("## Persistence Policy", contracts)
+        self.assertIn("## 落盘原则", contracts_zh)
+
+    def test_probe_handoff_strong_inputs_align_between_probe_and_plan(self) -> None:
+        probe_skill = self.read(PROBE_SKILL)
+        plan_skill = self.read(PLAN_SKILL)
+        handoff_template = self.read(PROBE_HANDOFF_TEMPLATE)
+
+        for required in (
+            "`Target`",
+            "optional `Slug`",
+            "optional `Issue classes`",
+            "`Accepted decisions`",
+            "`Unresolved decisions`",
+            "`Suggested edits`",
+        ):
+            self.assertIn(required, probe_skill)
+            self.assertIn(required, plan_skill)
+
+        self.assertIn("- Optional: Slug", handoff_template)
+        self.assertIn("- Optional: Issue classes", handoff_template)
+        self.assertIn("- Optional: Recommended tracking mode", handoff_template)
+        self.assertIn("- Optional: Suggested first slice", handoff_template)
+        self.assertIn("- Optional: Execution readiness risks", handoff_template)
+        self.assertIn("- Optional: Resolved during probe", handoff_template)
+        self.assertIn("`wilco-plan` should treat these as strong inputs", handoff_template)
+
+    def test_plan_contract_defines_execution_readiness_and_probe_consumption_hints(self) -> None:
+        plan_skill = self.read(PLAN_SKILL)
+        handoff_template = self.read(PROBE_HANDOFF_TEMPLATE)
+        plan_template = self.read(SKILLS_ROOT / "wilco-plan" / "references" / "templates" / "plan-template.md")
+        plan_only_template = self.read(SKILLS_ROOT / "wilco-plan" / "references" / "templates" / "plan-only-template.md")
+
+        self.assertIn("## Execution Readiness Rules", plan_skill)
+        self.assertIn("Recommended tracking mode", plan_skill)
+        self.assertIn("Suggested first slice", plan_skill)
+        self.assertIn("Execution readiness risks", plan_skill)
+        self.assertIn("Resolved during probe", plan_skill)
+        self.assertIn("A plan is `wilco-exec` ready only when the next smallest unblocked slice can be chosen without guessing", plan_skill)
+        self.assertIn("If the current plan is too coarse, too stale, or too ambiguous", plan_skill)
+
+        self.assertIn("Optional: Recommended tracking mode", handoff_template)
+        self.assertIn("Optional: Suggested first slice", handoff_template)
+        self.assertIn("Optional: Execution readiness risks", handoff_template)
+        self.assertIn("Optional: Resolved during probe", handoff_template)
+        self.assertIn("A plan is `wilco-exec` ready only when the next slice can be chosen without guessing", plan_template)
+        self.assertIn("A plan is `wilco-exec` ready only when the next slice can be chosen without guessing", plan_only_template)
+
+    def test_plan_public_modes_drop_reset_and_keep_replan(self) -> None:
+        plan_skill = self.read(PLAN_SKILL)
+        plan_help = self.read(PLAN_HELP)
+
+        self.assertIn("`replan`", plan_skill)
+        self.assertIn("- replan", plan_help)
+        self.assertIn("Use `replan` as the single public mode for same-slug execution-contract rewrites.", plan_skill)
+        self.assertNotIn("- `reset`", plan_skill)
+        self.assertNotIn("- reset", plan_help)
+
+    def test_probe_examples_cover_all_modes_and_drop_stale_contract_examples(self) -> None:
+        probe_help = self.read(PROBE_HELP)
+        probe_output = self.read(PROBE_OUTPUT)
+
+        for example in (
+            "`wilco-probe scan`",
+            "`wilco-probe grill`",
+            "`wilco-probe review`",
+            "`wilco-probe resolve`",
+        ):
+            self.assertIn(example, probe_help)
+
+        for section in (
+            "## Scan Example",
+            "## Review Example",
+            "## Grill Example",
+            "## Probe Handoff Example",
+        ):
+            self.assertIn(section, probe_output)
+
+        self.assertNotIn("review` and `resolve` are not formal modes yet", probe_output)
+        self.assertNotIn("handoff template lacks `Target`", probe_output)
+        self.assertIn("Issue classes", probe_output)
+
+    def test_probe_mode_set_is_consistent_across_skill_help_and_readme(self) -> None:
+        probe_skill = self.read(PROBE_SKILL)
+        probe_help = self.read(PROBE_HELP)
+        readme = self.read(README)
+        readme_zh = self.read(README_ZH)
+
+        expected_modes = (
+            "`scan`",
+            "`grill`",
+            "`review`",
+            "`resolve`",
+            "`help`",
+        )
+        for mode in expected_modes:
+            self.assertIn(mode, probe_skill)
+
+        for command in (
+            "`wilco-probe scan`",
+            "`wilco-probe grill`",
+            "`wilco-probe review`",
+            "`wilco-probe resolve`",
+            "`wilco-probe help`",
+        ):
+            self.assertIn(command, probe_help)
+            self.assertIn(command, readme)
+            self.assertIn(command, readme_zh)
+
+    def test_probe_topic_map_controls_and_agent_default_mode_are_consistent(self) -> None:
+        probe_skill = self.read(PROBE_SKILL)
+        probe_help = self.read(PROBE_HELP)
+        probe_agent = self.read(SKILLS_ROOT / "wilco-probe" / "agents" / "openai.yaml")
+
+        for control in (
+            "`show`",
+            "`add`",
+            "`delete`",
+            "`split`",
+            "`merge`",
+            "`retire`",
+            "`reprioritize`",
+        ):
+            self.assertIn(control, probe_skill)
+
+        for control in (
+            "- show",
+            "- add",
+            "- delete",
+            "- split",
+            "- merge",
+            "- retire",
+            "- reprioritize",
+        ):
+            self.assertIn(control, probe_help)
+
+        self.assertIn("default to concise mode unless the user asks for detailed mode", probe_agent)
+        self.assertNotIn("use the detailed contract in SKILL.md", probe_agent)
+
+    def test_probe_textual_outputs_follow_user_language_while_preserving_stable_literals(self) -> None:
+        probe_skill = self.read(PROBE_SKILL)
+        probe_help = self.read(PROBE_HELP)
+
+        self.assertIn("user's primary working language", probe_skill)
+        self.assertIn("most recent substantive message", probe_skill)
+        self.assertIn("machine-consumed `Probe Handoff` field names stable", probe_skill)
+
+        self.assertIn("user's primary working language", probe_help)
+        self.assertIn("Keep commands and mode literals unchanged.", probe_help)
+        self.assertIn("## Grill Shortcuts", probe_help)
+        self.assertIn("`推` / `rec`: choose the recommended option", probe_help)
+        self.assertIn("`做` / `do`: apply immediately", probe_help)
+
+    def test_probe_explicit_submodes_bootstrap_scan_when_probe_state_is_missing(self) -> None:
+        probe_skill = self.read(PROBE_SKILL)
+        probe_help = self.read(PROBE_HELP)
+
+        self.assertIn("explicit submode is invoked without a usable current issue bank", probe_skill)
+        self.assertIn("perform a lightweight bootstrap scan first", probe_skill)
+        self.assertIn("`resolve` does not require a prior `grill` pass", probe_skill)
+        self.assertIn(
+            "if major `ask-user` issues still remain after bootstrap triage, keep them in `Unresolved decisions` and `Recommended resolutions` rather than opening a new question during `resolve`",
+            probe_skill,
+        )
+
+        self.assertIn(
+            "bootstrap a light scan when explicit `grill`, `review`, or `resolve` is invoked without usable current probe state",
+            probe_help,
+        )
+        self.assertIn("if a bounded, low-risk issue becomes immediately solvable during `grill`", probe_skill)
+        self.assertIn("briefly solve it, refresh the evidence and issue state, and then continue `grill`", probe_skill)
+        self.assertIn("allow a brief solve-and-return inside `grill` for bounded low-risk issues", probe_help)
+        self.assertIn("`推` or `rec` = choose the recommended option", probe_skill)
+        self.assertIn("`做` or `do` = apply immediately", probe_skill)
+        self.assertIn("`留` or `hold` = decide now but do not apply immediately", probe_skill)
+        self.assertIn("`继续` or `cont` = continue `grill`", probe_skill)
+        self.assertIn("`收口` or `close` = stop questioning after this answer", probe_skill)
+        self.assertIn("if an issue is solved during `grill`, mark it `decided`", probe_skill)
+        self.assertIn("Resolved during probe", probe_skill)
+        self.assertIn("accept short action modifiers in `grill`", probe_help)
+
+    def test_probe_priority_rubric_covers_enforcement_boundaries_and_folded_scan_items(self) -> None:
+        probe_skill = self.read(PROBE_SKILL)
+        probe_output = self.read(PROBE_OUTPUT)
+
+        self.assertIn("validator hard-fail behavior", probe_skill)
+        self.assertIn("system-wide contract boundary or enforcement boundary", probe_skill)
+        self.assertIn("system-wide enforcement boundary or distribution/runtime contract", probe_skill)
+        self.assertIn("low-risk aliases", probe_skill)
+        self.assertIn("folded `scan` items", probe_skill)
+        self.assertIn("validator hard-fail rules still change the install model", probe_output)
+        self.assertIn("Accepted short replies", probe_output)
+        self.assertIn("`1 do cont`", probe_output)
+        self.assertIn("`rec do`", probe_output)
+
+    def test_probe_tree_has_no_legacy_grill_branding(self) -> None:
+        probe_skill = self.read(PROBE_SKILL)
+        probe_help = self.read(PROBE_HELP)
+        probe_output = self.read(PROBE_OUTPUT)
+
+        for text in (probe_skill, probe_help, probe_output):
+            self.assertNotIn("wilco-grill", text)
+            self.assertNotIn("Grill Handoff", text)
+
+        self.assertIn("# Wilco Probe Output Format", probe_output)
+
+    def test_probe_contract_no_longer_supports_batch_mode(self) -> None:
+        probe_skill = self.read(PROBE_SKILL)
+        probe_help = self.read(PROBE_HELP)
+        probe_output = self.read(PROBE_OUTPUT)
+
+        self.assertNotIn("## Batch Question Mode", probe_skill)
+        self.assertNotIn("Batch N", probe_skill)
+        self.assertNotIn("Batch rationale", probe_skill)
+        self.assertNotIn("small batch", probe_help)
+        self.assertNotIn("## Batch Question Example", probe_output)
+        self.assertNotIn("Batch 9", probe_output)
+
+    def test_plan_textual_outputs_follow_user_language_while_preserving_stable_literals(self) -> None:
+        plan_skill = self.read(PLAN_SKILL)
+        plan_help = self.read(PLAN_HELP)
+        plan_review = self.read(PLAN_REVIEW)
+        plan_truth = self.read(PLAN_TRUTH)
+
+        self.assertIn("user's primary working language", plan_skill)
+        self.assertIn("most recent substantive message", plan_skill)
+        self.assertIn("machine-consumed handoff field names stable", plan_skill)
+
+        self.assertIn("user's primary working language", plan_help)
+        self.assertIn("Keep commands and mode literals unchanged.", plan_help)
+        self.assertIn("## Mode Hints", plan_help)
+        self.assertIn("`sync`: use when code moved and the current plan should catch up", plan_help)
+        self.assertIn("`replan`: use when the same slug still applies", plan_help)
+        self.assertIn("`prd`: use when the work now needs or updates `prd_backed` framing", plan_help)
+
+        self.assertIn("user's primary working language", plan_review)
+        self.assertIn("Keep commands, mode literals, status literals, and slug/path literals unchanged.", plan_review)
+
+        self.assertIn("user's primary working language", plan_truth)
+        self.assertIn("Keep commands, path literals, and stable field labels unchanged when another workflow consumes them.", plan_truth)
+
+    def test_exec_help_template_has_language_rule_and_axis_position(self) -> None:
+        exec_help = self.read(EXEC_HELP)
+
+        self.assertIn("user's primary working language", exec_help)
+        self.assertIn("Keep commands and mode literals unchanged.", exec_help)
+        self.assertIn("Axis position: the heavy end of the execution axis", exec_help)
+        self.assertIn("do not guess the execution target when multiple active slugs are plausible", exec_help)
+
+    def test_exec_output_contract_covers_language_and_persistence(self) -> None:
+        exec_skill = self.read(EXEC_SKILL)
+        exec_report = self.read(SKILLS_ROOT / "wilco-exec" / "references" / "execution-report-template.md")
+        blocker_taxonomy = self.read(SKILLS_ROOT / "wilco-exec" / "references" / "blocker-taxonomy.md")
+
+        self.assertIn("## Output Contract", exec_skill)
+        self.assertIn("user's primary working language", exec_skill)
+        self.assertIn("most recent substantive message", exec_skill)
+        self.assertIn("keep commands, status literals, blocker types, file paths", exec_skill)
+        self.assertIn("persist plan, index, or temporary reconcile updates to disk", exec_skill)
+        self.assertIn("do not fabricate disk writes when no execution-state change is needed", exec_skill)
+        self.assertIn("Persist execution-state changes to disk when they are needed to preserve continuity across turns or tools.", exec_skill)
+        self.assertIn("## Multi-Active Safety Rules", exec_skill)
+        self.assertIn("do not guess. Ask for an explicit slug or route back through `wilco-plan review`", exec_skill)
+        self.assertIn("include the active source, active slug, and continuation basis in the execution report", exec_skill)
+
+        self.assertIn("user's primary working language", exec_report)
+        self.assertIn("Keep commands, status literals, blocker types, and path literals unchanged.", exec_report)
+        self.assertIn("## Execution State", exec_report)
+        self.assertIn("blocked output shape", exec_skill)
+        self.assertIn("## Blocked Output Shape", blocker_taxonomy)
+        self.assertIn("## Blocked", blocker_taxonomy)
+        self.assertIn("- Type:", blocker_taxonomy)
+        self.assertIn("- Evidence:", blocker_taxonomy)
+        self.assertIn("- Unblock:", blocker_taxonomy)
+        self.assertIn("- Next step:", blocker_taxonomy)
+
+    def test_exec_runtime_closure_uses_local_references_and_scripts(self) -> None:
+        exec_skill = self.read(EXEC_SKILL)
+        exec_automation = self.read(EXEC_AUTOMATION)
+        exec_status = self.read(EXEC_STATUS)
+        exec_sync_script = self.read(EXEC_SYNC_SCRIPT)
+
+        self.assertIn("Prefer `scripts/sync_wilco_index.py`", exec_skill)
+        self.assertIn("Use [references/status-vocabulary.md]", exec_skill)
+        self.assertIn("Use [references/automation.md]", exec_skill)
+        self.assertNotIn("../wilco-plan/", exec_skill)
+
+        self.assertIn("Use `scripts/sync_wilco_index.py`", exec_automation)
+        self.assertNotIn("../wilco-plan/", exec_automation)
+        self.assertIn("## Execution Progress", exec_status)
+        self.assertIn("from wilco_common import", exec_sync_script)
 
 
 if __name__ == "__main__":

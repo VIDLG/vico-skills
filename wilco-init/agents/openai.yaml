@@ -1,4 +1,0 @@
-interface:
-  display_name: "Wilco Init"
-  short_description: "Bootstrap new Wilco slugs with the smallest valid artifact set"
-  default_prompt: "Use this as the normal entrypoint for new tracked work. Decide whether the task should stay no-doc, become plan-only, or escalate to PRD-backed tracking, choose a stable slug, and bootstrap the minimal tracked artifact set with correct headers and derived index linkage."

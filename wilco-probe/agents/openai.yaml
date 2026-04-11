@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wilco Probe"
+  short_description: "Probe a PRD, plan, design, or codebase through scan, triage, questioning, and resolve"
+  default_prompt: "Probe the current plan, PRD, design, or codebase. Build evidence and issue banks first, derive an object-specific topic map, keep explicit top-level topic coverage state, re-rank the best next question across top-level topics after every answer instead of staying depth-first by default, avoid more than 2 consecutive questions in the same top-level topic unless the user asks for depth mode, follow the contract in SKILL.md, default to concise mode unless the user asks for detailed mode, provide short numbered options with the recommended choice marked inline, and use direct recommendation when one option clearly dominates and repository evidence is already strong."

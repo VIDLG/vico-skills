@@ -1,4 +1,0 @@
-interface:
-  display_name: "Wilco Cleanup"
-  short_description: "Close completed slugs and clear stale Wilco state"
-  default_prompt: "Handle the cleanup stage after execution or reconciliation has already established the truth. Confirm what can be archived, use the repo's automation where appropriate, and close the slug by archiving completed docs plus clearing stale resume and index state."

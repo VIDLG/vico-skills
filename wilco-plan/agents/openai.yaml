@@ -1,4 +1,4 @@
 interface:
   display_name: "Wilco Plan"
-  short_description: "Default to plan-only and write Wilco execution plans"
-  default_prompt: "Default to plan-only, reuse an existing active slug when appropriate, and update the active execution plan under .wilco/plans/active with derived index sync. If a new tracked slug does not exist yet, route to wilco-init instead of bootstrapping it here."
+  short_description: "Default to plan_only and write Wilco execution plans"
+  default_prompt: "Act as the only default front door for Wilco planning. Decide whether work should stay `no-doc`, become `plan_only`, or upgrade to `prd_backed`; perform lightweight reconcile when active state is stale or overlapping; reuse, replace, or create one fresh dated slug as needed; absorb the latest `wilco-probe` handoff block by default; and then update the active plan under .wilco/plans/active with derived index sync."

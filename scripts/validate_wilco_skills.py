@@ -2,11 +2,14 @@
 from __future__ import annotations
 
 import argparse
+import re
 import subprocess
 import sys
 from pathlib import Path
 
 PLACEHOLDER_MARKERS = ("[TODO",)
+MARKDOWN_LINK_RE = re.compile(r"\]\(([^)#\s]+)\)")
+BACKTICK_PATH_RE = re.compile(r"`((?:\.\.?/|references/|scripts/|agents/)[^`\s]+)`")
 
 
 def run(cmd: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
@@ -53,29 +56,34 @@ def remove_pycache_dirs(root: Path) -> None:
         path.rmdir()
 
 
-def validate_wilco_grill_contract(root: Path) -> list[str]:
+def validate_wilco_probe_contract(root: Path) -> list[str]:
     failures: list[str] = []
-    skill_path = root / "wilco-grill" / "SKILL.md"
-    reference_path = root / "wilco-grill" / "references" / "output-format.md"
-    agent_path = root / "wilco-grill" / "agents" / "openai.yaml"
+    skill_path = root / "wilco-probe" / "SKILL.md"
+    reference_path = root / "wilco-probe" / "references" / "output-format.md"
+    agent_path = root / "wilco-probe" / "agents" / "openai.yaml"
 
     if not skill_path.exists():
-        return [f"Missing wilco-grill skill file: {skill_path}"]
+        return [f"Missing wilco-probe skill file: {skill_path}"]
     if not reference_path.exists():
-        failures.append(f"Missing wilco-grill output reference: {reference_path}")
+        failures.append(f"Missing wilco-probe output reference: {reference_path}")
     if not agent_path.exists():
-        failures.append(f"Missing wilco-grill agent prompt: {agent_path}")
+        failures.append(f"Missing wilco-probe agent prompt: {agent_path}")
 
     skill_text = skill_path.read_text(encoding="utf-8")
     required_skill_markers = (
         "## Question Ordering Rules",
         "## Global Question Selection",
-        "## Branch Coverage States",
-        "## Branch Map Evolution",
-        "## Branch Map Bootstrap Heuristics",
+        "## Input Model",
+        "## Internal State Model",
+        "## Issue Classes",
+        "## Topic Coverage States",
+        "## Issue States",
+        "## Topic Map Evolution",
+        "## User Topic Map Controls",
+        "## Topic Map Bootstrap Heuristics",
         "## Question Bank",
         "## Scoring Rubric",
-        "## Branch Scheduling Rules",
+        "## Topic Scheduling Rules",
         "## Output Contract",
         "### Concise Mode",
         "### Detailed Mode",
@@ -94,7 +102,33 @@ def validate_wilco_grill_contract(root: Path) -> list[str]:
         "Mode: concise | available: concise, detailed",
         "Mode: detailed | available: concise, detailed",
         "dynamic working map",
+        "## Recommendation Shortcut",
+        "## Default Routing Rules",
+        "### Scan Contract",
+        "### Grill Contract",
+        "### Review Contract",
+        "### Resolve Contract",
+        "explicit submode is invoked without a usable current issue bank",
+        "perform a lightweight bootstrap scan first",
+        "`resolve` does not require a prior `grill` pass",
+        "if a bounded, low-risk issue becomes immediately solvable during `grill`",
+        "briefly solve it, refresh the evidence and issue state, and then continue `grill`",
+        "`推` or `rec` = choose the recommended option",
+        "`做` or `do` = apply immediately",
+        "`留` or `hold` = decide now but do not apply immediately",
+        "`继续` or `cont` = continue `grill`",
+        "`收口` or `close` = stop questioning after this answer",
+        "if an issue is solved during `grill`, mark it `decided`",
+        "Resolved during probe",
+        "Intent Overlay",
+        "Evidence Bank",
+        "Issue Bank",
+        "- `grill`",
+        "- `review`",
+        "- `resolve`",
+        "Recommendation N:",
         "`add`",
+        "`delete`",
         "`split`",
         "`merge`",
         "`retire`",
@@ -103,45 +137,72 @@ def validate_wilco_grill_contract(root: Path) -> list[str]:
         "highest-value next question",
         "impact",
         "dependency_unlock",
-        "branch_saturation_penalty",
-        "unvisited_branch_bonus",
-        "Do not ask more than `2` consecutive questions from the same top-level branch",
+        "topic_saturation_penalty",
+        "unvisited_topic_bonus",
+        "Do not ask more than `2` consecutive questions from the same top-level topic",
+        "user's primary working language",
+        "most recent substantive message",
+        "machine-consumed `Probe Handoff` field names stable",
+        "validator hard-fail behavior",
+        "system-wide contract boundary or enforcement boundary",
+        "system-wide enforcement boundary or distribution/runtime contract",
+        "low-risk aliases",
+        "folded `scan` items",
     )
     for marker in required_skill_markers:
         if marker not in skill_text:
-            failures.append(f"wilco-grill/SKILL.md missing marker: {marker}")
+            failures.append(f"wilco-probe/SKILL.md missing marker: {marker}")
 
     if reference_path.exists():
         reference_text = reference_path.read_text(encoding="utf-8")
         required_reference_markers = (
             "## Concise Question Template",
-            "## Cross-Branch Scheduling Example",
-            "## Object-Specific Branch Map Example",
+            "## Cross-Topic Scheduling Example",
+            "## Scan Example",
+            "## Review Example",
+            "## Grill Example",
+            "## Object-Specific Topic Map Example",
             "## Candidate Ranking Example",
-            "## Branch Coverage Example",
-            "## Branch Map Snapshot Example",
+            "## Topic Coverage Example",
+            "## Topic Map Snapshot Example",
+            "## User-Directed Topic Map Update Example",
             "## Expanded Question Example",
             "## Final Summary Example",
             "Question 7:",
+            "Recommendation 18:",
+            "Target",
+            "Issue classes",
+            "Observed issues",
+            "Evidence",
+            "validator hard-fail rules still change the install model",
+            "Accepted short replies",
+            "`1 do cont`",
+            "`rec do`",
             "Mode: concise | available: concise, detailed",
             "Mode: detailed | available: concise, detailed",
             "Accepted decisions",
         )
         for marker in required_reference_markers:
             if marker not in reference_text:
-                failures.append(f"wilco-grill/references/output-format.md missing marker: {marker}")
+                failures.append(f"wilco-probe/references/output-format.md missing marker: {marker}")
 
     if agent_path.exists():
         agent_text = agent_path.read_text(encoding="utf-8")
         required_agent_markers = (
             "SKILL.md",
-            "object-specific branch map",
-            "top-level branch coverage state",
+            "object-specific topic map",
+            "top-level topic coverage state",
             "2 consecutive questions",
+            "direct recommendation",
+            "default to concise mode unless the user asks for detailed mode",
         )
         for marker in required_agent_markers:
             if marker not in agent_text:
-                failures.append(f"wilco-grill/agents/openai.yaml missing marker: {marker}")
+                failures.append(f"wilco-probe/agents/openai.yaml missing marker: {marker}")
+        if "use the detailed contract in SKILL.md" in agent_text:
+            failures.append(
+                "wilco-probe/agents/openai.yaml should not imply detailed mode is the default"
+            )
         forbidden_agent_markers = (
             "Recommended answer",
             "Why it matters",
@@ -150,7 +211,199 @@ def validate_wilco_grill_contract(root: Path) -> list[str]:
         )
         for marker in forbidden_agent_markers:
             if marker in agent_text:
-                failures.append(f"wilco-grill/agents/openai.yaml should not duplicate detailed contract marker: {marker}")
+                failures.append(f"wilco-probe/agents/openai.yaml should not duplicate detailed contract marker: {marker}")
+
+    user_controls_markers = ("`show`", "`add`", "`delete`", "`split`", "`merge`", "`retire`", "`reprioritize`")
+    help_controls_markers = ("- show", "- add", "- delete", "- split", "- merge", "- retire", "- reprioritize")
+    for marker in user_controls_markers:
+        if marker not in skill_text:
+            failures.append(f"wilco-probe/SKILL.md missing topic-map control: {marker}")
+    if root.joinpath("wilco-probe", "references", "help-template.md").exists():
+        help_text = root.joinpath("wilco-probe", "references", "help-template.md").read_text(encoding="utf-8")
+        for marker in help_controls_markers:
+            if marker not in help_text:
+                failures.append(f"wilco-probe/references/help-template.md missing topic-map control: {marker}")
+        for marker in (
+            "## Grill Shortcuts",
+            "`推` / `rec`: choose the recommended option",
+            "`做` / `do`: apply immediately",
+            "`留` / `hold`: decide now without applying",
+            "`继续` / `cont`: continue `grill`",
+            "`收口` / `close`: stop questioning and synthesize",
+        ):
+            if marker not in help_text:
+                failures.append(f"wilco-probe/references/help-template.md missing grill shortcut marker: {marker}")
+
+    return failures
+
+
+def validate_wilco_exec_contract(root: Path) -> list[str]:
+    failures: list[str] = []
+    skill_path = root / "wilco-exec" / "SKILL.md"
+    help_path = root / "wilco-exec" / "references" / "help-template.md"
+    report_path = root / "wilco-exec" / "references" / "execution-report-template.md"
+    agent_path = root / "wilco-exec" / "agents" / "openai.yaml"
+
+    if not skill_path.exists():
+        return [f"Missing wilco-exec skill file: {skill_path}"]
+    if not help_path.exists():
+        failures.append(f"Missing wilco-exec help template: {help_path}")
+    if not report_path.exists():
+        failures.append(f"Missing wilco-exec execution report template: {report_path}")
+    if not agent_path.exists():
+        failures.append(f"Missing wilco-exec agent prompt: {agent_path}")
+
+    skill_text = skill_path.read_text(encoding="utf-8")
+    required_skill_markers = (
+        "## Mode Contract",
+        "## Output Contract",
+        "smallest unblocked next step",
+        "route to `wilco-plan done` automatically",
+        "user's primary working language",
+        "most recent substantive message",
+        "keep commands, status literals, blocker types, file paths",
+        "persist plan, index, or temporary reconcile updates to disk",
+        "do not fabricate disk writes when no execution-state change is needed",
+        "Persist execution-state changes to disk when they are needed to preserve continuity across turns or tools.",
+        "## Multi-Active Safety Rules",
+        "do not guess. Ask for an explicit slug or route back through `wilco-plan review`",
+        "include the active source, active slug, and continuation basis in the execution report",
+        "[references/execution-report-template.md](references/execution-report-template.md)",
+    )
+    for marker in required_skill_markers:
+        if marker not in skill_text:
+            failures.append(f"wilco-exec/SKILL.md missing marker: {marker}")
+
+    if help_path.exists():
+        help_text = help_path.read_text(encoding="utf-8")
+        for marker in (
+            "user's primary working language",
+            "Keep commands and mode literals unchanged.",
+            "Axis position: the heavy end of the execution axis",
+            "do not guess the execution target when multiple active slugs are plausible",
+        ):
+            if marker not in help_text:
+                failures.append(f"wilco-exec/references/help-template.md missing marker: {marker}")
+
+    if report_path.exists():
+        report_text = report_path.read_text(encoding="utf-8")
+        for marker in (
+            "user's primary working language",
+            "Keep commands, status literals, blocker types, and path literals unchanged.",
+            "## Execution Step",
+            "## Execution State",
+            "## Verification",
+            "## Plan Update",
+            "## Next Step",
+        ):
+            if marker not in report_text:
+                failures.append(f"wilco-exec/references/execution-report-template.md missing marker: {marker}")
+
+    if agent_path.exists():
+        agent_text = agent_path.read_text(encoding="utf-8")
+        for marker in (
+            "active Wilco plan",
+            "smallest unblocked next step",
+            "verify it",
+            "update the plan",
+            "route to `wilco-plan done` automatically",
+        ):
+            if marker not in agent_text:
+                failures.append(f"wilco-exec/agents/openai.yaml missing marker: {marker}")
+
+    return failures
+
+
+def validate_wilco_plan_contract(root: Path) -> list[str]:
+    failures: list[str] = []
+    skill_path = root / "wilco-plan" / "SKILL.md"
+    help_path = root / "wilco-plan" / "references" / "templates" / "help-template.md"
+    review_path = root / "wilco-plan" / "references" / "templates" / "review-template.md"
+    truth_path = root / "wilco-plan" / "references" / "templates" / "truth-template.md"
+    handoff_path = root / "wilco-plan" / "references" / "templates" / "probe-handoff-template.md"
+    agent_path = root / "wilco-plan" / "agents" / "openai.yaml"
+
+    if not skill_path.exists():
+        return [f"Missing wilco-plan skill file: {skill_path}"]
+    for path, label in (
+        (help_path, "help template"),
+        (review_path, "review template"),
+        (truth_path, "truth template"),
+        (handoff_path, "probe handoff template"),
+        (agent_path, "agent prompt"),
+    ):
+        if not path.exists():
+            failures.append(f"Missing wilco-plan {label}: {path}")
+
+    skill_text = skill_path.read_text(encoding="utf-8")
+    for marker in (
+        "## Mode Contract",
+        "## Execution Readiness Rules",
+        "Recommended tracking mode",
+        "Suggested first slice",
+        "Execution readiness risks",
+        "Resolved during probe",
+        "A plan is `wilco-exec` ready only when the next smallest unblocked slice can be chosen without guessing",
+        "If the current plan is too coarse, too stale, or too ambiguous",
+        "user's primary working language",
+        "machine-consumed handoff field names stable",
+    ):
+        if marker not in skill_text:
+            failures.append(f"wilco-plan/SKILL.md missing marker: {marker}")
+
+    if handoff_path.exists():
+        handoff_text = handoff_path.read_text(encoding="utf-8")
+        for marker in (
+            "Optional: Recommended tracking mode",
+            "Optional: Suggested first slice",
+            "Optional: Execution readiness risks",
+            "Optional: Resolved during probe",
+            "`Recommended tracking mode`, `Suggested first slice`, `Execution readiness risks`",
+        ):
+            if marker not in handoff_text:
+                failures.append(f"wilco-plan/references/templates/probe-handoff-template.md missing marker: {marker}")
+
+    if help_path.exists():
+        help_text = help_path.read_text(encoding="utf-8")
+        for marker in (
+            "Axis position: the tracked-execution front door",
+            "user's primary working language",
+        ):
+            if marker not in help_text:
+                failures.append(f"wilco-plan/references/templates/help-template.md missing marker: {marker}")
+        if "- reset" in help_text:
+            failures.append("wilco-plan/references/templates/help-template.md should not expose `reset` as a public mode")
+        for marker in (
+            "## Mode Hints",
+            "`sync`: use when code moved and the current plan should catch up",
+            "`replan`: use when the same slug still applies",
+            "`prd`: use when the work now needs or updates `prd_backed` framing",
+        ):
+            if marker not in help_text:
+                failures.append(f"wilco-plan/references/templates/help-template.md missing mode hint marker: {marker}")
+
+    if review_path.exists():
+        review_text = review_path.read_text(encoding="utf-8")
+        if "`review` must be read-only" not in review_text:
+            failures.append("wilco-plan/references/templates/review-template.md missing marker: `review` must be read-only")
+
+    if truth_path.exists():
+        truth_text = truth_path.read_text(encoding="utf-8")
+        if "Use `truth` only when the user explicitly asks" not in truth_text:
+            failures.append("wilco-plan/references/templates/truth-template.md missing marker: Use `truth` only when the user explicitly asks")
+
+    if agent_path.exists():
+        agent_text = agent_path.read_text(encoding="utf-8")
+        for marker in (
+            "only default front door",
+            "plan_only",
+            "probe",
+            ".wilco/plans/active",
+        ):
+            if marker not in agent_text:
+                failures.append(f"wilco-plan/agents/openai.yaml missing marker: {marker}")
+    if "- `reset`" in skill_text:
+        failures.append("wilco-plan/SKILL.md should not expose `reset` as a separate public mode")
 
     return failures
 
@@ -159,82 +412,200 @@ def validate_workflow_invariants(root: Path) -> list[str]:
     failures: list[str] = []
     required_markers: dict[Path, tuple[str, ...]] = {
         root / "README.md": (
-            "new tracked work enters through `wilco-init`",
+            "`wilco-plan` is the only default user-facing entrypoint",
             "every tracked slug should have an `.wilco/index/<slug>.json` linkage file",
-            "agents may route automatically from `wilco-execute` into `wilco-cleanup`",
+            "agents may route automatically from `wilco-exec` into `wilco-plan done`",
             "lightweight workflow invariant checks",
+            "Default Light, Escalate When Needed.",
+            "probing and execution are separate escalation axes",
+            "## Persistence Policy",
+            "## Most Common Paths",
+            "## Escalation Hints",
         ),
         root / "wilco-plan" / "SKILL.md": (
-            "use `wilco-init` first",
-            "do not treat it as `no-doc`",
-            "stable topic ID",
-            "split to a new slug",
-            "downgraded to plan-only",
+            "only default front door",
+            "Do not create a plan",
+            "fresh dated slug",
+            "delete the active docs and rebuild",
+            "Mode: plan_only",
+            "probe handoff",
+            "Use [scripts/bootstrap_wilco_slug.py]",
+            "`done` = delete-and-exit",
+            "`cancel` = delete-and-exit",
+            "## Mode Contract",
+            "## Input Precedence",
+            "## Multi-Active Safety Rules",
+            "`review` must be strictly read-only",
+            "`truth` is manual only",
+            "user's primary working language",
+            "most recent substantive message",
+            "machine-consumed handoff field names stable",
+            "## Execution Readiness Rules",
+            "Recommended tracking mode",
+            "Suggested first slice",
+            "Execution readiness risks",
+            "Resolved during probe",
+            "Use [references/templates/help-template.md]",
+            "Use [references/templates/review-template.md]",
         ),
-        root / "wilco-prd" / "SKILL.md": (
-            "hard escalation gate",
-            "hand off to `wilco-init`",
-            "`downgrade-to-plan-only`",
+        root / "wilco-exec" / "SKILL.md": (
+            "not final close-out deletion",
+            "route to `wilco-plan done`",
+            "route back through `wilco-plan` for reconcile",
+            "Prefer `scripts/sync_wilco_index.py`",
+            "Use [references/status-vocabulary.md]",
+            "Use [references/automation.md]",
+            "## Mode Contract",
+            "## Output Contract",
+            "## Multi-Active Safety Rules",
+            "persist plan, index, or temporary reconcile updates to disk",
+            "do not guess. Ask for an explicit slug or route back through `wilco-plan review`",
+            "include the active source, active slug, and continuation basis in the execution report",
+            "Use [references/help-template.md]",
         ),
-        root / "wilco-resume" / "SKILL.md": (
-            "`downgrade-to-plan-only`",
-            "PRD has effectively become redundant",
-        ),
-        root / "wilco-execute" / "SKILL.md": (
-            "not final archive handling",
-            "route to `wilco-cleanup`",
-        ),
-        root / "wilco-cleanup" / "SKILL.md": (
-            "Users should not need to remember this skill manually",
-        ),
-        root / "wilco-docs" / "SKILL.md": (
-            "new tracked work enters through `wilco-init`",
-            "index` exists for tracked slugs",
-            "stable topic identifier",
-            "`related`, `follow_up`, `supersedes`, and `superseded_by`",
-        ),
-        root / "wilco-init" / "references" / "bootstrap-levels.md": (
+        root / "wilco-plan" / "references" / "ops" / "bootstrap-levels.md": (
             "create the active plan and the derived index manifest",
         ),
-        root / "wilco-docs" / "references" / "decision-tree.md": (
-            "tracked work should enter through `wilco-init`",
+        root / "wilco-plan" / "references" / "rules" / "routing.md": (
+            "`wilco-plan` is the only default front door",
             "Do not treat the work as `no-doc`",
-            "`downgrade-to-plan-only`",
-            "Treat the slug as a stable topic ID",
+            "`upgrade-to-prd-backed`",
+            "Prefer dated slugs in `YYYY-MM-DD-topic` form",
             "`related`",
         ),
-        root / "wilco-docs" / "references" / "troubleshooting.md": (
-            "`downgrade-to-plan-only`",
+        root / "wilco-plan" / "references" / "rules" / "closeout-rules.md": (
+            "delete active docs",
         ),
-        root / "wilco-docs" / "references" / "archive.md": (
-            "downgraded out of the active lifecycle",
-        ),
-        root / "wilco-plan" / "references" / "plan-template.md": (
+        root / "wilco-plan" / "references" / "templates" / "plan-template.md": (
             "Keep the slug stable once tracked",
-            "`downgrade-to-plan-only`",
+            "Mode: `prd_backed`",
         ),
-        root / "wilco-plan" / "references" / "plan-only-template.md": (
+        root / "wilco-plan" / "references" / "templates" / "plan-only-template.md": (
             "Keep the slug stable once tracked",
         ),
-        root / "wilco-prd" / "references" / "prd-template.md": (
-            "`downgrade-to-plan-only`",
+        root / "wilco-plan" / "references" / "templates" / "prd-template.md": (
+            "Mode: prd_backed",
         ),
-        root / "wilco-resume" / "references" / "resume-output-template.md": (
-            "`downgrade-to-plan-only`",
-            "record slug splits",
+        root / "wilco-plan" / "references" / "ops" / "reconcile.md": (
+            "`upgrade-to-prd-backed`",
+            "replace active slug",
+            "## Reconcile Summary",
         ),
-        root / "wilco-resume" / "references" / "resume-checklist.md": (
-            "independent scope, intent, or acceptance value",
-            "record the split in prose and index linkage",
+        root / "wilco-plan" / "references" / "templates" / "probe-handoff-template.md": (
+            "Target",
+            "Issue classes",
+            "Recommended tracking mode",
+            "Suggested first slice",
+            "Execution readiness risks",
+            "Resolved during probe",
+            "Accepted decisions",
+            "Suggested edits",
         ),
-        root / "wilco-execute" / "references" / "execute-loop.md": (
-            "do not perform archive handling inside `wilco-execute`",
+        root / "wilco-exec" / "references" / "help-template.md": (
+            "## Wilco Exec Help",
+            "user's primary working language",
+            "Keep commands and mode literals unchanged.",
+            "Axis position: the heavy end of the execution axis",
+            "## Inputs",
+            "## Behavior",
+            "## Safety Rules",
+            "do not guess the execution target when multiple active slugs are plausible",
+            "## Examples",
         ),
-        root / "wilco-docs" / "scripts" / "wilco_common.py": (
+        root / "wilco-plan" / "references" / "templates" / "help-template.md": (
+            "## Wilco Plan Help",
+            "user's primary working language",
+            "Keep commands and mode literals unchanged.",
+            "Axis position: the tracked-execution front door",
+            "## Modes",
+            "## Input Sources",
+            "## Input Precedence",
+            "## Safety Rules",
+            "## Examples",
+        ),
+        root / "wilco-plan" / "references" / "templates" / "review-template.md": (
+            "## Plan Review",
+            "user's primary working language",
+            "Keep commands, mode literals, status literals, and slug/path literals unchanged.",
+            "## Current State",
+            "## Recommended Next Step",
+            "`review` must be read-only",
+        ),
+        root / "wilco-plan" / "references" / "templates" / "truth-template.md": (
+            "## Truth Extraction",
+            "user's primary working language",
+            "Keep commands, path literals, and stable field labels unchanged when another workflow consumes them.",
+            "## Stable Facts",
+            "Use `truth` only when the user explicitly asks",
+        ),
+        root / "README-zh.md": (
+            "## 落盘原则",
+            "## 最常用路径",
+            "## 升级提示",
+            "默认从轻，按需升级。",
+        ),
+        root / "wilco-probe" / "references" / "help-template.md": (
+            "## Wilco Probe Help",
+            "## Modes",
+            "## Input Model",
+            "## Internal State",
+            "## Behavior",
+            "## Topic Map Controls",
+            "## Examples",
+            "user's primary working language",
+            "Keep commands and mode literals unchanged.",
+            "Axis position: the probing axis",
+            "bootstrap a light scan when explicit `grill`, `review`, or `resolve` is invoked without usable current probe state",
+            "allow a brief solve-and-return inside `grill` for bounded low-risk issues",
+            "accept short action modifiers in `grill`",
+            "- grill",
+            "- review",
+            "- resolve",
+            "- retire",
+        ),
+        root / "wilco-exec" / "references" / "execute-loop.md": (
+            "do not perform close-out deletion inside `wilco-exec`",
+            "route directly to `wilco-plan done`",
+        ),
+        root / "wilco-exec" / "references" / "execution-report-template.md": (
+            "user's primary working language",
+            "Keep commands, status literals, blocker types, and path literals unchanged.",
+            "## Execution Step",
+            "## Execution State",
+            "## Plan Update",
+            "## Next Step",
+        ),
+        root / "wilco-exec" / "references" / "blocker-taxonomy.md": (
+            "## Blocked Output Shape",
+            "## Blocked",
+            "- Type:",
+            "- Evidence:",
+            "- Unblock:",
+            "- Next step:",
+        ),
+        root / "wilco-exec" / "references" / "status-vocabulary.md": (
+            "## Work Status",
+            "## Execution Progress",
+            "## Alignment Status",
+            "## Confidence",
+        ),
+        root / "wilco-exec" / "references" / "automation.md": (
+            "## Sync Derived Index",
+            "Use `scripts/sync_wilco_index.py`",
+        ),
+        root / "wilco-exec" / "scripts" / "sync_wilco_index.py": (
+            "Derive minimal .wilco/index manifests from current Wilco artifacts.",
+            "from wilco_common import",
+        ),
+        root / "wilco-exec" / "scripts" / "wilco_common.py": (
+            "RELATIONSHIP_KEYS",
+            "build_index_manifest",
+        ),
+        root / "wilco-plan" / "scripts" / "wilco_common.py": (
             "RELATIONSHIP_KEYS",
             "normalize_relationships",
         ),
-        root / "wilco-docs" / "scripts" / "validate_wilco_workspace.py": (
+        root / "wilco-plan" / "scripts" / "validate_wilco_workspace.py": (
             "RELATIONSHIP_KEYS",
             "unexpected relationship key",
         ),
@@ -257,6 +628,7 @@ def validate_contract_map(root: Path) -> list[str]:
     file_markers: dict[Path, tuple[str, ...]] = {
         root / "CONTRACTS.md": (
             "## Distribution Assumptions",
+            "## Persistence Policy",
             "## Contract Layers",
             "## Owners And Derived Forms",
             "## Sync Policy",
@@ -267,6 +639,7 @@ def validate_contract_map(root: Path) -> list[str]:
         ),
         root / "CONTRACTS-zh.md": (
             "## 分发前提",
+            "## 落盘原则",
             "## 契约层级",
             "## Owner 与派生层",
             "## 同步策略",
@@ -284,6 +657,65 @@ def validate_contract_map(root: Path) -> list[str]:
         for marker in required_markers:
             if marker not in text:
                 failures.append(f"{path.relative_to(root)} missing marker: {marker}")
+    return failures
+
+
+def skill_root_for_path(path: Path, skill_dirs: list[Path]) -> Path | None:
+    for skill_dir in skill_dirs:
+        try:
+            path.relative_to(skill_dir.resolve())
+            return skill_dir.resolve()
+        except ValueError:
+            continue
+    return None
+
+
+def extract_runtime_reference_tokens(text: str) -> set[str]:
+    tokens: set[str] = set()
+    for match in MARKDOWN_LINK_RE.finditer(text):
+        token = match.group(1)
+        if token.startswith(("references/", "scripts/", "agents/", "./", "../")):
+            tokens.add(token)
+    for match in BACKTICK_PATH_RE.finditer(text):
+        tokens.add(match.group(1))
+    return tokens
+
+
+def resolve_runtime_reference(skill_root: Path, current_file: Path, token: str) -> Path:
+    if token.startswith(("references/", "scripts/", "agents/")):
+        return (skill_root / token).resolve()
+    return (current_file.parent / token).resolve()
+
+
+def validate_runtime_closure(root: Path) -> list[str]:
+    failures: list[str] = []
+    skill_dirs = [path.resolve() for path in find_skill_dirs(root)]
+
+    for skill_dir in skill_dirs:
+        queue: list[Path] = [skill_dir / "SKILL.md"]
+        agents_dir = skill_dir / "agents"
+        if agents_dir.exists():
+            queue.extend(path for path in sorted(agents_dir.rglob("*")) if path.is_file())
+
+        visited: set[Path] = set()
+        while queue:
+            current = queue.pop(0).resolve()
+            if current in visited or not current.exists() or not current.is_file():
+                continue
+            visited.add(current)
+
+            text = current.read_text(encoding="utf-8")
+            for token in sorted(extract_runtime_reference_tokens(text)):
+                resolved = resolve_runtime_reference(skill_dir, current, token)
+                target_skill = skill_root_for_path(resolved, skill_dirs)
+                if target_skill is not None and target_skill != skill_dir:
+                    failures.append(
+                        f"{current.relative_to(root)} has cross-skill runtime reference `{token}` -> {resolved.relative_to(root)}"
+                    )
+                    continue
+                if target_skill == skill_dir and resolved.is_file() and resolved not in visited:
+                    queue.append(resolved)
+
     return failures
 
 
@@ -338,11 +770,23 @@ def main() -> int:
     else:
         print("[ok] no placeholder markers")
 
-    grill_failures = validate_wilco_grill_contract(root)
-    if grill_failures:
-        failures.append("wilco-grill contract validation failed:\n" + "\n".join(grill_failures))
+    probe_failures = validate_wilco_probe_contract(root)
+    if probe_failures:
+        failures.append("wilco-probe contract validation failed:\n" + "\n".join(probe_failures))
     else:
-        print("[ok] wilco-grill contract")
+        print("[ok] wilco-probe contract")
+
+    plan_failures = validate_wilco_plan_contract(root)
+    if plan_failures:
+        failures.append("wilco-plan contract validation failed:\n" + "\n".join(plan_failures))
+    else:
+        print("[ok] wilco-plan contract")
+
+    exec_failures = validate_wilco_exec_contract(root)
+    if exec_failures:
+        failures.append("wilco-exec contract validation failed:\n" + "\n".join(exec_failures))
+    else:
+        print("[ok] wilco-exec contract")
 
     workflow_failures = validate_workflow_invariants(root)
     if workflow_failures:
@@ -355,6 +799,12 @@ def main() -> int:
         failures.append("contract map validation failed:\n" + "\n".join(contract_map_failures))
     else:
         print("[ok] contract map")
+
+    runtime_closure_failures = validate_runtime_closure(root)
+    if runtime_closure_failures:
+        failures.append("runtime closure validation failed:\n" + "\n".join(runtime_closure_failures))
+    else:
+        print("[ok] runtime closure")
 
     cache_dirs = pycache_dirs(root)
     if cache_dirs:

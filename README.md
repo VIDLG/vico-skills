@@ -1,101 +1,151 @@
 # wilco-skills
 
-Repository-native Wilco skills for planning, execution, reconciliation, and cleanup under `.wilco/`.
+Repository-native Wilco skills for planning and execution under `.wilco/`.
 
 Chinese version: [README-zh.md](README-zh.md)
 Contract map: [CONTRACTS.md](CONTRACTS.md)
 
 ## Skill Set
 
-- `wilco-init`: bootstrap a new slug with the smallest valid artifact set
-- `wilco-plan`: default tracked workflow; create or update plan-only or PRD-backed execution plans
-- `wilco-prd`: create or update PRDs only when plan-only is not enough
-- `wilco-resume`: reconcile `.wilco`, code, and tests to decide the true current state
-- `wilco-execute`: execute the active plan until done or truly blocked
-- `wilco-cleanup`: archive completed or abandoned slugs and clear stale temporary state
-- `wilco-docs`: govern `.wilco` vs `docs/` boundaries, lifecycle, and archive handling
-- `wilco-grill`: stress-test the current PRD, plan, or design
+- `wilco-plan`: the only default front door; decide `no-doc / plan_only / prd_backed`, reconcile state, create or update the active plan, and absorb probe handoff
+- `wilco-exec`: execute the active plan until done or truly blocked
+- `wilco-probe`: inspect a plan, design, or codebase; scan for issues; grill where needed; and emit a handoff block that `wilco-plan` can consume
 
-For `wilco-grill` output examples, see [wilco-grill/references/output-format.md](wilco-grill/references/output-format.md).
+For `wilco-probe` output examples, see [wilco-probe/references/output-format.md](wilco-probe/references/output-format.md).
 
 ## Default Model
 
 - `wilco-skills` is a strongly routed workflow, not a loose toolbelt
-- new tracked work enters through `wilco-init`
-- `plan-only` is the default tracked workflow
-- `PRD` is an escalation, not a baseline requirement
-- `resume` is a temporary handoff or recovery snapshot
+- `wilco-plan` is the only default user-facing entrypoint
+- `wilco-plan` internally handles bootstrap, lightweight reconcile, PRD escalation, and active-slug replacement decisions
+- `wilco-plan` also exposes explicit controller modes such as `help`, `review`, `sync`, `prd`, `replace`, `done`, and `cancel`
+- `plan_only` is the default tracked workflow
+- `PRD` is an internal escalation path, not a separate default entrypoint
+- once upgraded to `prd_backed`, a slug does not downgrade in place
+- temporary reconcile state may still exist, but `resume` is an internal capability rather than a primary user-facing skill
 - every tracked slug should have an `.wilco/index/<slug>.json` linkage file
 - `index` is derived linkage metadata, not the primary human source of truth
 
+## Design Principle
+
+`Default Light, Escalate When Needed.`
+
+- `wilco-skills` is designed to stay vibe-friendly at low complexity and become more structured only when the work actually needs it
+- probing and execution are separate escalation axes rather than one forced heavyweight workflow
+- probing can scale from direct clarification to `wilco-probe`, `scan`, and `grill`
+- execution can scale from direct vibe execution to `wilco-plan`, `prd_backed`, and `wilco-exec`
+- heavier modes exist to reduce ambiguity and coordination cost, not to front-load process onto every task
+
 See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, distribution assumptions, and validator responsibilities.
+
+## Persistence Policy
+
+- `wilco-probe`: keep probe state session-local by default; write back only when the user explicitly asks to capture conclusions
+- `wilco-plan`: write or update active plan, optional PRD, and derived index state by default when tracked work is being shaped
+- `wilco-exec`: persist plan, index, or temporary reconcile updates when continuity depends on accurate execution state or when the user expects docs to stay current
+
+## Most Common Paths
+
+- direct vibe execution: talk through the task and implement immediately when no tracked workflow is needed
+- inspect before planning: `wilco-probe -> wilco-plan`
+- tracked planning only: `wilco-plan`
+- end-to-end tracked execution: `wilco-plan -> wilco-exec -> wilco-plan done`
+
+## Escalation Hints
+
+- stay in direct vibe execution when the task is local, low-risk, and does not need tracked cross-turn coordination
+- use `wilco-probe` when the object is unclear, contested, or likely to benefit from evidence-first questioning before planning
+- use `wilco-plan` when the work should become a tracked execution contract under `.wilco/`
+- use `wilco-exec` only when an active plan already exists and the user wants persistent execution until done or a real blocker
 
 ## When To Use What
 
-- New tracked work, no slug yet: `wilco-init`
-- Existing slug, need execution planning: `wilco-plan`
-- Existing slug, scope or acceptance changed: `wilco-prd` and `wilco-plan`
-- `.wilco` looks outdated or out of sync: `wilco-resume`
-- Continue implementation against an active plan: `wilco-execute`
-- Work is effectively done and should be archived: `wilco-cleanup`
-- Need lifecycle or placement decisions: `wilco-docs`
-
-Do not bootstrap new tracked work from `wilco-plan` or `wilco-prd`. Those skills may update an existing slug directly, but new tracked work should first enter the workflow through `wilco-init`.
+- Need to start, update, reconcile, or reshape tracked work: `wilco-plan`
+- Continue implementation against an active plan: `wilco-exec`
+- Need to mark work done or cancelled and remove active docs: `wilco-plan`
+- Need architecture truth extraction or boundary handling: `wilco-plan`
+- Need to inspect a plan, design, or codebase before planning: `wilco-probe`
 
 ## Automation
 
-- `wilco-init/scripts/bootstrap_wilco_slug.py`
-  Creates starter plan/PRD/architecture files for a new slug.
-- `wilco-docs/scripts/sync_wilco_headers.py`
+- `wilco-plan/scripts/bootstrap_wilco_slug.py`
+  Creates starter active plan/PRD/architecture files when `wilco-plan` decides a new slug is needed.
+- `wilco-plan/scripts/sync_wilco_headers.py`
   Synchronizes plan and PRD headers plus cross-links.
-- `wilco-docs/scripts/sync_wilco_index.py`
+- `wilco-plan/scripts/sync_wilco_index.py`
   Rebuilds minimal `.wilco/index/*.json` manifests from current artifacts.
-- `wilco-docs/scripts/close_wilco_slug.py`
-  Archives a completed slug and clears temporary resume/index state.
-- `wilco-docs/scripts/validate_wilco_workspace.py`
+- `wilco-plan/scripts/close_wilco_slug.py`
+  Deletes completed active docs and clears temporary resume/index state.
+- `wilco-plan/scripts/validate_wilco_workspace.py`
   Validates the current `.wilco` workspace against the Wilco schema.
 - `scripts/validate_wilco_skills.py`
   Validates all Wilco skills, helper scripts, tests, and basic content hygiene.
 
 ## Typical Flows
 
-### Start New Work
+### Start Or Reconcile Work
 
 ```text
-wilco-init -> wilco-plan
+wilco-plan
 ```
 
-or:
+### Inspect Current State
 
 ```text
-wilco-init -> wilco-prd -> wilco-plan
+wilco-plan review
 ```
 
-### Recover Out-Of-Sync Work
+### Show Available Modes
 
 ```text
-wilco-resume -> wilco-plan
-wilco-resume -> wilco-prd -> wilco-plan
-wilco-resume -> wilco-docs
+wilco-plan help
 ```
 
-### Execute And Close
+### Probe Then Plan
 
 ```text
-wilco-execute -> wilco-cleanup
+wilco-probe -> wilco-plan
 ```
 
-The skill boundary remains split even when the user wants end-to-end completion:
+### Show Available Modes
 
-- `wilco-execute` finishes implementation and keeps the plan current
-- `wilco-cleanup` performs `close-archive` handling
-- agents may route automatically from `wilco-execute` into `wilco-cleanup` so the user does not need to remember the second step
+```text
+wilco-exec help
+wilco-probe help
+```
+
+## Probe Workflow
+
+- `wilco-probe`
+  - default entry; does a light scan first, then recommends, asks one question, reviews, or resolves based on issue state
+- `wilco-probe scan`
+  - deep inspection only; build evidence, issues, and a topic map without entering a long questioning loop
+- `wilco-probe grill`
+  - force sustained high-intensity questioning on the most important unresolved issues
+- `wilco-probe review`
+  - show the current accepted decisions, unresolved issues, and suggested next mode
+- `wilco-probe resolve`
+  - stop asking and emit a final summary or `Probe Handoff` for `wilco-plan`
+- `wilco-probe help`
+  - show the modes and the intended usage flow
+
+### Execute And Finish
+
+```text
+wilco-exec -> wilco-plan done
+```
+
+The lifecycle remains simple even when the user wants end-to-end completion:
+
+- `wilco-exec` finishes implementation and keeps the plan current
+- `wilco-plan done` performs close-out deletion handling
+- agents may route automatically from `wilco-exec` into `wilco-plan done` so the user does not need to remember the second step
 
 ## Development Notes
 
 - Treat `wilco-skills/` as the single source of truth.
 - During development, point project-local `.codex/skills/` and `.claude/skills/` entries at these folders instead of copying skill contents.
-- For Claude Code, hook scripts live in `wilco-execute/scripts/` and project hook wiring lives in `.claude/settings*.json`.
+- For Claude Code, hook scripts live in `wilco-exec/scripts/` and project hook wiring lives in `.claude/settings*.json`.
 
 ## Validation
 
