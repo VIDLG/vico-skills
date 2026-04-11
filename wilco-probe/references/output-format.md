@@ -142,6 +142,10 @@ Recommended resolutions
 
 - prefer `resolve` to emit handoff when `wilco-plan` is the next consumer
 
+Recommended action
+
+- `wilco-plan`
+
 Topic map snapshot
 
 - handoff-shape: active
@@ -380,6 +384,9 @@ Unresolved decisions
 Suggested edits
 - Rewrite `wilco-plan/SKILL.md` as the front-door orchestrator.
 - Remove the old user-facing init / prd / resume entrypoints.
+
+Recommended action
+- `wilco-plan`
 
 Edit priority
 1. README and contracts

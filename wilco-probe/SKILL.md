@@ -427,6 +427,7 @@ Use `grill` when the next best action is sustained user questioning rather than 
 - optional `Deferred issues`
 - optional `Recommended resolutions`
 - optional `Topic map snapshot`
+- optional `Recommended action`
 - `Suggested next mode`
 
 `review` is a checkpoint, not a new questioning round.
@@ -441,6 +442,7 @@ Use `resolve` when the goal is to converge the current probe state into a stable
 - if unresolved items are minor or recommendation-grade, emit the final summary directly
 - if the result should feed planning, emit `## Probe Handoff`
 - keep issue classes visible when they materially affect write-back target selection
+- include `Recommended action` when it helps distinguish direct execution from tracked planning
 - do not open a fresh `Question N` during `resolve`
 - prefer `resolve` over an extra confirmation turn when the next useful action is clearly to hand work back to `wilco-plan`
 - if a handoff is emitted, include all strong input fields explicitly
@@ -609,6 +611,12 @@ At the end of a substantial probing pass, produce a final summary.
 
 - `Edit priority`
   - Use when multiple files or layers should be updated in a specific order.
+- `Recommended action`
+  - Use when the next human-facing action should be explicit.
+  - Prefer one of:
+    - `direct_execute`
+    - `wilco-plan`
+    - `wilco-plan -> wilco-exec`
 - `Next questions`
   - Use when another probing pass is clearly warranted.
 - `Not covered in this pass`
@@ -631,6 +639,7 @@ Use this shape:
 - optional `Resolved during probe`
 - `Unresolved decisions`
 - `Suggested edits`
+- optional `Recommended action`
 - optional `Recommended resolutions`
 - optional `Edit priority`
 
@@ -643,6 +652,7 @@ Use this shape:
 - optional `Resolved during probe`
 - `Unresolved decisions`
 - `Suggested edits`
+- optional `Recommended action`
 
 `Resolved during probe`, `Recommended resolutions`, and `Edit priority` are soft inputs.
 

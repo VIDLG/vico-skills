@@ -440,6 +440,7 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertNotIn("handoff template lacks `Target`", probe_output)
         self.assertIn("Issue classes", probe_output)
         self.assertIn("Findings", probe_output)
+        self.assertIn("Recommended action", probe_output)
         self.assertIn("Suggested next target", probe_output)
         self.assertIn("This probe is ready to hand to `wilco-plan`.", probe_output)
 
@@ -551,6 +552,8 @@ class WilcoAutomationTests(unittest.TestCase):
         self.assertIn("Only expose full issue-bank style detail when the user asks for it", probe_skill)
         self.assertIn("If the next clear consumer is `wilco-plan`, emit a self-contained `## Probe Handoff` block", probe_skill)
         self.assertIn("Do not use `see above` or other relative references inside a `Probe Handoff`", probe_skill)
+        self.assertIn("`direct_execute`", probe_skill)
+        self.assertIn("`wilco-plan -> wilco-exec`", probe_skill)
         self.assertIn("`scan` may legitimately suggest another narrower `scan`", probe_skill)
         self.assertIn("controlled recursive narrowing process", probe_skill)
         self.assertIn("Suggested next target", probe_skill)
