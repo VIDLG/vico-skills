@@ -366,6 +366,7 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
         "Execution readiness risks",
         "Resolved during probe",
         "`verify` is the close-out readiness gate",
+        "`verify done`",
         "`verified_complete`",
         "`not_complete`",
         "`ambiguous`",
@@ -373,6 +374,7 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
         "If the current plan is too coarse, too stale, or too ambiguous",
         "make a plan",
         "verify this plan",
+        "verify done",
         "how do I use wilco-plan",
         "If the user's intent could reasonably map to lightweight direct execution instead of tracked planning",
         "user's primary working language",
@@ -407,6 +409,7 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
         for marker in (
             "## Mode Hints",
             "`verify`: use when you need to check completion against real code and test evidence before close-out",
+            "`verify done`: use when you want verification to gate an immediate close-out",
             "`sync`: use when code moved and the current plan should catch up",
             "`replan`: use when the same slug still applies",
             "`prd`: use when the work now needs or updates `prd_backed` framing",
@@ -427,6 +430,7 @@ def validate_wilco_plan_contract(root: Path) -> list[str]:
             "## Evidence",
             "## Open Gaps",
             "## Recommended Next Mode",
+            "`verify done`",
             "`verify` must be read-only",
         ):
             if marker not in verify_text:
@@ -471,6 +475,7 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "## Install And Uninstall",
             "`wilco-probe grill plan -> wilco-plan`",
             "verify this plan",
+            "verify done",
             "how do I use wilco-probe",
             "how do I use wilco-plan",
             "how do I use wilco-exec",

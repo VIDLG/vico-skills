@@ -45,6 +45,7 @@ Recommended minimums:
 
 ## Anti-Patterns
 
+- treating `verify` as if it automatically performs close-out deletion
 - leaving a completed plan in an active directory without deleting it
 - relying on deleted PRD content in memory instead of extracting needed truth into architecture docs
 - treating `.wilco/resume/` as a history store instead of a current-state handoff location

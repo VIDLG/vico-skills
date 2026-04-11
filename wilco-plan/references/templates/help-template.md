@@ -53,6 +53,7 @@ Keep commands and mode literals unchanged.
 
 - `sync`: use when code moved and the current plan should catch up
 - `verify`: use when you need to check completion against real code and test evidence before close-out
+- `verify done`: use when you want verification to gate an immediate close-out
 - `replan`: use when the same slug still applies, but the execution contract itself should be rewritten
 - `prd`: use when the work now needs or updates `prd_backed` framing
 
