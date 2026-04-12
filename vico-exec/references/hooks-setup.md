@@ -1,6 +1,7 @@
 # Claude Hook Setup
 
 These hooks are optional helpers for Claude Code.
+If you need a stronger outer loop, use [runner.md](runner.md) instead of relying on hooks alone.
 
 Goal:
 
@@ -19,6 +20,7 @@ Suggested events:
 ## Important Notes
 
 - Hooks should reinforce execution discipline, not replace reasoning.
+- Hooks are lighter-weight than the bundled Claude runner loop.
 - Do not use hooks to silently invent progress.
 - Let the model stop when a real blocker exists or a user decision is needed.
 - After changing Claude hooks, start a new session or re-review the hooks configuration so the new settings take effect.

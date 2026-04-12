@@ -43,14 +43,37 @@ For `vico-probe` output examples, see [vico-probe/references/output-format.md](v
 `Default Light, Escalate When Needed.`
 
 - `vico-skills` is designed to stay vibe-friendly at low complexity and become more structured only when the work actually needs it
-- freeform grilling is the lightest questioning lane; `vico-probe` is the repo-native questioning lane
 - probing and execution are separate escalation axes rather than one forced heavyweight workflow
+- freeform grilling is the lightest questioning lane
+- problem framing and execution structure are separate escalation axes rather than one forced heavyweight workflow
+- freeform grilling is the lightest problem-framing lane; `vico-probe` is the repo-native problem-framing lane
 - freeform questioning can scale from `vico-grill` into `vico-probe` or `vico-plan` when repository reality or tracked execution becomes the next governing constraint
 - probing can scale from direct clarification to `vico-probe`, `scan`, and `grill`
 - execution can scale from direct vibe execution to `vico-plan`, `prd_backed`, and `vico-exec`
 - heavier modes exist to reduce ambiguity and coordination cost, not to front-load process onto every task
 - workflow re-entry is first-class: work may move from vibe execution into tracked workflow and back again without being treated as an error state
 - direct execution may happen before, during, or after tracked workflow; when tracked workflow resumes, the active Vico route should reconcile against repository reality before trusting `.vico` state
+
+### Escalation Map
+
+```text
+Higher execution structure
+^
+|                                      vico-exec
+|                           vico-plan (plan_only / prd_backed)
+|                  vico-probe -> vico-plan
+|         vico-probe
+|  vico-grill
++------------------------------------------------------------> Higher problem-framing rigor
+  direct vibe execution
+```
+
+- Horizontal axis: problem-framing rigor
+  how much discovery, clarification, and repository-grounded reasoning is needed before action is safe
+- Vertical axis: execution structure
+  how much durable planning, coordination, and repeatable execution machinery the work now needs
+- Move right when the problem is still unclear or contested.
+- Move up when the execution needs stronger contracts, artifacts, or persistence.
 
 See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, distribution assumptions, and validator responsibilities.
 
@@ -70,6 +93,8 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 - inspect before planning: `vico-probe -> vico-plan`
 - refine an existing plan: `vico-probe grill plan -> vico-plan`
 - tracked planning only: `vico-plan`
+- cross-agent handoff: `Codex vico-plan -> Claude Code vico-exec`
+- Claude runner loop: `Codex vico-plan -> Claude runner -> vico-plan verify`
 - end-to-end tracked execution: `vico-plan -> vico-exec -> vico-plan close`
 
 ## Escalation Hints
@@ -94,8 +119,8 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 
 - `vico-grill`: `grill this idea`, `grill me`, `stress-test this decision`, `deep interview this`, `discuss this tradeoff`, `how do I use vico-grill`
 - `vico-probe`: `scan the repo`, `inspect the codebase`, `grill this plan`, `grill this PRD`, `refine this plan`, `how do I use vico-probe`
-- `vico-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `verify close`, `verify sync`, `verify replan`, `close this plan`, `how do I use vico-plan`
-- `vico-exec`: `keep going`, `continue until complete`, `execute the active plan`, `carry this through unless blocked`, `how do I use vico-exec`
+- `vico-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `verify close`, `verify sync`, `verify replan`, `close this plan`, `export these rules to AGENTS.md`, `write the operating brief to CLAUDE.md`, `how do I use vico-plan`
+- `vico-exec`: `keep going`, `continue until complete`, `execute the active plan`, `carry this through unless blocked`, `vico-exec cc`, `run this with cc`, `handoff to cc`, `use claude code runner`, `how do I use vico-exec`
 - `vico-feedback`: `file an issue`, `report a bug`, `I have feedback about vico-skills`, `draft a GitHub issue`, `how do I use vico-feedback`
 
 If a natural-language request could reasonably mean more than one of these routes, prefer a short clarification over guessing the wrong workflow.
@@ -273,6 +298,15 @@ vico-plan help
 vico-probe -> vico-plan
 ```
 
+### Export Repo Operating Brief
+
+```text
+vico-plan export-md AGENTS.md
+vico-plan export-md CLAUDE.md
+```
+
+Use this when you want the current Vico discipline and repo-local workflow rules exported into project-local instruction files.
+
 ### Show Available Modes
 
 ```text
@@ -309,11 +343,50 @@ The lifecycle remains simple even when the user wants end-to-end completion:
 - `vico-plan close` performs close-out deletion handling
 - agents should stop after showing completion evidence and wait for the user to type the close command explicitly
 
+### Codex Plan Then Claude Execute
+
+```text
+Codex: vico-plan -> Claude Code: vico-exec
+```
+
+This is a first-class supported handoff:
+
+- Codex can build or refine the tracked plan
+- Claude Code can consume the active plan and execute it
+- handoff happens through the active `.vico` artifacts rather than hidden session state
+
+### Claude Runner Loop
+
+```bash
+python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon
+```
+
+Use the runner when Claude Code should keep looping through execute + verify + continue decisions until it reaches `done`, `blocked`, `needs_user`, or `stale_plan`.
+Natural entrypoints: `vico-exec cc`, `run this with cc`, `handoff to cc`.
+
+## External Influences
+
+These references influenced the shape of `vico-skills`, even though Vico keeps its own contracts and naming:
+
+- [`forrestchang/andrej-karpathy-skills`](https://github.com/forrestchang/andrej-karpathy-skills)
+  influenced the emphasis on explicit assumptions, simplicity pressure, surgical changes, and goal-driven execution. Those ideas map closely onto Vico's evidence-first probing, small-scope edits, and verify-driven execution loops.
+- [`mattpocock/skills` `grill-me`](https://github.com/mattpocock/skills/tree/main/grill-me)
+  influenced the freeform grilling lane behind `vico-grill`, especially the one-question-at-a-time pressure-testing style.
+- [`gsd-build/get-shit-done`](https://github.com/gsd-build/get-shit-done)
+  influenced the emphasis on repo-local planning artifacts and context-engineered execution. GSD currently keeps planning state under `.plans/`.
+- [`Yeachan-Heo/oh-my-codex`](https://github.com/Yeachan-Heo/oh-my-codex)
+  influenced the idea of a workflow layer around Codex, durable runtime state under `.omx/`, and persistent completion loops such as `$ralph`.
+- [`Yeachan-Heo/oh-my-claudecode`](https://github.com/Yeachan-Heo/oh-my-claudecode)
+  influenced the Claude Code side of the model: team orchestration, staged execution pipelines, and explicit Codex/Claude cross-runtime handoff surfaces.
+
+Vico intentionally stays smaller and more repo-native than those systems. These are inspirations, not compatibility targets.
+
 ## Development Notes
 
 - Treat `vico-skills/` as the single source of truth.
 - During development, point project-local `.codex/skills/` and `.claude/skills/` entries at these folders instead of copying skill contents.
 - For Claude Code, hook scripts live in `vico-exec/scripts/` and project hook wiring lives in `.claude/settings*.json`.
+- For Claude Code, the stronger outer-loop runner lives at `vico-exec/scripts/claude_exec_runner.py`.
 
 ## Validation
 

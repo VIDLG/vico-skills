@@ -9,7 +9,7 @@ description: Default front door for Vico-style repo-local planning. Decide wheth
 
 `vico-plan` is the only default front door for tracked Vico work.
 
-Treat natural requests such as `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, or `how do I use vico-plan` as valid `vico-plan` entrypoints even when the user does not name the skill explicitly.
+Treat natural requests such as `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `export these rules to AGENTS.md`, `write the operating brief to CLAUDE.md`, or `how do I use vico-plan` as valid `vico-plan` entrypoints even when the user does not name the skill explicitly.
 If the user's intent could reasonably map to lightweight direct execution instead of tracked planning, and repository evidence does not clearly justify `.vico` tracking, ask a short clarification question before creating tracked work.
 
 It owns four decisions before planning:
@@ -26,6 +26,14 @@ It also owns two terminal state transitions:
 
 After that, it writes or updates the active plan under `.vico/plans/active/`.
 Default to a single active plan document that carries both intent and execution. When work outgrows that shape, upgrade the slug to `prd_backed` and keep the plan as the execution document. Prefer dated slugs, capture status and dates in metadata, and prefer vertical slices over horizontal layer-by-layer plans.
+
+## Simplicity Discipline
+
+- Build the minimum execution contract that solves the current planning problem.
+- Do not add speculative phases, abstractions, or artifacts just because they might be useful later.
+- If `plan_only` is sufficient, do not escalate to `prd_backed`.
+- If a smaller plan shape can support reliable execution, prefer it.
+- Keep every planned slice directly tied to the user's requested outcome.
 
 The plan is the primary execution document. Its checklist defines the intended path of work and the smallest next executable units.
 
@@ -95,6 +103,8 @@ If a matching probe handoff came from a broad repo scan or architectural pass, t
   - delete the current active docs and continue with one fresh dated slug
 - `truth`
   - explicitly extract durable truth into `docs/architecture/`
+- `export-md`
+  - export a repo-local operating brief into `AGENTS.md` or `CLAUDE.md`
 - `close`
   - delete active docs because the work is complete
 - `cancel`
@@ -295,6 +305,7 @@ Use the full phased template for medium and large work. For small plan-only work
 - Use [references/templates/verify-template.md](references/templates/verify-template.md) for `vico-plan verify`.
 - Use [references/templates/probe-handoff-template.md](references/templates/probe-handoff-template.md) for the expected `vico-probe` handoff block shape.
 - Use [references/templates/truth-template.md](references/templates/truth-template.md) for `vico-plan truth`.
+- Use [scripts/export_vico_operating_md.py](scripts/export_vico_operating_md.py) when explicitly exporting a repo-local operating brief to `AGENTS.md` or `CLAUDE.md`.
 - Use [references/ops/reconcile.md](references/ops/reconcile.md) when reconcile is needed before planning.
 - Use [references/rules/status-vocabulary.md](references/rules/status-vocabulary.md) when expressing progress or divergence.
 - Use [references/ops/automation.md](references/ops/automation.md) for sync and close-out automation.

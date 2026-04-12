@@ -21,6 +21,7 @@ Keep commands and mode literals unchanged.
 - replan
 - replace
 - truth
+- export-md
 - close
 - cancel
 
@@ -58,6 +59,7 @@ Keep commands and mode literals unchanged.
 - `verify replan`: use when you want verification to gate an immediate execution-contract rewrite
 - `replan`: use when the same slug still applies, but the execution contract itself should be rewritten
 - `prd`: use when the work now needs or updates `prd_backed` framing
+- `export-md`: use when you want to export the current Vico discipline and repo-local workflow rules into `AGENTS.md` or `CLAUDE.md`
 - `close`: use only when you explicitly want active docs deleted after completion is verified
 
 ## Examples
@@ -69,6 +71,8 @@ Keep commands and mode literals unchanged.
 - `vico-plan verify replan`
 - `vico-plan sync`
 - `vico-plan prd`
+- `vico-plan export-md AGENTS.md`
+- `vico-plan export-md CLAUDE.md`
 - `vico-plan replace`
 - `vico-plan close`
 - `vico-plan cancel`

@@ -1,6 +1,6 @@
 ---
 name: vico-exec
-description: Execute the current Vico plan continuously until completion or a real blocker is reached. Use when the user wants the agent to keep going without stopping after each small step, carry out an active plan under `.vico/plans/active/` item by item, continue from temporary reconcile state when needed, keep going until complete, or follow a Ralph-like persistent execution loop. For Claude Code, this skill can be paired with bundled hooks; for Codex, use the same execute loop directly.
+description: Execute the current Vico plan continuously until completion or a real blocker is reached. Use when the user wants the agent to keep going without stopping after each small step, carry out an active plan under `.vico/plans/active/` item by item, continue from temporary reconcile state when needed, keep going until complete, or follow a Ralph-like persistent execution loop. For Claude Code, this skill can be paired with bundled hooks or a repo-local runner loop; for Codex, use the same execute loop directly.
 ---
 
 # Vico Exec
@@ -25,7 +25,21 @@ Do not stop just because one small slice completed. Stop only when:
 
 This skill owns implementation progress and plan synchronization, not final close-out deletion. When the work is truly complete, stop with the plan updated and recommend `vico-plan close`; do not delete active docs without explicit user confirmation.
 
-Treat natural requests such as `keep going`, `continue until complete`, `execute the active plan`, `carry this through unless blocked`, or `how do I use vico-exec` as valid `vico-exec` entrypoints when an active plan already exists.
+## Surgical Execution Discipline
+
+- Touch only what you must to complete the current step safely.
+- Clean up only your own mess unless the user explicitly expands scope.
+- Every changed line should trace directly to the current execution objective.
+- If a broader cleanup is tempting but not required, note it and keep moving.
+
+## Success Criteria Discipline
+
+- Define the success criteria of the current slice before treating it as done.
+- Loop until verified; do not confuse implementation with completion.
+- If verification still shows open gaps, continue or route to `stale_plan` rather than claiming completion.
+- `done` requires both implementation evidence and verification evidence.
+
+Treat natural requests such as `keep going`, `continue until complete`, `execute the active plan`, `carry this through unless blocked`, `vico-exec cc`, `run this with cc`, `handoff to cc`, `use claude code runner`, or `how do I use vico-exec` as valid `vico-exec` entrypoints when an active plan already exists.
 If the user sounds like they want persistent execution but no active plan exists, ask a short clarification question or route them through `vico-plan` instead of guessing.
 
 ## Inputs
@@ -55,6 +69,8 @@ Treat direct-execution detours as normal: if execution resumes after out-of-band
 
 - default
   - execute the current active plan
+- `cc`
+  - launch the bundled Claude Code runner loop against the active plan
 - `help`
   - show inputs, behavior, safety rules, and common examples
 
@@ -96,13 +112,16 @@ When blocked, classify the blocker and use the blocked output shape in [referenc
 
 ## Claude Code
 
-For Claude Code, this skill can be paired with bundled hook scripts:
+For Claude Code, this skill can be paired with bundled hook scripts or a stronger repo-local runner loop:
 
 - [references/hooks-setup.md](references/hooks-setup.md)
+- [references/runner.md](references/runner.md)
+- `scripts/claude_exec_runner.py`
 - `scripts/session_start_hook.ps1`
 - `scripts/stop_hook.ps1`
 
-The hooks are optional but useful when you want to bias Claude toward continuing until the plan is actually complete or a real blocker is reached.
+Use hooks when you want lightweight execution pressure inside normal Claude sessions.
+Use the Python runner when you want a stronger outer loop that repeatedly executes, verifies, and decides whether another pass is required.
 
 ## Codex
 
@@ -111,6 +130,15 @@ Codex does not have equivalent event hooks. Use the same execute loop directly a
 - this skill
 - repository `AGENTS.md`
 - explicit instruction to continue until complete or blocked
+
+## Cross-Agent Handoff
+
+`vico-plan` and `vico-probe` handoffs can be consumed across agents, not just within one tool.
+
+- Codex can create or refine the tracked plan
+- Claude Code can take that active plan and run `vico-exec`
+- the Claude runner can keep looping until execution is done, blocked, stale, or waiting on the user
+- after execution, route back to `vico-plan verify` or `vico-plan close` as needed
 
 ## References
 
@@ -121,3 +149,4 @@ Codex does not have equivalent event hooks. Use the same execute loop directly a
 - Use [references/status-vocabulary.md](references/status-vocabulary.md) for shared status terms.
 - Use [references/automation.md](references/automation.md) when refreshing index state.
 - Use [references/hooks-setup.md](references/hooks-setup.md) for Claude Code hook wiring.
+- Use [references/runner.md](references/runner.md) for the Claude runner loop.

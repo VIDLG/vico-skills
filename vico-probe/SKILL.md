@@ -15,6 +15,14 @@ Preserve the full core behavior of a strong probing workflow:
 - Do not absorb freeform requests such as `grill this idea`, `stress-test this decision`, `deep interview this`, or `discuss this tradeoff` into `vico-probe` unless the user explicitly anchors them to a repo object.
 - If the user's intent could reasonably map to `probe`, `plan`, or `exec`, and repository evidence does not make one route dominant, ask a short clarification question instead of guessing.
 
+## Clarification Discipline
+
+- Do not assume missing intent when a short clarification question would remove real ambiguity.
+- Do not hide confusion behind overconfident prose. Name the exact uncertainty.
+- Surface tradeoffs explicitly when multiple live options still exist.
+- If uncertain, ask rather than guess.
+- Do not pick silently when ambiguity exists.
+
 When the discussion is about repository-native planning, prefer alignment with:
 
 - `.vico/prd/active/`
@@ -77,6 +85,7 @@ Do not let a user factual guess silently override stronger repository evidence.
 
 The `Issue Bank` is the main working state.
 The `Topic Map` is a derived scheduling view, not the primary truth source.
+Do not treat every user-facing `Finding` as an `Issue`. Findings may include issue-backed risks, stable observations, or structure notes that help the user reason about the object.
 Do not persist internal probe state to repo files by default. Keep it session-local unless the user explicitly asks to write conclusions back into plan, PRD, or architecture docs.
 Do not let the currently active grilled issue silently replace the `Program Objective` unless the user explicitly changes scope.
 
@@ -389,7 +398,10 @@ Use `grill` when the user wants a sustained interrogation loop or when the curre
 Use `scan` to establish the problem map, not to start a long questioning chain.
 Every `Finding` should be grounded in evidence, not just speculation.
 Default `Findings` should use a compact per-item shape of `- [priority] Title: explanation` so each finding is easy to scan.
+`Findings` are user-facing diagnostic statements, not a dump of the internal `Issue Bank`.
+`Findings` may include non-issue observations when they materially improve the user's mental model of the target.
 The internal `Issue Bank` still tracks the fuller issue set, but default `scan` output should emphasize user-facing findings over raw triage state.
+Only promote a finding into the `Issue Bank` when it represents a real problem, conflict, gap, or unresolved decision worth triaging.
 Only expose full issue-bank style detail when the user asks for it or when unresolved issue structure materially affects the next decision.
 - `scan` may legitimately suggest another narrower `scan` when the next missing input is repository evidence rather than user intent.
 - Treat repeated `scan` as a controlled recursive narrowing process, not as an invitation to rescan the whole object indefinitely.

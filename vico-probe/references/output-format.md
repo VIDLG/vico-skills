@@ -75,6 +75,7 @@ Findings
 - [critical] Controller-driven default: default routing must remain controller-driven rather than always dropping into `grill`
 - [important] Grill remains explicit: `grill` should stay a sustained-questioning submode rather than the default path
 - [important] Handoff stays aligned: handoff routing hints must stay aligned with `vico-plan`
+- [detail] Stable split: `Findings` are the user-facing diagnostic summary; they do not need to mirror the full internal issue list item-for-item
 
 Evidence
 

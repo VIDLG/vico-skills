@@ -18,6 +18,7 @@ HEADERS_SCRIPT = PLAN_SCRIPTS / "sync_vico_headers.py"
 INDEX_SCRIPT = PLAN_SCRIPTS / "sync_vico_index.py"
 CLOSE_SCRIPT = PLAN_SCRIPTS / "close_vico_slug.py"
 WORKSPACE_VALIDATE_SCRIPT = PLAN_SCRIPTS / "validate_vico_workspace.py"
+PLAN_EXPORT_MD_SCRIPT = PLAN_SCRIPTS / "export_vico_operating_md.py"
 PROBE_SKILL = SKILLS_ROOT / "vico-probe" / "SKILL.md"
 PROBE_HELP = SKILLS_ROOT / "vico-probe" / "references" / "help-template.md"
 PROBE_OUTPUT = SKILLS_ROOT / "vico-probe" / "references" / "output-format.md"
@@ -32,6 +33,8 @@ PLAN_TRUTH = SKILLS_ROOT / "vico-plan" / "references" / "templates" / "truth-tem
 EXEC_SKILL = SKILLS_ROOT / "vico-exec" / "SKILL.md"
 EXEC_HELP = SKILLS_ROOT / "vico-exec" / "references" / "help-template.md"
 EXEC_AUTOMATION = SKILLS_ROOT / "vico-exec" / "references" / "automation.md"
+EXEC_RUNNER = SKILLS_ROOT / "vico-exec" / "scripts" / "claude_exec_runner.py"
+EXEC_RUNNER_REF = SKILLS_ROOT / "vico-exec" / "references" / "runner.md"
 EXEC_STATUS = SKILLS_ROOT / "vico-exec" / "references" / "status-vocabulary.md"
 EXEC_SYNC_SCRIPT = SKILLS_ROOT / "vico-exec" / "scripts" / "sync_vico_index.py"
 FEEDBACK_SKILL = SKILLS_ROOT / "vico-feedback" / "SKILL.md"
@@ -178,6 +181,29 @@ class VicoAutomationTests(unittest.TestCase):
         )
         run_ok(str(WORKSPACE_VALIDATE_SCRIPT), "--repo-root", str(root))
 
+    def test_export_md_writes_repo_operating_brief(self) -> None:
+        root = self.make_repo()
+        date = "2026-04-09"
+        slug = self.dated_slug(date, "export-me")
+        run_ok(
+            str(PLAN_BOOTSTRAP_SCRIPT),
+            "export-me",
+            "Export Me",
+            "--repo-root",
+            str(root),
+            "--date",
+            date,
+        )
+
+        run_ok(str(PLAN_EXPORT_MD_SCRIPT), "AGENTS.md", "--repo-root", str(root))
+        exported = (root / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("## Vico Operating Brief", exported)
+        self.assertIn("## Clarification Discipline", exported)
+        self.assertIn("## Simplicity Discipline", exported)
+        self.assertIn("## Surgical Edit Discipline", exported)
+        self.assertIn("## Success Criteria Discipline", exported)
+        self.assertIn(f"- Active slug: `{slug}`", exported)
+
     def test_close_slug_dry_run_surfaces_reason_and_does_not_mutate_files(self) -> None:
         root = self.make_repo()
         date = "2026-04-09"
@@ -264,6 +290,10 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("Do not force `grill` as the default", probe_skill)
         self.assertIn("Do not absorb freeform requests such as `grill this idea`", probe_skill)
         self.assertIn("## Route Boundary With `vico-grill`", probe_skill)
+        self.assertIn("## Clarification Discipline", probe_skill)
+        self.assertIn("If uncertain, ask rather than guess.", probe_skill)
+        self.assertIn("Do not pick silently when ambiguity exists.", probe_skill)
+        self.assertIn("Do not treat every user-facing `Finding` as an `Issue`.", probe_skill)
 
         self.assertIn("route by issue state instead of forcing questioning every time", probe_help)
         self.assertIn("do a light scan first, then route into recommendation, one question, review, grill, or resolve", probe_help)
@@ -281,7 +311,10 @@ class VicoAutomationTests(unittest.TestCase):
         exec_help = self.read(SKILLS_ROOT / "vico-exec" / "references" / "help-template.md")
 
         self.assertIn("Default Light, Escalate When Needed.", readme)
-        self.assertIn("probing and execution are separate escalation axes", readme)
+        self.assertIn("problem framing and execution structure are separate escalation axes", readme)
+        self.assertIn("### Escalation Map", readme)
+        self.assertIn("Horizontal axis: problem-framing rigor", readme)
+        self.assertIn("Vertical axis: execution structure", readme)
         self.assertIn("默认从轻，按需升级。", readme_zh)
         self.assertIn("probing 和 execution 是两条独立的升级轴", readme_zh)
 
@@ -316,9 +349,22 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("`vico-probe grill plan -> vico-plan`", readme)
         self.assertIn("how do I use vico-probe", readme)
         self.assertIn("how do I use vico-plan", readme)
+        self.assertIn("export these rules to AGENTS.md", readme)
+        self.assertIn("write the operating brief to CLAUDE.md", readme)
         self.assertIn("verify this plan", readme)
         self.assertIn("how do I use vico-exec", readme)
+        self.assertIn("vico-exec cc", readme)
+        self.assertIn("run this with cc", readme)
+        self.assertIn("handoff to cc", readme)
+        self.assertIn("Codex: vico-plan -> Claude Code: vico-exec", readme)
+        self.assertIn("python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon", readme)
         self.assertIn("how do I use vico-feedback", readme)
+        self.assertIn("## External Influences", readme)
+        self.assertIn("forrestchang/andrej-karpathy-skills", readme)
+        self.assertIn("mattpocock/skills", readme)
+        self.assertIn("gsd-build/get-shit-done", readme)
+        self.assertIn("Yeachan-Heo/oh-my-codex", readme)
+        self.assertIn("Yeachan-Heo/oh-my-claudecode", readme)
         self.assertIn("auto-classify the report as `bug`, `ux_friction`, `contract_gap`, or `feature_request`", readme)
         self.assertIn("Let `vico-feedback` classify it and draft the issue.", readme)
         self.assertIn("`vico-probe`: keep probe state session-local by default", readme)
@@ -358,6 +404,10 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("vico-probe 如何使用", readme_zh)
         self.assertIn("vico-plan 如何使用", readme_zh)
         self.assertIn("verify this plan", readme_zh)
+        self.assertIn("把这些规则导出到 AGENTS.md", readme_zh)
+        self.assertIn("把 operating brief 写到 CLAUDE.md", readme_zh)
+        self.assertIn("Codex: vico-plan -> Claude Code: vico-exec", readme_zh)
+        self.assertIn("python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon", readme_zh)
         self.assertIn("vico-exec 如何使用", readme_zh)
         self.assertIn("vico-feedback 如何使用", readme_zh)
         self.assertIn("默认应根据用户表达和上下文自动归类为 `bug`、`ux_friction`、`contract_gap` 或 `feature_request`", readme_zh)
@@ -431,6 +481,7 @@ class VicoAutomationTests(unittest.TestCase):
         plan_only_template = self.read(SKILLS_ROOT / "vico-plan" / "references" / "templates" / "plan-only-template.md")
 
         self.assertIn("## Execution Readiness Rules", plan_skill)
+        self.assertIn("`export-md`", plan_skill)
         self.assertIn("## Verification Rules", plan_skill)
         self.assertIn("Recommended tracking mode", plan_skill)
         self.assertIn("Suggested first slice", plan_skill)
@@ -441,6 +492,7 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("`verify close`", plan_skill)
         self.assertIn("`verify sync`", plan_skill)
         self.assertIn("`verify replan`", plan_skill)
+        self.assertIn("export these rules to AGENTS.md", plan_skill)
         self.assertIn("how do I use vico-plan", plan_skill)
         self.assertIn("If the user's intent could reasonably map to lightweight direct execution instead of tracked planning", plan_skill)
         self.assertIn("keep internal routing and reconciliation heuristics implicit by default", plan_skill)
@@ -509,6 +561,7 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertNotIn("handoff template lacks `Target`", probe_output)
         self.assertIn("Issue classes", probe_output)
         self.assertIn("Findings", probe_output)
+        self.assertIn("Stable split: `Findings` are the user-facing diagnostic summary", probe_output)
         self.assertIn("[critical] Controller-driven default:", probe_output)
         self.assertIn("Recommended action", probe_output)
         self.assertIn("Suggested next target", probe_output)
@@ -631,6 +684,8 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("accept short action modifiers in `grill`", probe_help)
         self.assertIn("`Findings`", probe_skill)
         self.assertIn("default `scan` output should emphasize user-facing findings over raw triage state", probe_skill)
+        self.assertIn("`Findings` are user-facing diagnostic statements, not a dump of the internal `Issue Bank`.", probe_skill)
+        self.assertIn("Only promote a finding into the `Issue Bank` when it represents a real problem", probe_skill)
 
     def test_probe_priority_rubric_covers_enforcement_boundaries_and_folded_scan_items(self) -> None:
         probe_skill = self.read(PROBE_SKILL)
@@ -665,10 +720,13 @@ class VicoAutomationTests(unittest.TestCase):
 
         self.assertIn("Freeform questioning skill", grill_skill)
         self.assertIn("## Distinction From `vico-probe`", grill_skill)
+        self.assertIn("## Clarification Discipline", grill_skill)
         self.assertIn("## Hard Route Boundary", grill_skill)
         self.assertIn("keep one high-value question active at a time", grill_skill)
         self.assertIn("do not claim repository-backed evidence when operating in `vico-grill`", grill_skill)
         self.assertIn("do not keep the conversation in `vico-grill` once the user points at a concrete repo object", grill_skill)
+        self.assertIn("Do not assume unstated goals, constraints, or success criteria.", grill_skill)
+        self.assertIn("Do not hide confusion behind agreeable filler.", grill_skill)
         self.assertIn("`probe` = upgrade to `vico-probe`", grill_skill)
         self.assertIn("`plan` = upgrade to `vico-plan`", grill_skill)
         self.assertIn("for high-stakes domains such as finance, law, or medicine", grill_skill)
@@ -718,6 +776,8 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("`sync`: use when code moved and the current plan should catch up", plan_help)
         self.assertIn("`replan`: use when the same slug still applies", plan_help)
         self.assertIn("`prd`: use when the work now needs or updates `prd_backed` framing", plan_help)
+        self.assertIn("`export-md`: use when you want to export the current Vico discipline", plan_help)
+        self.assertIn("`vico-plan export-md AGENTS.md`", plan_help)
 
         self.assertIn("user's primary working language", plan_review)
         self.assertIn("Keep commands, mode literals, status literals, and slug/path literals unchanged.", plan_review)
@@ -741,15 +801,30 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("show `Skill route` and `Route reason` in the first visible update when `vico-exec` is selected", exec_help)
         self.assertIn("Axis position: the heavy end of the execution axis", exec_help)
         self.assertIn("do not guess the execution target when multiple active slugs are plausible", exec_help)
+        self.assertIn("## Modes", exec_help)
+        self.assertIn("- cc", exec_help)
+        self.assertIn("vico-exec cc", exec_help)
+        self.assertIn("run this with cc", exec_help)
+        self.assertIn("handoff to cc", exec_help)
+        self.assertIn("claude_exec_runner.py", exec_help)
 
     def test_exec_output_contract_covers_language_and_persistence(self) -> None:
         exec_skill = self.read(EXEC_SKILL)
+        exec_runner = self.read(EXEC_RUNNER)
+        exec_runner_ref = self.read(EXEC_RUNNER_REF)
         exec_report = self.read(SKILLS_ROOT / "vico-exec" / "references" / "execution-report-template.md")
         blocker_taxonomy = self.read(SKILLS_ROOT / "vico-exec" / "references" / "blocker-taxonomy.md")
 
         self.assertIn("## Output Contract", exec_skill)
         self.assertIn("keep going", exec_skill)
+        self.assertIn("`cc`", exec_skill)
+        self.assertIn("launch the bundled Claude Code runner loop against the active plan", exec_skill)
         self.assertIn("how do I use vico-exec", exec_skill)
+        self.assertIn("vico-exec cc", exec_skill)
+        self.assertIn("run this with cc", exec_skill)
+        self.assertIn("handoff to cc", exec_skill)
+        self.assertIn("repo-local runner loop", exec_skill)
+        self.assertIn("## Cross-Agent Handoff", exec_skill)
         self.assertIn("If the user sounds like they want persistent execution but no active plan exists", exec_skill)
         self.assertIn("Treat direct-execution detours as normal", exec_skill)
         self.assertIn("user's primary working language", exec_skill)
@@ -762,6 +837,19 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertIn("do not guess. Ask for an explicit slug or route back through `vico-plan review`", exec_skill)
         self.assertIn("include the active source, active slug, and continuation basis in the execution report", exec_skill)
         self.assertIn("keep deeper continuation heuristics implicit by default", exec_skill)
+        self.assertIn("references/runner.md", exec_skill)
+
+        self.assertIn("Run a Claude Code outer loop for vico-exec", exec_runner)
+        self.assertIn("RUNNER_SCHEMA", exec_runner)
+        self.assertIn("continue", exec_runner)
+        self.assertIn("stale_plan", exec_runner)
+        self.assertIn("--permission-mode", exec_runner)
+        self.assertIn("claude", exec_runner)
+
+        self.assertIn("## Claude Runner", exec_runner_ref)
+        self.assertIn("claude_exec_runner.py", exec_runner_ref)
+        self.assertIn("continue", exec_runner_ref)
+        self.assertIn("stale_plan", exec_runner_ref)
 
         self.assertIn("user's primary working language", exec_report)
         self.assertIn("Keep commands, status literals, blocker types, and path literals unchanged.", exec_report)
@@ -777,16 +865,20 @@ class VicoAutomationTests(unittest.TestCase):
     def test_exec_runtime_closure_uses_local_references_and_scripts(self) -> None:
         exec_skill = self.read(EXEC_SKILL)
         exec_automation = self.read(EXEC_AUTOMATION)
+        exec_runner_ref = self.read(EXEC_RUNNER_REF)
         exec_status = self.read(EXEC_STATUS)
         exec_sync_script = self.read(EXEC_SYNC_SCRIPT)
 
         self.assertIn("Prefer `scripts/sync_vico_index.py`", exec_skill)
         self.assertIn("Use [references/status-vocabulary.md]", exec_skill)
         self.assertIn("Use [references/automation.md]", exec_skill)
+        self.assertIn("Use [references/runner.md]", exec_skill)
         self.assertNotIn("../vico-plan/", exec_skill)
 
         self.assertIn("Use `scripts/sync_vico_index.py`", exec_automation)
+        self.assertIn("claude_exec_runner.py", exec_automation)
         self.assertNotIn("../vico-plan/", exec_automation)
+        self.assertIn("claude_exec_runner.py", exec_runner_ref)
         self.assertIn("## Execution Progress", exec_status)
         self.assertIn("from vico_common import", exec_sync_script)
 

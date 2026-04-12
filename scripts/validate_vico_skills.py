@@ -151,10 +151,17 @@ def validate_vico_probe_contract(root: Path) -> list[str]:
         "machine-consumed `Probe Handoff` field names stable",
         "umbrella verb for inspect + ask + targeted refinement",
         "If the target object is an active plan",
+        "Do not treat every user-facing `Finding` as an `Issue`.",
         "scan the repo",
         "how do I use vico-probe",
         "Do not absorb freeform requests such as `grill this idea`, `stress-test this decision`, `deep interview this`, or `discuss this tradeoff` into `vico-probe` unless the user explicitly anchors them to a repo object.",
         "If the user's intent could reasonably map to `probe`, `plan`, or `exec`",
+        "## Clarification Discipline",
+        "Do not assume missing intent",
+        "Do not hide confusion",
+        "Surface tradeoffs explicitly",
+        "If uncertain, ask rather than guess.",
+        "Do not pick silently when ambiguity exists.",
         "## Route Boundary With `vico-grill`",
         "`vico-grill` owns freeform targets",
         "if the target is freeform and repository evidence is not yet the governing constraint, prefer `vico-grill`",
@@ -165,6 +172,9 @@ def validate_vico_probe_contract(root: Path) -> list[str]:
         "folded `scan` items",
         "`Findings`",
         "default `scan` output should emphasize user-facing findings over raw triage state",
+        "`Findings` are user-facing diagnostic statements, not a dump of the internal `Issue Bank`.",
+        "`Findings` may include non-issue observations",
+        "Only promote a finding into the `Issue Bank` when it represents a real problem",
         "Only expose full issue-bank style detail when the user asks for it",
         "`scan` may legitimately suggest another narrower `scan`",
         "controlled recursive narrowing process",
@@ -207,6 +217,7 @@ def validate_vico_probe_contract(root: Path) -> list[str]:
             "Mode: concise | available: concise, detailed",
             "Mode: detailed | available: concise, detailed",
             "Accepted decisions",
+            "Stable split: `Findings` are the user-facing diagnostic summary",
         )
         for marker in required_reference_markers:
             if marker not in reference_text:
@@ -280,6 +291,10 @@ def validate_vico_grill_contract(root: Path) -> list[str]:
         "Freeform questioning skill",
         "Treat natural requests such as `grill this idea`, `grill me`, `stress-test this decision`, `deep interview this`, `discuss this tradeoff`, or `how do I use vico-grill`",
         "## Distinction From `vico-probe`",
+        "## Clarification Discipline",
+        "Do not assume unstated goals, constraints, or success criteria.",
+        "Do not hide confusion behind agreeable filler.",
+        "Surface tradeoffs directly",
         "route to `vico-probe` when the user wants to inspect a repo plan, PRD, design, or codebase",
         "do not keep the conversation in `vico-grill` once the user points at a concrete repo object",
         "if the request could reasonably mean either freeform grilling or repo-native probing",
@@ -375,7 +390,22 @@ def validate_vico_exec_contract(root: Path) -> list[str]:
         "smallest unblocked next step",
         "route to `vico-plan close` automatically",
         "keep going",
+        "## Surgical Execution Discipline",
+        "Touch only what you must",
+        "Clean up only your own mess",
+        "Every changed line should trace directly to the current execution objective.",
+        "## Success Criteria Discipline",
+        "Define the success criteria of the current slice before treating it as done.",
+        "Loop until verified",
+        "`done` requires both implementation evidence and verification evidence.",
+        "`cc`",
+        "launch the bundled Claude Code runner loop against the active plan",
+        "vico-exec cc",
+        "run this with cc",
+        "handoff to cc",
         "how do I use vico-exec",
+        "repo-local runner loop",
+        "## Cross-Agent Handoff",
         "If the user sounds like they want persistent execution but no active plan exists",
         "user's primary working language",
         "most recent substantive message",
@@ -388,6 +418,7 @@ def validate_vico_exec_contract(root: Path) -> list[str]:
         "include the active source, active slug, and continuation basis in the execution report",
         "keep deeper continuation heuristics implicit by default",
         "[references/execution-report-template.md](references/execution-report-template.md)",
+        "[references/runner.md](references/runner.md)",
     )
     for marker in required_skill_markers:
         if marker not in skill_text:
@@ -400,6 +431,12 @@ def validate_vico_exec_contract(root: Path) -> list[str]:
             "Keep commands and mode literals unchanged.",
             "Axis position: the heavy end of the execution axis",
             "do not guess the execution target when multiple active slugs are plausible",
+            "## Modes",
+            "- cc",
+            "vico-exec cc",
+            "run this with cc",
+            "handoff to cc",
+            "claude_exec_runner.py",
         ):
             if marker not in help_text:
                 failures.append(f"vico-exec/references/help-template.md missing marker: {marker}")
@@ -429,6 +466,35 @@ def validate_vico_exec_contract(root: Path) -> list[str]:
         ):
             if marker not in agent_text:
                 failures.append(f"vico-exec/agents/openai.yaml missing marker: {marker}")
+
+    runner_script = root / "vico-exec" / "scripts" / "claude_exec_runner.py"
+    runner_ref = root / "vico-exec" / "references" / "runner.md"
+    if not runner_script.exists():
+        failures.append(f"Missing vico-exec runner script: {runner_script}")
+    else:
+        runner_text = runner_script.read_text(encoding="utf-8")
+        for marker in (
+            "Run a Claude Code outer loop for vico-exec",
+            "RUNNER_SCHEMA",
+            "continue",
+            "stale_plan",
+            "--permission-mode",
+            "claude",
+        ):
+            if marker not in runner_text:
+                failures.append(f"vico-exec/scripts/claude_exec_runner.py missing marker: {marker}")
+    if not runner_ref.exists():
+        failures.append(f"Missing vico-exec runner reference: {runner_ref}")
+    else:
+        runner_ref_text = runner_ref.read_text(encoding="utf-8")
+        for marker in (
+            "## Claude Runner",
+            "claude_exec_runner.py",
+            "continue",
+            "stale_plan",
+        ):
+            if marker not in runner_ref_text:
+                failures.append(f"vico-exec/references/runner.md missing marker: {marker}")
 
     return failures
 
@@ -534,6 +600,10 @@ def validate_vico_plan_contract(root: Path) -> list[str]:
     skill_text = skill_path.read_text(encoding="utf-8")
     for marker in (
         "## Mode Contract",
+        "## Simplicity Discipline",
+        "Build the minimum execution contract that solves the current planning problem.",
+        "Do not add speculative phases, abstractions, or artifacts",
+        "If `plan_only` is sufficient, do not escalate to `prd_backed`.",
         "## Execution Readiness Rules",
         "## Verification Rules",
         "Recommended tracking mode",
@@ -550,6 +620,8 @@ def validate_vico_plan_contract(root: Path) -> list[str]:
         "A plan is `vico-exec` ready only when the next smallest unblocked slice can be chosen without guessing",
         "If the current plan is too coarse, too stale, or too ambiguous",
         "make a plan",
+        "`export-md`",
+        "export these rules to AGENTS.md",
         "verify this plan",
         "verify close",
         "verify sync",
@@ -594,6 +666,7 @@ def validate_vico_plan_contract(root: Path) -> list[str]:
             "`sync`: use when code moved and the current plan should catch up",
             "`replan`: use when the same slug still applies",
             "`prd`: use when the work now needs or updates `prd_backed` framing",
+            "`export-md`: use when you want to export the current Vico discipline",
             "`close`: use only when you explicitly want active docs deleted after completion is verified",
         ):
             if marker not in help_text:
@@ -656,6 +729,10 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "Default Light, Escalate When Needed.",
             "freeform grilling is the lightest questioning lane",
             "probing and execution are separate escalation axes",
+            "problem framing and execution structure are separate escalation axes",
+            "### Escalation Map",
+            "Horizontal axis: problem-framing rigor",
+            "Vertical axis: execution structure",
             "freeform questioning can scale from `vico-grill` into `vico-probe` or `vico-plan`",
             "## Persistence Policy",
             "## Most Common Paths",
@@ -668,6 +745,8 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "`vico-grill -> vico-probe`",
             "`vico-grill -> vico-plan`",
             "`vico-probe grill plan -> vico-plan`",
+            "Codex: vico-plan -> Claude Code: vico-exec",
+            "python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon",
             "grill this idea",
             "grill this problem",
             "how do I use vico-grill",
@@ -679,7 +758,12 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "verify replan",
             "how do I use vico-probe",
             "how do I use vico-plan",
+            "export these rules to AGENTS.md",
+            "write the operating brief to CLAUDE.md",
             "how do I use vico-exec",
+            "vico-exec cc",
+            "run this with cc",
+            "handoff to cc",
             "how do I use vico-feedback",
             "If a natural-language request could reasonably mean more than one of these routes",
             "Skill route: <skill-name>",
@@ -731,6 +815,8 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "recommend `vico-plan close`",
             "route back through `vico-plan` for reconcile",
             "Prefer `scripts/sync_vico_index.py`",
+            "references/runner.md",
+            "## Cross-Agent Handoff",
             "Use [references/status-vocabulary.md]",
             "Use [references/automation.md]",
             "## Mode Contract",
@@ -779,6 +865,14 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "Accepted decisions",
             "Suggested edits",
         ),
+        root / "vico-plan" / "scripts" / "export_vico_operating_md.py": (
+            "Export a repo-local Vico operating brief to AGENTS.md or CLAUDE.md.",
+            "## Vico Operating Brief",
+            "## Clarification Discipline",
+            "## Simplicity Discipline",
+            "## Surgical Edit Discipline",
+            "## Success Criteria Discipline",
+        ),
         root / "vico-exec" / "references" / "help-template.md": (
             "## Vico Exec Help",
             "user's primary working language",
@@ -790,6 +884,7 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "## Safety Rules",
             "do not guess the execution target when multiple active slugs are plausible",
             "## Examples",
+            "claude_exec_runner.py",
         ),
         root / "vico-plan" / "references" / "templates" / "help-template.md": (
             "## Vico Plan Help",
@@ -936,8 +1031,23 @@ def validate_workflow_invariants(root: Path) -> list[str]:
             "## Confidence",
         ),
         root / "vico-exec" / "references" / "automation.md": (
+            "## Claude Runner Loop",
+            "claude_exec_runner.py",
             "## Sync Derived Index",
             "Use `scripts/sync_vico_index.py`",
+        ),
+        root / "vico-exec" / "references" / "runner.md": (
+            "## Claude Runner",
+            "claude_exec_runner.py",
+            "continue",
+            "stale_plan",
+        ),
+        root / "vico-exec" / "scripts" / "claude_exec_runner.py": (
+            "Run a Claude Code outer loop for vico-exec",
+            "RUNNER_SCHEMA",
+            "stale_plan",
+            "continue",
+            "claude",
         ),
         root / "vico-exec" / "scripts" / "sync_vico_index.py": (
             "Derive minimal .vico/index manifests from current Vico artifacts.",

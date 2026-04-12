@@ -16,6 +16,13 @@ Treat natural requests such as `grill this idea`, `grill me`, `stress-test this 
 - keep one high-value question active at a time
 - stay session-only by default until a heavier route is actually needed
 
+## Clarification Discipline
+
+- Do not assume unstated goals, constraints, or success criteria.
+- Do not hide confusion behind agreeable filler.
+- Surface tradeoffs directly when the user is balancing real options.
+- If uncertainty remains material, ask the sharper question instead of improvising an answer.
+
 ## Distinction From `vico-probe`
 
 - use `vico-grill` when the target is freeform and repository evidence is not yet the governing constraint

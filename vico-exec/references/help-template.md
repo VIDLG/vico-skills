@@ -22,8 +22,15 @@ Keep commands and mode literals unchanged.
 - execute the smallest unblocked next step
 - verify after each meaningful step
 - keep the plan current while executing
+- use the bundled Claude runner when hooks are not enough and you want a stronger repeat-until-stop loop
 - route to `vico-plan close` when end-to-end completion is requested
 - show `Skill route` and `Route reason` in the first visible update when `vico-exec` is selected
+
+## Modes
+
+- default
+- cc
+- help
 
 ## Safety Rules
 
@@ -34,7 +41,11 @@ Keep commands and mode literals unchanged.
 ## Examples
 
 - `vico-exec`
+- `vico-exec cc`
+- `run this with cc`
+- `handoff to cc`
 - `vico-exec help`
+- `python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon`
 ```
 
 Keep help compact and execution-focused.

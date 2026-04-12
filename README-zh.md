@@ -48,14 +48,37 @@ English version: [README.md](README.md)
 `默认从轻，按需升级。`
 
 - `vico-skills` 的目标是在低复杂度下保持 vibe-friendly，只在工作真正需要时才升级到更正式的流程
-- freeform grilling 是最轻的追问通道，`vico-probe` 是面向仓库对象的正式追问通道
 - probing 和 execution 是两条独立的升级轴，不是单条强制的重流程
+- freeform grilling 是最轻的追问通道
+- 问题澄清强度和执行结构强度是两条独立的升级轴，不是单条强制的重流程
+- freeform grilling 是最轻的问题澄清通道，`vico-probe` 是面向仓库对象的正式问题澄清通道
 - freeform questioning 可以从 `vico-grill` 升级到 `vico-probe` 或 `vico-plan`，当下一个关键约束变成仓库现实或 tracked execution 时再升级
 - probing 可以从直接澄清逐步升级到 `vico-probe`、`scan`、`grill`
 - execution 可以从直接 vibe 式执行逐步升级到 `vico-plan`、`prd_backed`、`vico-exec`
 - 更重的模式是为了降低歧义和协作成本，不是为了给每个任务预先加流程
 - workflow re-entry 是一等能力：工作可以在 vibe execution 与 tracked workflow 之间往返，而不应被视为异常状态
 - direct execution 可以发生在 tracked workflow 之前、之中或之后；当 workflow 恢复时，当前 Vico 路由应先根据仓库现实做 reconcile，再决定是否继续信任 `.vico` 状态
+
+### 升级坐标图
+
+```text
+更高的执行结构强度
+^
+|                                      vico-exec
+|                           vico-plan (plan_only / prd_backed)
+|                  vico-probe -> vico-plan
+|         vico-probe
+|  vico-grill
++------------------------------------------------------------> 更高的问题澄清强度
+  direct vibe execution
+```
+
+- 横轴：问题澄清强度
+  在开始行动前，需要多少 discovery、clarification 和基于仓库现实的判断
+- 纵轴：执行结构强度
+  这项工作现在需要多少持久化计划、协作约束和可重复执行机制
+- 当问题还不够清楚、仍有争议时，向右移动。
+- 当执行需要更强的 contract、artifact 或持久状态时，向上移动。
 
 owner map、派生层、同步边界、分发前提和 validator 责任见 [CONTRACTS-zh.md](CONTRACTS-zh.md)。
 
@@ -75,6 +98,8 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 - 先检查再规划：`vico-probe -> vico-plan`
 - 继续细化现有 plan：`vico-probe grill plan -> vico-plan`
 - 只做 tracked planning：`vico-plan`
+- 跨 agent handoff：`Codex vico-plan -> Claude Code vico-exec`
+- Claude runner 循环：`Codex vico-plan -> Claude runner -> vico-plan verify`
 - 端到端 tracked execution：`vico-plan -> vico-exec -> vico-plan close`
 
 ## 升级提示
@@ -99,8 +124,8 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 - `vico-grill`：`grill 这个想法`、`grill 我`、`拷问这个决策`、`deep interview 这个问题`、`discuss 这个取舍`、`vico-grill 如何使用`
 - `vico-probe`：`scan 仓库`、`inspect codebase`、`grill 这个 plan`、`grill 这个 PRD`、`继续细化这个 plan`、`vico-probe 如何使用`
-- `vico-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify close`、`verify sync`、`verify replan`、`close 这个 plan`、`vico-plan 如何使用`
-- `vico-exec`：`继续做`、`一直做到完成`、`执行 active plan`、`除非阻塞否则继续`、`vico-exec 如何使用`
+- `vico-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify close`、`verify sync`、`verify replan`、`close 这个 plan`、`把这些规则导出到 AGENTS.md`、`把 operating brief 写到 CLAUDE.md`、`vico-plan 如何使用`
+- `vico-exec`：`继续做`、`一直做到完成`、`执行 active plan`、`除非阻塞否则继续`、`vico-exec cc`、`用 cc 跑这个 plan`、`切到 cc`、`vico-exec 如何使用`
 - `vico-feedback`：`提个 issue`、`报告 bug`、`我对 vico-skills 有反馈`、`整理成 GitHub issue`、`vico-feedback 如何使用`
 
 如果一条自然语言请求同时可能落到多个 route 上，优先用一句简短确认来消歧，不要直接猜。
@@ -276,6 +301,15 @@ vico-plan help
 vico-probe -> vico-plan
 ```
 
+### 导出仓库操作说明
+
+```text
+vico-plan export-md AGENTS.md
+vico-plan export-md CLAUDE.md
+```
+
+当你希望把当前 Vico discipline 和 repo-local workflow 规则导出到项目里的说明文件时，用这个 mode。
+
 ### 查看可用模式
 
 ```text
@@ -312,11 +346,50 @@ vico-exec -> 用户确认 -> vico-plan close
 - `vico-plan close` 负责 close-out 删除
 - agent 应在展示完成证据后停下，等待用户手动输入 close 命令
 
+### Codex 做 Plan，Claude 执行
+
+```text
+Codex: vico-plan -> Claude Code: vico-exec
+```
+
+这是一条一等支持路径：
+
+- Codex 可以先创建或细化 tracked plan
+- Claude Code 可以接住 active plan 并执行
+- handoff 通过 `.vico` artifact 完成，而不是依赖隐藏会话状态
+
+### Claude Runner 循环
+
+```bash
+python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon
+```
+
+当你希望 Claude Code 持续执行“实现 + verify + 判断是否继续”直到进入 `done`、`blocked`、`needs_user` 或 `stale_plan` 时，使用这个 runner。
+自然入口可以直接说：`vico-exec cc`、`用 cc 跑这个 plan`、`切到 cc`。
+
+## 外部参考
+
+下面这些项目对 `vico-skills` 的形状有明显影响，但 Vico 仍然保持自己的 contract 和命名：
+
+- [`forrestchang/andrej-karpathy-skills`](https://github.com/forrestchang/andrej-karpathy-skills)
+  影响了我们对这几件事的强调：显式说出假设、持续施压简单性、外科式修改、以及目标驱动执行。这些思想和 Vico 里的 evidence-first probe、小范围改动、以及 verify 驱动的执行循环是高度一致的。
+- [`mattpocock/skills` 的 `grill-me`](https://github.com/mattpocock/skills/tree/main/grill-me)
+  影响了 `vico-grill` 这条 freeform grilling 通道，尤其是一问一答、持续拷问的风格。
+- [`gsd-build/get-shit-done`](https://github.com/gsd-build/get-shit-done)
+  影响了 repo-local planning artifact 和 context-engineered execution 这条思路。GSD 当前把规划状态放在 `.plans/` 下。
+- [`Yeachan-Heo/oh-my-codex`](https://github.com/Yeachan-Heo/oh-my-codex)
+  影响了“围绕 Codex 再包一层 workflow layer”的思路，包括 `.omx/` 下的持久状态，以及像 `$ralph` 这种 persistent completion loop。
+- [`Yeachan-Heo/oh-my-claudecode`](https://github.com/Yeachan-Heo/oh-my-claudecode)
+  影响了 Claude Code 这一侧的设计：team orchestration、分阶段执行流水线，以及 Codex/Claude 之间显式 handoff 的表面。
+
+Vico 会刻意保持比这些系统更小、更 repo-native。这里是借鉴来源，不是兼容性目标。
+
 ## 开发说明
 
 - `vico-skills/` 是单一事实来源。
 - 开发时优先让项目内 `.codex/skills/` 和 `.claude/skills/` 指向这些目录，而不是复制内容。
 - Claude Code 相关 hook 脚本在 `vico-exec/scripts/`，项目级 hook 配置在 `.claude/settings*.json`。
+- Claude Code 更强的外层循环 runner 在 `vico-exec/scripts/claude_exec_runner.py`。
 
 ## 校验
 
