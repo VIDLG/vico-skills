@@ -1,89 +1,158 @@
 # Vico Ground Output Format
 
+Use this file for worked examples and anti-examples.
+Start with `index.md` for the full reference map.
+
 ## Scan Example
 
 ```md
-repo | architecture > current-understanding
-Mode: concise | available: concise, detailed
-Priority: critical
-Confidence: medium
-Uncertainty source: vocabulary drift plus incomplete operator-facing examples
-Scope impact: repo_wide
+Move: scan
 
-Findings
+Conclusion
 
-- [critical] Build boundary is currently spread across two orchestration layers.
-- [important] Completion terminology is used inconsistently between docs and code.
-- [detail] Findings and issues should stay distinct in user-facing scan output.
+- The repo already has a stable planning and execution split.
+- The main design pressure is that `vico-ground` still exposes too many public moves.
 
 Evidence
 
-- `runner` logic exists in execution docs but not yet in the shared mental model of every agent.
-- Several workflow terms are overloaded across README and skill contracts.
+- `vico-plan` and `vico-exec` already own tracked planning and persistent execution.
+- `vico-ground` docs currently expose many adjacent move names for similar kinds of work.
 
-Topic map snapshot
+Why this matters
 
-- execution-surface: active
-- vocabulary-alignment: active
-- export-flow: deferred
+- the next step should be controller simplification rather than more grounding depth
 
-High-risk gaps
+Next route
 
-- completion and close-out are still easy to conflate
+- `vico-plan`
 
-Likely recommendations
+Next action
 
-- align the public vocabulary before expanding execution automation
-
-Open questions worth asking
-
-- Should `challenge` and `grill` stay distinct public moves, or should one become a stronger submove of the other?
-
-Suggested next move
-
-- `tradeoff`
-
-Recommended next action
-
-- `vico-ground tradeoff`
-
-Risk if skipped
-
-- public routes and output fields may keep drifting even if the underlying workflow logic is sound
-
-Alternative next actions
-
-- `vico-ground align`
-  - use when the main issue is term mismatch rather than value conflict
-- `vico-ground challenge`
-  - use when the current proposal is already sharp enough for stronger adversarial review
+- rewrite the `vico-ground` public contract around fewer moves and a thinner handoff
 ```
 
-## Ground Handoff Example
+## Clarify Example
 
 ```md
+Move: clarify
+
+Conclusion
+
+- The real ambiguity is not implementation scope.
+- The real ambiguity is whether the user wants repository orientation or immediate code changes.
+
+Evidence
+
+- the request asks for a scan of the overall project rather than a narrow file edit
+- no concrete implementation target was named
+
+Next route
+
+- `stay_in_ground`
+
+Next action
+
+- continue with `vico-ground scan`
+```
+
+## Stress Example
+
+```md
+Move: stress
+
+Conclusion
+
+- Keeping `tradeoff`, `grill`, and `challenge` as separate public moves adds more routing cost than user value.
+
+Evidence
+
+- all three operate on pressure rather than on distinct workflow stages
+- most practical requests only need one pressure-testing entrypoint
+
+Next route
+
+- `stay_in_ground`
+
+Next action
+
+- collapse those routes into `vico-ground stress`
+```
+
+## Handoff Example
+
+```md
+Move: handoff
+
+Conclusion
+
+- The next safe route is tracked planning.
+- Further grounding would mostly restate the same design conclusions.
+
+Evidence
+
+- the redesign goals are clear enough to plan concrete document changes
+- the remaining work is execution shaping, not more framing
+
+Next route
+
+- `vico-plan`
+
+Next action
+
+- create the v2 migration plan and update the skill contract
+```
+
+## Full Handoff Example
+
+```md
+Move: handoff
+
 ## Ground Handoff
 
-- Target
-  - repo workflow redesign
-- Accepted facts
-  - `Findings` and `Issues` should remain distinct
-  - the execution side now includes a Claude Code runner loop
-- Accepted decisions
-  - shared-ground construction is broader than repo inspection
-  - adversarial pressure-testing should remain an explicit move
-- Active assumptions
-  - `vico-ground` should become the umbrella workflow name
-- Preferences
-  - keep the public command surface small even when the internal move system grows
-- Tradeoffs
-  - larger state model improves clarity but increases contract surface
-- Commitments
-  - route grounding into planning only after the current frame is stable enough to execute from
-- Open questions
-  - whether older terms should be removed immediately or staged out
-- Invalidation triggers
-  - if users still confuse `grill` and `challenge`, tighten their public contracts again
-- Recommended next action
-  - `vico-plan`
+Target
+
+- redesign `vico-ground` as a lighter pre-planning controller
+
+What is true now
+
+- the public move surface is too wide
+- the default output contract is heavier than most scans need
+
+What is still unresolved
+
+- whether `stress` needs a shorter alias in natural-language usage
+
+Recommended route
+
+- `vico-plan`
+
+Suggested first step
+
+- rewrite `vico-ground/SKILL.md` around `scan`, `clarify`, `stress`, and `handoff`
+
+Tracking hint
+
+- `plan_only`
 ```
+
+## Incomplete Anti-Example
+
+This example is intentionally incomplete. It should not be treated as a valid output because it names a concern but does not route forward.
+
+```md
+Move: scan
+
+Conclusion
+
+- The docs feel too heavy.
+
+Evidence
+
+- There are many sections.
+```
+
+Why this is incomplete:
+
+- missing `Next route`
+- missing `Next action`
+- does not hand the work forward

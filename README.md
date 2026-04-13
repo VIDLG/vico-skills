@@ -19,7 +19,7 @@ The repo still uses `vico-*` skill names today. `vico-skills` is the broader pro
 
 ## Skill Set
 
-- `vico-ground`: build shared ground before planning or execution through clarify, scan, map, align, reframe, tradeoff, grill, challenge, review, export, and resolve
+- `vico-ground`: build just enough shared ground to choose a safe next route through `scan`, `clarify`, `stress`, and `handoff`
 - `vico-plan`: the only default front door; decide `no-doc / plan_only / prd_backed`, reconcile state, create or update the active plan, and absorb ground handoff
 - `vico-exec`: execute the active plan until complete or truly blocked
 - `vico-feedback`: turn feedback about `vico-skills` into a GitHub issue draft and optionally file it after explicit confirmation
@@ -60,8 +60,9 @@ Three common paths:
 - `vico-skills` is designed to stay vibe-friendly at low complexity and become more structured only when the work actually needs it
 - grounding and execution are separate escalation axes rather than one forced heavyweight workflow
 - problem framing and execution structure are separate escalation axes rather than one forced heavyweight workflow
-- `vico-ground` is the shared-ground workflow along the problem-framing axis
-- grounding can move among `clarify`, `scan`, `map`, `align`, `reframe`, `tradeoff`, `grill`, `challenge`, `review`, `export-md`, and `resolve`
+- `vico-ground` is the lightweight grounding controller along the problem-framing axis
+- grounding should stay light and stop once the next safe route is clear
+- `vico-ground` keeps a small public move set: `scan`, `clarify`, `stress`, and `handoff`
 - execution can scale from direct vibe execution to `vico-plan`, `prd_backed`, and `vico-exec`
 - heavier modes exist to reduce ambiguity and coordination cost, not to front-load process onto every task
 - workflow re-entry is first-class: work may move from vibe execution into tracked workflow and back again without being treated as an error state
@@ -85,7 +86,7 @@ Higher execution structure
 |                           vico-plan (plan_only / prd_backed)
 |                  vico-ground -> vico-plan
 |            vico-ground
-|      vico-ground clarify / scan / tradeoff
+|      vico-ground clarify / scan / stress
 +------------------------------------------------------------> Higher problem-framing rigor
   direct vibe execution
 ```
@@ -111,7 +112,7 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 - shared-ground into tracked work: `vico-ground -> vico-plan`
 - direct vibe execution: talk through the task and implement immediately when no tracked workflow is needed
 - ground before planning: `vico-ground -> vico-plan`
-- adversarial grounding of a plan: `vico-ground grill -> vico-plan`
+- pressure-test before planning: `vico-ground stress -> vico-plan`
 - tracked planning only: `vico-plan`
 - cross-agent handoff: `Codex vico-plan -> Claude Code vico-exec`
 - Claude runner loop: `Codex vico-plan -> Claude runner -> vico-plan verify`
@@ -135,7 +136,7 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 
 ## Natural Triggers
 
-- `vico-ground`: `scan the repo`, `inspect the codebase`, `scan the architecture`, `take a quick pass over the project`, `orient me in this repo`, `clarify this`, `what are we actually solving`, `align on terms`, `map the problem`, `map the decision`, `reframe this`, `surface the tradeoff`, `stress-test this`, `challenge this assumption`, `where are we disagreeing`, `grill this plan`, `export these rules to AGENTS.md`, `write the operating brief to CLAUDE.md`, `review what we know`, `resolve this into a handoff`, `扫一下这个项目`, `扫一下架构`, `摸一下这个仓库`, `摸个底`, `盘一下这个代码库`, `过一遍整体结构`, `先看看整体`, `看下架构`, `how do I use vico-ground`
+- `vico-ground`: `scan the repo`, `inspect the codebase`, `scan the architecture`, `take a quick pass over the project`, `orient me in this repo`, `clarify this`, `what are we actually solving`, `align on terms`, `stress-test this`, `challenge this assumption`, `where are we disagreeing`, `review what we know`, `resolve this into a handoff`, `扫一下这个项目`, `扫一下架构`, `摸一下这个仓库`, `摸个底`, `盘一下这个代码库`, `过一遍整体结构`, `先看看整体`, `看下架构`, `how do I use vico-ground`
 - `vico-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `verify close`, `verify sync`, `verify replan`, `close this plan`, `做个计划`, `建个 tracked plan`, `整理成执行步骤`, `对一下 plan`, `verify 一下`, `收个口`, `close 这个 plan`, `how do I use vico-plan`
 - `vico-exec`: `keep going`, `continue until complete`, `execute the active plan`, `carry this through unless blocked`, `vico-exec cc`, `run this with cc`, `handoff to cc`, `use claude code runner`, `继续做`, `一直做到完成`, `别停`, `接着跑`, `继续推进直到完成`, `how do I use vico-exec`
 - `vico-feedback`: `file an issue`, `report a bug`, `I have feedback about vico-skills`, `draft a GitHub issue`, `提个 issue`, `记个反馈`, `这个 workflow 有点别扭`, `这个触发不太对`, `帮我整理成 issue`, `how do I use vico-feedback`
@@ -157,57 +158,40 @@ Most users should start with:
 
 Use an explicit move only when the next need is already obvious:
 
-- `vico-ground clarify`
-  when the goal, scope, or success criteria are still fuzzy
 - `vico-ground scan`
   when the factual picture is weak
-- `vico-ground map`
-  when the structure of the problem is still hard to see
-- `vico-ground align`
-  when terms or boundaries are mismatched
-- `vico-ground reframe`
-  when the current interpretation is too narrow, stale, or misleading
-- `vico-ground tradeoff`
-  when priorities and constraints need reconciliation
-- `vico-ground grill`
-  when a plan, finding, or proposal needs pressure-testing
-- `vico-ground challenge`
-  when you want adversarial review, counterexamples, or rebuttals
-- `vico-ground review`
-  when you want a checkpoint
-- `vico-ground export-md`
-  when the current shared ground should become repo-local instructions
-- `vico-ground resolve`
-  when the shared ground is strong enough to hand forward
+- `vico-ground clarify`
+  when the goal, scope, terms, or constraints are still fuzzy
+- `vico-ground stress`
+  when a proposal, assumption, or plan needs pressure
+- `vico-ground handoff`
+  when the next safe route is already clear and grounding should stop
 
 ### Move Flow
 
 ```text
-clarify -> scan -> map -> tradeoff -> grill/challenge -> review -> resolve
-             |       |        |            |
-             |       |        |            +-> align
-             |       |        +----------------> reframe
-             +-------------------------------> review
+scan -> clarify -> stress -> handoff
+   |        |          |
+   |        |          +-> pressure changes the route
+   |        +---------------> framing changes the route
+   +------------------------> facts become sufficient for routing
 ```
 
-- `clarify` when the target is unclear
 - `scan` when the facts are weak
-- `map` when the structure is unclear
-- `align` when terms or boundaries mismatch
-- `reframe` when the current interpretation is too narrow
-- `tradeoff` when priorities or constraints are the real gap
-- `grill` when pressure-testing should stay interactive
-- `challenge` when you want stronger adversarial review or counterexamples
-- `review` when you need a checkpoint
-- `resolve` when the current ground is strong enough to hand forward
+- `clarify` when the target, scope, or terms are unclear
+- `stress` when a proposal or plan needs pressure-testing
+- `handoff` when the next route is clear enough to stop grounding
 
 ## Route Visibility
 
 - When a Vico skill is selected, the first visible update should surface the active skill and the route reason.
 - Suggested shape:
   - `Skill route: <skill-name>`
-  - `Route reason: <natural trigger | explicit skill request>`
+  - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
+  - optional `Route detail: <the strongest route-specific detail>`
+  - optional `Route mode: <public mode or move>`
 - For explicit skill invocations, surface that the route came from an explicit skill request rather than a natural trigger.
+- For natural routing, prefer naming the strongest intent cluster or trigger that caused the route.
 
 ## When To Use What
 
@@ -372,11 +356,11 @@ vico-ground -> vico-plan
 ### Export Repo Operating Brief
 
 ```text
-vico-ground export-md AGENTS.md
-vico-ground export-md CLAUDE.md
+python vico-skills/scripts/export_vico_operating_md.py AGENTS.md
+python vico-skills/scripts/export_vico_operating_md.py CLAUDE.md
 ```
 
-Use this when you want the current Vico discipline and repo-local workflow rules exported into project-local instruction files.
+Use this utility when you want the current Vico discipline and repo-local workflow rules exported into project-local instruction files.
 
 ### Show Available Modes
 
@@ -388,29 +372,15 @@ vico-ground help
 ## Ground Workflow
 
 - `vico-ground`
-  - default controller; chooses the highest-value grounding move before planning or execution
-- `vico-ground clarify`
-  - align goals, scope, terms, and success criteria
+  - default lightweight controller; build just enough shared ground to choose the next safe route
 - `vico-ground scan`
-  - inspect the target and build evidence, findings, issues, and a topic map
-- `vico-ground map`
-  - externalize the structure of the decision space or problem space
-- `vico-ground align`
-  - repair vocabulary or boundary mismatches
-- `vico-ground reframe`
-  - replace the current interpretation when the frame itself is the problem
-- `vico-ground tradeoff`
-  - reconcile priorities, constraints, and irreversibilities
-- `vico-ground grill`
-  - adversarially pressure-test assumptions, findings, plans, maps, or proposed decisions
-- `vico-ground challenge`
-  - use stronger counterexamples, rebuttals, and adversarial review
-- `vico-ground export-md`
-  - export current shared ground into repo-local instructions
-- `vico-ground review`
-  - show the current shared ground without expanding it
-- `vico-ground resolve`
-  - stop expanding ground and emit a final summary or `Ground Handoff` for `vico-plan`
+  - build enough factual confidence to choose the next route
+- `vico-ground clarify`
+  - align goals, scope, terms, constraints, or framing
+- `vico-ground stress`
+  - pressure-test a proposal, assumption, option set, or plan
+- `vico-ground handoff`
+  - stop grounding and emit the next route or a thin `Ground Handoff` for `vico-plan`
 - `vico-ground help`
   - show the moves and intended usage flow
 
@@ -454,7 +424,7 @@ These references influenced the shape of `vico-skills`, even though Vico keeps i
 - [`forrestchang/andrej-karpathy-skills`](https://github.com/forrestchang/andrej-karpathy-skills)
   influenced the emphasis on explicit assumptions, simplicity pressure, surgical changes, and goal-driven execution. Those ideas map closely onto Vico's evidence-first probing, small-scope edits, and verify-driven execution loops.
 - [`mattpocock/skills` `grill-me`](https://github.com/mattpocock/skills/tree/main/grill-me)
-  influenced the adversarial one-question-at-a-time pressure-testing style that now lives inside `vico-ground grill`.
+  influenced the adversarial one-question-at-a-time pressure-testing style that now lives inside `vico-ground stress`.
 - [`gsd-build/get-shit-done`](https://github.com/gsd-build/get-shit-done)
   influenced the emphasis on repo-local planning artifacts and context-engineered execution. GSD currently keeps planning state under `.plans/`.
 - [`Yeachan-Heo/oh-my-codex`](https://github.com/Yeachan-Heo/oh-my-codex)
@@ -468,7 +438,7 @@ Vico intentionally stays smaller and more repo-native than those systems. These 
 
 `forrestchang/andrej-karpathy-skills` is most useful to Vico as a principle layer, not as a workflow replacement:
 
-- `Think Before Coding` maps to `vico-ground`, explicit assumptions, clarification-first routing, and tradeoff surfacing.
+- `Think Before Coding` maps to `vico-ground`, explicit assumptions, clarification-first routing, and lightweight pre-planning pressure-testing.
 - `Simplicity First` maps to `vico-plan` simplicity discipline and the preference for smaller execution contracts.
 - `Surgical Changes` maps to `vico-exec` surgical execution discipline and Vico's small-scope edit bias.
 - `Goal-Driven Execution` maps to verify-driven loops in `vico-exec` and close-out verification in `vico-plan verify`.
@@ -491,6 +461,7 @@ What Vico should not absorb directly:
 - During development, point project-local `.codex/skills/` and `.claude/skills/` entries at these folders instead of copying skill contents.
 - For Claude Code, hook scripts live in `vico-exec/scripts/` and project hook wiring lives in `.claude/settings*.json`.
 - For Claude Code, the stronger outer-loop runner lives at `vico-exec/scripts/claude_exec_runner.py`.
+- Use `scripts/export_vico_operating_md.py` as a repo-level utility rather than as part of `vico-ground`.
 
 ## Validation
 

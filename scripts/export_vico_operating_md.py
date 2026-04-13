@@ -15,10 +15,19 @@ def find_active_slug(repo_root: Path) -> tuple[str | None, str | None, str | Non
     plan = plans[0]
     slug = plan.stem
     prd = repo_root / ".vico" / "prd" / "active" / f"{slug}.md"
-    return slug, f".vico/plans/active/{plan.name}", f".vico/prd/active/{prd.name}" if prd.exists() else None
+    return (
+        slug,
+        f".vico/plans/active/{plan.name}",
+        f".vico/prd/active/{prd.name}" if prd.exists() else None,
+    )
 
 
-def build_markdown(target_name: str, active_slug: str | None, plan_path: str | None, prd_path: str | None) -> str:
+def build_markdown(
+    target_name: str,
+    active_slug: str | None,
+    plan_path: str | None,
+    prd_path: str | None,
+) -> str:
     lines = [
         f"# {target_name}",
         "",
@@ -53,8 +62,9 @@ def build_markdown(target_name: str, active_slug: str | None, plan_path: str | N
         "",
         "## Repo-Local Workflow",
         "",
-        "- Use `vico-ground` to clarify, scan, align, reframe, map, surface tradeoffs, and pressure-test before action.",
-        "- Use `vico-ground challenge` when adversarial review or counterexamples are needed.",
+        "- Use `vico-ground` to build just enough shared ground to choose a safe next route before action.",
+        "- Use `vico-ground scan`, `clarify`, `stress`, and `handoff` as the primary public moves.",
+        "- Stop grounding once the next safe route is already clear.",
         "- Use `vico-plan` to create, sync, verify, or reshape tracked work under `.vico/`.",
         "- Use `vico-exec` for persistent execution against an active plan.",
         "- Use `vico-exec cc` when Claude Code should drive a stronger outer execution loop.",
@@ -79,11 +89,28 @@ def build_markdown(target_name: str, active_slug: str | None, plan_path: str | N
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Export a repo-local Vico operating brief to AGENTS.md or CLAUDE.md.")
-    parser.add_argument("target", nargs="?", default="AGENTS.md", help="Target markdown file to create, usually AGENTS.md or CLAUDE.md")
-    parser.add_argument("--repo-root", default=".", help="Repository root that contains .vico/")
-    parser.add_argument("--stdout", action="store_true", help="Print the generated markdown instead of writing a file")
-    parser.add_argument("--overwrite", action="store_true", help="Overwrite the target file if it already exists")
+    parser = argparse.ArgumentParser(
+        description="Export a repo-local Vico operating brief to AGENTS.md or CLAUDE.md."
+    )
+    parser.add_argument(
+        "target",
+        nargs="?",
+        default="AGENTS.md",
+        help="Target markdown file to create, usually AGENTS.md or CLAUDE.md",
+    )
+    parser.add_argument(
+        "--repo-root", default=".", help="Repository root that contains .vico/"
+    )
+    parser.add_argument(
+        "--stdout",
+        action="store_true",
+        help="Print the generated markdown instead of writing a file",
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Overwrite the target file if it already exists",
+    )
     args = parser.parse_args()
 
     repo_root = Path(args.repo_root).resolve()

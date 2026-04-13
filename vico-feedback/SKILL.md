@@ -87,7 +87,12 @@ For confirmed external actions, prefer this shape:
 
 Use the user's primary working language when it is clear from the conversation.
 Keep GitHub command names, labels, URLs, and machine-facing literals unchanged.
-Surface `Skill route` and `Route reason` in the first visible update when `vico-feedback` is selected.
+Surface this route-debug shape in the first visible update when `vico-feedback` is selected:
+
+- `Skill route: vico-feedback`
+- `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
+- optional `Route detail: <workflow_feedback | issue_draft_request | exact trigger phrase>`
+- optional `Route mode: <default | help>`
 
 ## References
 

@@ -15,7 +15,7 @@
 
 | 意图簇 | 默认 route | 核心前置条件 | 例子 |
 | --- | --- | --- | --- |
-| 仓库摸底、架构扫描、对齐、建图、challenge、review、reframe、导出操作说明 | `vico-ground` | 用户目标是整个对象或整体决策面 | `scan the repo`、`inspect the codebase`、`scan the architecture`、`reframe 一下这个问题`、`把这些规则导出到 AGENTS.md`、`扫一下这个项目`、`摸个底`、`盘一下这个代码库`、`看下架构` |
+| 仓库摸底、架构扫描、澄清、pressure-test、handoff | `vico-ground` | 用户目标是整个对象或整体决策面 | `scan the repo`、`inspect the codebase`、`scan the architecture`、`clarify 一下这个目标`、`stress-test 这个方案`、`把这个 resolve 成 handoff`、`扫一下这个项目`、`摸个底`、`盘一下这个代码库`、`看下架构` |
 | tracked work 控制、规划、verify、sync、replan、close | `vico-plan` | tracked work 已经在上下文里，或应该进入 tracked work | `make a plan`、`verify this plan`、`做个计划`、`对一下 plan`、`verify 一下`、`收个口`、`close 这个 plan` |
 | 持续推进实现 | `vico-exec` | 已经存在 active plan | `keep going`、`continue until complete`、`继续做`、`别停`、`接着跑`、`一直做到完成` |
 | 反馈 `vico-skills` 自身 | `vico-feedback` | 抱怨或建议的目标是 workflow / skill 行为本身 | `file an issue`、`I have feedback about vico-skills`、`提个 issue`、`记个反馈`、`这个触发不太对`、`帮我整理成 issue` |
@@ -25,8 +25,8 @@
 | 用户表达 | Route | 原因 |
 | --- | --- | --- |
 | `扫一下 spoon 项目看看架构方面的问题` | `vico-ground` | 明显是在做整体摸底和架构审视 |
-| `我们是不是把问题看错了，reframe 一下` | `vico-ground` | 当前解释框架本身就是问题 |
-| `把我们现在的 operating brief 导出到 AGENTS.md` | `vico-ground` | 要把当前 shared ground 导出成 repo-local instructions |
+| `我们是不是把目标理解错了，clarify 一下` | `vico-ground` | 当前目标或解释框架需要先澄清 |
+| `把我们现在的 operating brief 导出到 AGENTS.md` | 仓库级 utility | 把当前 workflow 规则导出成项目内说明文件 |
 | `看下这个函数为什么 panic` | `direct_execute` 或直接回答 | 单点、局部的排障请求 |
 | `做个计划把这个需求落成 tracked work` | `vico-plan` | 明确是在做 tracked planning |
 | `verify 一下这个 active plan 能不能 close` | `vico-plan` | verify 和 close-out 控制属于 plan |

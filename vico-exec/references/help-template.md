@@ -24,7 +24,11 @@ Keep commands and mode literals unchanged.
 - keep the plan current while executing
 - use the bundled Claude runner when hooks are not enough and you want a stronger repeat-until-stop loop
 - route to `vico-plan close` when end-to-end completion is requested
-- show `Skill route` and `Route reason` in the first visible update when `vico-exec` is selected
+- show this route-debug shape in the first visible update when `vico-exec` is selected:
+  - `Skill route: vico-exec`
+  - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
+  - optional `Route detail: <persistent_implementation | continue_until_complete | exact trigger phrase>`
+  - optional `Route mode: <default | cc | help>`
 
 ## Modes
 

@@ -24,10 +24,14 @@
 - 不要把 `vico-ground` 中仍然停留在假设层或未充分 grounding 的结论包装成基于仓库证据的发现，或包装成已经成立的 tracked-plan 承诺。
 - 即使外围文案为了用户可读性做了优化，机器消费字段也应保持稳定。
 - 一旦选中了某个 Vico skill，应在第一条可见 update 中显式展示当前 skill 路由和路由原因，让用户能区分 skill 路由行为与普通模型行为。
-- 当输出的是面向用户的 checkpoint、summary、verification result 或 handoff 时，如果下一步动作并不显而易见，优先给出 `Recommended action`。
-- `Recommended action` 的标准取值统一为：
+- 当输出的是面向用户的 checkpoint、summary、verification result 或 handoff 时，如果下一步动作并不显而易见，优先显式给出路由和下一步动作。
+- 对 `vico-ground`，优先使用这一对字段：
+  - `Next route`
+  - `Next action`
+- 路由字面值应保持稳定，尤其是：
   - `direct_execute`
   - `vico-plan`
+  - `stay_in_ground`
   - `vico-plan -> vico-exec`
 
 ## Trigger Model

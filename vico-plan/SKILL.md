@@ -80,14 +80,14 @@ Use code reality to verify and correct stale planning state, but do not let it s
 
 Treat a ground handoff as matching only when:
 
-- its `Slug` matches the tracked work in scope, or
+- its optional `Suggested slug` matches the tracked work in scope, or
 - when no slug exists yet, its `Target` clearly matches the current requested work object
 
-Treat any `Issue classes` in the handoff as strong routing hints:
+Treat `Tracking hint` in the handoff as a soft routing hint:
 
-- `intent` may justify `prd_backed`
-- `execution` usually stays in the plan
-- `durable_truth` may justify `vico-plan truth`
+- `no-doc` may justify staying light
+- `plan_only` is the default tracked mode
+- `prd_backed` may justify creating or updating a paired PRD
 
 If the latest ground handoff clearly targets a different active slug or work object than the current request, do not absorb it implicitly.
 If a matching ground handoff came from a broad scan or architectural pass, treat it as describing the whole tracked work object rather than just the last grounded issue.
@@ -142,18 +142,12 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 6. If `prd_backed`, ensure the paired PRD exists and its header points back to the plan.
 7. If a recent `vico-ground` handoff block exists, absorb these as strong inputs:
    - `Target`
-   - optional `Program objective`
-   - optional `Slug`
-   - optional `Issue classes`
-   - `Accepted decisions`
-   - optional `Problem bundle`
-   - optional `Resolved during grounding`
-   - `Unresolved decisions`
-   - `Suggested edits`
+   - `What is true now`
+   - `What is still unresolved`
+   - `Suggested first step`
    And absorb these as soft execution-shaping hints when present:
-   - optional `Recommended tracking mode`
-   - optional `Suggested first slice`
-   - optional `Execution readiness risks`
+   - optional `Suggested slug`
+   - optional `Tracking hint`
 8. Explore the codebase to understand current architecture, ownership, and integration seams.
 9. Identify durable architectural decisions that should apply across all phases.
 10. Draft thin vertical slices that produce verifiable behavior end-to-end.
@@ -219,7 +213,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - User decisions, blockers, and unresolved scope forks should be explicit in the plan or PRD rather than implied by missing checklist detail.
 - If the current plan is too coarse, too stale, or too ambiguous for the next step to be chosen reliably, stay in `vico-plan` and `sync` or `replan` before routing into `vico-exec`.
 - Prefer using ground handoff hints to sharpen the first execution slice when they materially reduce ambiguity.
-- Treat `Resolved during grounding` as already handled work; do not reopen those items as unresolved planning questions unless repository evidence now conflicts with them.
+- Treat `What is true now` as grounded context that should sharpen planning unless repository evidence now conflicts with it.
 
 ## Verification Rules
 
@@ -262,7 +256,7 @@ Write plans with at least:
 - `Updated`
 - optional `Manifest`
 - optional `Source PRD`
-- optional `Unresolved decisions`
+- optional `What is still unresolved`
 - optional terminal status note when using `close` or `cancel`
 - architectural decisions section
 - phased slices
@@ -274,6 +268,11 @@ For user-facing textual output:
 - if the user's preferred language is unclear, mirror the user's most recent substantive message
 - keep commands, mode names, file paths, code literals, and machine-consumed handoff field names stable unless that downstream contract is explicitly changed
 - keep internal routing and reconciliation heuristics implicit by default unless they materially affect the user's next planning decision
+- surface this route-debug shape in the first visible update when `vico-plan` is selected:
+  - `Skill route: vico-plan`
+  - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
+  - optional `Route detail: <tracked_work_controller | verify_request | exact trigger phrase>`
+  - optional `Route mode: <review | verify | sync | prd | replan | replace | truth | close | cancel>`
 
 For `help`:
 

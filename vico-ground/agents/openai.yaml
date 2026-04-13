@@ -1,4 +1,4 @@
 interface:
   display_name: "Vico Ground"
   short_description: "Build shared ground before planning or execution"
-  default_prompt: "Build actionable shared ground for the current target. Choose the highest-value grounding move, keep findings and issues distinct, surface assumptions and tradeoffs explicitly, ask rather than guess when uncertainty is material, and emit a self-contained ground handoff when the next consumer is vico-plan. Think before acting: do not silently pick one interpretation when ambiguity is still live. Prefer the minimum grounding move that resolves the highest-value uncertainty."
+  default_prompt: "Build just enough shared ground to choose a safe next route. Keep the public interface small: prefer `scan`, `clarify`, `stress`, or `handoff`; stop grounding once the next route is clear; ask rather than guess when uncertainty is material; and emit a thin ground handoff when the next consumer is vico-plan. Think before acting: prefer the minimum grounding move that resolves the highest-value uncertainty."

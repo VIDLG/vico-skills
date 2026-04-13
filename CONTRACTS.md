@@ -24,10 +24,21 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 - Do not present ungrounded or assumption-level `vico-ground` conclusions as if they were repository-backed findings or tracked-plan commitments.
 - Keep machine-consumed fields stable even when surrounding prose is optimized for user readability.
 - When a Vico skill is selected, expose the active skill route and route reason in the first visible update so the user can distinguish skill-routed behavior from generic model behavior.
-- When a human-facing checkpoint, summary, verification result, or handoff is emitted, prefer a `Recommended action` when that action is not already obvious.
-- Standardize `Recommended action` on:
+- Prefer this minimal route-debug shape:
+  - `Skill route: <skill-name>`
+  - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
+  - optional `Route detail: <the strongest route-specific detail>`
+  - optional `Route mode: <public mode or move>` when a specific mode already explains the route more clearly
+- For explicit invocations, say that the route came from an explicit skill request.
+- For natural routing, prefer naming the strongest intent cluster or natural trigger rather than a vague explanation.
+- When a human-facing checkpoint, summary, verification result, or handoff is emitted, prefer an explicit route and next step when that action is not already obvious.
+- For `vico-ground`, prefer the pair:
+  - `Next route`
+  - `Next action`
+- Route literals should stay stable, especially:
   - `direct_execute`
   - `vico-plan`
+  - `stay_in_ground`
   - `vico-plan -> vico-exec`
 
 ## Trigger Model

@@ -8,48 +8,36 @@ Keep commands and move literals unchanged.
 ## Vico Ground Help
 
 - Entry: `vico-ground`
-- Default role: build actionable shared ground before planning or execution
-- Axis position: the problem-framing axis; increase grounding rigor without forcing tracked execution too early
+- Default role: build just enough shared ground to choose a safe next route
+- Default posture: stay light, stop once the next route is clear
 
-## Moves
+## Public Moves
 
-- default
-- clarify
-- scan
-- map
-- align
-- reframe
-- tradeoff
-- grill
-- challenge
-- review
-- export-md
-- resolve
-- help
+- `scan`
+- `clarify`
+- `stress`
+- `handoff`
+- `help`
 
-## State
+## Routing Hints
 
-- Accepted Facts
-- Active Assumptions
-- Findings
-- Issue Bank
-- Tradeoffs
-- Open Questions
-- Topic Map
-- Ground Handoff
+- use `scan` when facts are weak
+- use `clarify` when scope, terms, or intent are weak
+- use `stress` when a proposal, assumption, or plan needs pressure
+- use `handoff` when the next route is already clear
+- show this route-debug shape in the first visible update:
+  - `Skill route: vico-ground`
+  - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
+  - optional `Route detail: <repo_orientation | architecture_scan | exact trigger phrase>`
+  - optional `Route mode: <scan | clarify | stress | handoff>`
 
-## Behavior
+## Output
 
-- build evidence before overcommitting
-- keep findings and issues separate
-- use `clarify` for goal and term alignment
-- use `tradeoff` for preference and constraint reconciliation
-- use `grill` for adversarial pressure-testing
-- use `challenge` for counterexamples, rebuttals, and adversarial review
-- use `reframe` when the current interpretation is the thing that needs fixing
-- use `export-md` when the current ground should become repo-local instructions
-- use `resolve` when the current ground is strong enough to hand forward
-- show `Skill route` and `Route reason` in the first visible update
+- `Move: <move>`
+- `Conclusion`
+- `Evidence`
+- `Next route`
+- `Next action`
 
 ## Examples
 
@@ -57,17 +45,9 @@ Keep commands and move literals unchanged.
 - `vico-ground scan`
 - `scan the repo`
 - `扫一下这个项目`
-- `看下架构`
 - `vico-ground clarify`
-- `vico-ground map`
-- `vico-ground align`
-- `vico-ground reframe`
-- `vico-ground tradeoff`
-- `vico-ground grill`
-- `vico-ground challenge`
-- `vico-ground export-md AGENTS.md`
-- `vico-ground review`
-- `vico-ground resolve`
+- `vico-ground stress`
+- `vico-ground handoff`
 - `how do I use vico-ground`
 ```
 

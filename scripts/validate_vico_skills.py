@@ -20,13 +20,19 @@ def run(cmd: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
 
 
 def find_skill_dirs(root: Path) -> list[Path]:
-    return sorted(path for path in root.iterdir() if path.is_dir() and (path / "SKILL.md").exists())
+    return sorted(
+        path
+        for path in root.iterdir()
+        if path.is_dir() and (path / "SKILL.md").exists()
+    )
 
 
 def python_files_under(path: Path) -> list[Path]:
     if not path.exists():
         return []
-    return sorted(file for file in path.rglob("*.py") if "__pycache__" not in file.parts)
+    return sorted(
+        file for file in path.rglob("*.py") if "__pycache__" not in file.parts
+    )
 
 
 def placeholder_hits(root: Path) -> list[str]:
@@ -61,7 +67,9 @@ def remove_pycache_dirs(root: Path) -> None:
         path.rmdir()
 
 
-def validate_skill_markers(root: Path, relative_path: str, markers: tuple[str, ...]) -> list[str]:
+def validate_skill_markers(
+    root: Path, relative_path: str, markers: tuple[str, ...]
+) -> list[str]:
     failures: list[str] = []
     path = root / relative_path
     if not path.exists():
@@ -77,81 +85,62 @@ def validate_current_contracts(root: Path) -> list[str]:
     failures: list[str] = []
     required: dict[str, tuple[str, ...]] = {
         "vico-ground/SKILL.md": (
-            "shared-ground construction workflow",
+            "lightweight grounding controller",
+            "Build just enough shared ground to choose a safe next route.",
             "Treat short repo-orientation requests as strong `vico-ground` signals by default",
-            "## Theory Basis",
-            "## Grounding Principles",
-            "## Forward-Only Design Discipline",
-            "Default to forward design and assume no historical burden unless the user explicitly says compatibility matters.",
-            "## State Model",
-            "Accepted Facts",
-            "Active Assumptions",
-            "Interpretations",
-            "Findings",
-            "Preferences",
-            "Issue Bank",
-            "Tradeoffs",
-            "Commitments",
-            "Ground Handoff",
-            "## Epistemic Status Model",
-            "`fact`",
-            "`assumption`",
-            "`interpretation`",
-            "`preference`",
-            "`commitment`",
-            "## Epistemic Transition Rules",
-            "`assumption -> fact`",
-            "`preference -> commitment`",
-            "## Moves",
-            "`clarify`",
+            "## Public Moves",
             "`scan`",
-            "`map`",
-            "`align`",
-            "`reframe`",
-            "`tradeoff`",
-            "`grill`",
-            "`challenge`",
-            "`export-md`",
-            "`review`",
-            "`resolve`",
-            "## Move Selection Rubric",
-            "ambiguity_reduction",
-            "verification_impact",
-            "Do not treat every `Finding` as an `Issue`",
+            "`clarify`",
+            "`stress`",
+            "`handoff`",
+            "## Controller Rules",
+            "Choose the smallest move that resolves the highest-value uncertainty.",
+            "## Stop Rule",
+            "Never continue grounding just to make the output look more complete.",
+            "## Minimal State Model",
+            "`Facts`",
+            "`Assumptions`",
+            "`Tensions`",
+            "`Next route`",
+            "## Output Contract",
+            "`Conclusion`",
+            "`Evidence`",
+            "`Next action`",
+            "## Full Handoff Contract",
         ),
         "vico-ground/references/help-template.md": (
             "## Vico Ground Help",
-            "- clarify",
-            "- reframe",
-            "- tradeoff",
-            "- grill",
-            "- challenge",
-            "- export-md",
-            "keep findings and issues separate",
+            "- `scan`",
+            "- `clarify`",
+            "- `stress`",
+            "- `handoff`",
+            "- `Next route`",
+            "- `Next action`",
+            "Skill route: vico-ground",
+            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
+            "Route detail: <repo_orientation | architecture_scan | exact trigger phrase>",
+            "Route mode: <scan | clarify | stress | handoff>",
         ),
         "vico-ground/agents/openai.yaml": (
             "Think before acting",
-            "Prefer the minimum grounding move",
+            "Keep the public interface small",
+            "stop grounding once the next route is clear",
         ),
-        "vico-ground/scripts/export_vico_operating_md.py": (
+        "scripts/export_vico_operating_md.py": (
             "Export a repo-local Vico operating brief to AGENTS.md or CLAUDE.md.",
             "## Vico Operating Brief",
-            "Use `vico-ground` to clarify, scan, align, reframe, map, surface tradeoffs, and pressure-test before action.",
+            "Use `vico-ground` to build just enough shared ground to choose a safe next route before action.",
+            "Use `vico-ground scan`, `clarify`, `stress`, and `handoff` as the primary public moves.",
         ),
         "vico-ground/references/output-format.md": (
             "# Vico Ground Output Format",
             "## Scan Example",
-            "## Ground Handoff Example",
-            "Findings",
-            "Confidence: medium",
-            "Uncertainty source:",
-            "Scope impact:",
-            "Preferences",
-            "Commitments",
-            "Invalidation triggers",
-            "Recommended next action",
-            "Risk if skipped",
-            "Alternative next actions",
+            "## Handoff Example",
+            "Conclusion",
+            "Evidence",
+            "Next route",
+            "Next action",
+            "## Full Handoff Example",
         ),
         "vico-plan/SKILL.md": (
             "## Simplicity Discipline",
@@ -164,6 +153,9 @@ def validate_current_contracts(root: Path) -> list[str]:
         "vico-plan/references/templates/help-template.md": (
             "`verify close`",
             "`sync`: use when code moved and the current plan should catch up",
+            "Skill route: vico-plan",
+            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
+            "Route detail: <tracked_work_controller | verify_request | exact trigger phrase>",
         ),
         "vico-plan/references/templates/review-template.md": (
             "Confidence: high | medium | low",
@@ -186,12 +178,12 @@ def validate_current_contracts(root: Path) -> list[str]:
         ),
         "vico-plan/references/templates/ground-handoff-template.md": (
             "# Ground Handoff Template",
+            "Move: handoff",
             "## Ground Handoff",
-            "Optional: Active assumptions",
-            "Optional: Preferences",
-            "Optional: Tradeoffs",
-            "Optional: Commitments",
-            "Optional: Invalidation triggers",
+            "What is true now",
+            "What is still unresolved",
+            "Suggested first step",
+            "Optional: Tracking hint",
             "strong downstream inputs",
             "soft context inputs",
         ),
@@ -203,6 +195,9 @@ def validate_current_contracts(root: Path) -> list[str]:
             "Loop until verified",
             "Treat persistent implementation intent as the main routing signal",
             "`vico-ground` handoffs",
+            "Skill route: vico-exec",
+            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
+            "Route detail: <persistent_implementation | continue_until_complete | exact trigger phrase>",
         ),
         "vico-exec/references/help-template.md": (
             "## Modes",
@@ -210,6 +205,10 @@ def validate_current_contracts(root: Path) -> list[str]:
             "vico-exec cc",
             "run this with cc",
             "handoff to cc",
+            "Skill route: vico-exec",
+            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
+            "Route detail: <persistent_implementation | continue_until_complete | exact trigger phrase>",
+            "Route mode: <default | cc | help>",
         ),
         "vico-exec/agents/openai.yaml": (
             "Use surgical changes and goal-driven execution",
@@ -251,6 +250,9 @@ def validate_current_contracts(root: Path) -> list[str]:
             "GitHub issue draft",
             "Treat feedback-about-the-workflow intent as the main routing signal",
             "how do I use vico-feedback",
+            "Skill route: vico-feedback",
+            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
+            "Route detail: <workflow_feedback | issue_draft_request | exact trigger phrase>",
         ),
         "vico-feedback/agents/openai.yaml": (
             "Think before filing",
@@ -261,11 +263,12 @@ def validate_current_contracts(root: Path) -> list[str]:
             "`vico-ground`",
             "Trigger examples: [TRIGGERS.md](TRIGGERS.md)",
             "problem framing and execution structure are separate escalation axes",
+            "build just enough shared ground to choose a safe next route",
             "## Forward-Only Design",
             "default to forward design; do not assume historical burden",
             "### Escalation Map",
             "Codex: vico-plan -> Claude Code: vico-exec",
-            "vico-ground export-md AGENTS.md",
+            "python vico-skills/scripts/export_vico_operating_md.py AGENTS.md",
             "## External Influences",
             "forrestchang/andrej-karpathy-skills",
             "### Karpathy Mapping",
@@ -275,13 +278,17 @@ def validate_current_contracts(root: Path) -> list[str]:
             "## Start Here",
             "Three common paths",
             "Route by intent cluster first, phrase match second.",
+            "Route detail: <the strongest route-specific detail>",
+            "Route mode: <public mode or move>",
         ),
         "README-zh.md": (
             "`vico-ground`",
             "触发示例: [TRIGGERS-zh.md](TRIGGERS-zh.md)",
+            "建立“足够行动”的 shared ground",
             "## 前向设计原则",
             "默认按前向设计处理，不预设历史负担",
             "Codex: vico-plan -> Claude Code: vico-exec",
+            "python vico-skills/scripts/export_vico_operating_md.py AGENTS.md",
             "共识模型参考: [CONSENSUS-zh.md](CONSENSUS-zh.md)",
             "### Karpathy 映射",
             "Think Before Coding",
@@ -289,6 +296,8 @@ def validate_current_contracts(root: Path) -> list[str]:
             "## 从这里开始",
             "三条最常见路径",
             "应先按意图簇路由，再用短语匹配补召回。",
+            "Route detail: <最强的路由细节>",
+            "Route mode: <public mode or move>",
         ),
         "CONTRACTS.md": (
             "## Forward-Only Contract Discipline",
@@ -305,7 +314,7 @@ def validate_current_contracts(root: Path) -> list[str]:
             "## Routing Order",
             "Route by intent cluster first.",
             "## Intent Clusters",
-            "Repo orientation, architecture scan, alignment, mapping, challenge, review",
+            "Repo orientation, architecture scan, clarification, pressure-test, handoff",
             "Persistent implementation continuation",
             "## Example Decisions",
             "## Short Clarification Patterns",
@@ -316,7 +325,7 @@ def validate_current_contracts(root: Path) -> list[str]:
             "## 路由顺序",
             "先按意图簇路由。",
             "## 意图簇",
-            "仓库摸底、架构扫描、对齐、建图、challenge、review",
+            "仓库摸底、架构扫描、澄清、pressure-test、handoff",
             "持续推进实现",
             "## 路由示例",
             "## 短确认模板",
@@ -327,9 +336,8 @@ def validate_current_contracts(root: Path) -> list[str]:
             "### Common Ground",
             "### Conversational Grounding",
             "### Sensemaking",
+            "### Collaborative Problem Solving",
             "### Deliberation And Argumentation",
-            "### Negotiation And Preference Reconciliation",
-            "### Vocabulary And Ontology Alignment",
             "## Practical Consensus Moves",
             "## Theory To Move Mapping",
             "## Failure Patterns",
@@ -385,7 +393,9 @@ def validate_runtime_closure(root: Path) -> list[str]:
         queue: list[Path] = [skill_dir / "SKILL.md"]
         agents_dir = skill_dir / "agents"
         if agents_dir.exists():
-            queue.extend(path for path in sorted(agents_dir.rglob("*")) if path.is_file())
+            queue.extend(
+                path for path in sorted(agents_dir.rglob("*")) if path.is_file()
+            )
         visited: set[Path] = set()
         while queue:
             current = queue.pop(0).resolve()
@@ -401,14 +411,24 @@ def validate_runtime_closure(root: Path) -> list[str]:
                         f"{current.relative_to(root)} has cross-skill runtime reference `{token}` -> {resolved.relative_to(root)}"
                     )
                     continue
-                if target_skill == skill_dir and resolved.is_file() and resolved not in visited:
+                if (
+                    target_skill == skill_dir
+                    and resolved.is_file()
+                    and resolved not in visited
+                ):
                     queue.append(resolved)
     return failures
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Validate Vico skills, helper scripts, and basic content hygiene.")
-    parser.add_argument("--root", default=str(Path(__file__).resolve().parents[1]), help="vico-skills root directory")
+    parser = argparse.ArgumentParser(
+        description="Validate Vico skills, helper scripts, and basic content hygiene."
+    )
+    parser.add_argument(
+        "--root",
+        default=str(Path(__file__).resolve().parents[1]),
+        help="vico-skills root directory",
+    )
     parser.add_argument(
         "--validator",
         default=r"C:\Users\vision\.codex\skills\.system\skill-creator\scripts\quick_validate.py",
@@ -428,7 +448,9 @@ def main() -> int:
     for skill_dir in skill_dirs:
         result = run([sys.executable, str(validator), str(skill_dir)], root)
         if result.returncode != 0:
-            failures.append(f"quick_validate failed for {skill_dir.name}: {result.stdout}{result.stderr}".strip())
+            failures.append(
+                f"quick_validate failed for {skill_dir.name}: {result.stdout}{result.stderr}".strip()
+            )
         else:
             print(f"[ok] quick_validate {skill_dir.name}")
 
@@ -447,7 +469,9 @@ def main() -> int:
             env=compile_env,
         )
         if compile_result.returncode != 0:
-            failures.append(f"py_compile failed:\n{compile_result.stdout}{compile_result.stderr}".strip())
+            failures.append(
+                f"py_compile failed:\n{compile_result.stdout}{compile_result.stderr}".strip()
+            )
         else:
             print(f"[ok] py_compile {len(python_files)} python files")
         shutil.rmtree(pycache_prefix, ignore_errors=True)
@@ -457,7 +481,9 @@ def main() -> int:
     if test_file.exists():
         test_result = run([sys.executable, str(test_file)], root)
         if test_result.returncode != 0:
-            failures.append(f"automation tests failed:\n{test_result.stdout}{test_result.stderr}".strip())
+            failures.append(
+                f"automation tests failed:\n{test_result.stdout}{test_result.stderr}".strip()
+            )
         else:
             print("[ok] automation tests")
         remove_pycache_dirs(root)
@@ -470,13 +496,17 @@ def main() -> int:
 
     contract_failures = validate_current_contracts(root)
     if contract_failures:
-        failures.append("current contract validation failed:\n" + "\n".join(contract_failures))
+        failures.append(
+            "current contract validation failed:\n" + "\n".join(contract_failures)
+        )
     else:
         print("[ok] current skill contracts")
 
     runtime_closure_failures = validate_runtime_closure(root)
     if runtime_closure_failures:
-        failures.append("runtime closure validation failed:\n" + "\n".join(runtime_closure_failures))
+        failures.append(
+            "runtime closure validation failed:\n" + "\n".join(runtime_closure_failures)
+        )
     else:
         print("[ok] runtime closure")
 

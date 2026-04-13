@@ -40,7 +40,11 @@ Keep commands and mode literals unchanged.
 
 ## Route Visibility
 
-- show `Skill route` and `Route reason` in the first visible update when `vico-plan` is selected
+- show this route-debug shape in the first visible update when `vico-plan` is selected:
+  - `Skill route: vico-plan`
+  - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
+  - optional `Route detail: <tracked_work_controller | verify_request | exact trigger phrase>`
+  - optional `Route mode: <review | verify | sync | prd | replan | replace | truth | close | cancel>`
 
 ## Safety Rules
 

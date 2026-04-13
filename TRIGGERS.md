@@ -15,7 +15,7 @@ It is not a second source of truth for skill behavior; the owner contracts remai
 
 | Intent cluster | Default route | Core precondition | Examples |
 | --- | --- | --- | --- |
-| Repo orientation, architecture scan, alignment, mapping, challenge, review, reframe, export | `vico-ground` | user is working on the whole target or overall decision surface | `scan the repo`, `inspect the codebase`, `scan the architecture`, `reframe this`, `export these rules to AGENTS.md`, `扫一下这个项目`, `摸个底`, `盘一下这个代码库`, `看下架构` |
+| Repo orientation, architecture scan, clarification, pressure-test, handoff | `vico-ground` | user is working on the whole target or overall decision surface | `scan the repo`, `inspect the codebase`, `scan the architecture`, `clarify this`, `stress-test this`, `resolve this into a handoff`, `扫一下这个项目`, `摸个底`, `盘一下这个代码库`, `看下架构` |
 | Tracked-work control, planning, verify, sync, replan, close | `vico-plan` | tracked work is in scope or should become tracked | `make a plan`, `verify this plan`, `做个计划`, `对一下 plan`, `verify 一下`, `收个口`, `close 这个 plan` |
 | Persistent implementation continuation | `vico-exec` | an active plan already exists | `keep going`, `continue until complete`, `继续做`, `别停`, `接着跑`, `一直做到完成` |
 | Feedback about `vico-skills` itself | `vico-feedback` | the complaint or suggestion targets the workflow or skill behavior | `file an issue`, `I have feedback about vico-skills`, `提个 issue`, `记个反馈`, `这个触发不太对`, `帮我整理成 issue` |
@@ -25,8 +25,8 @@ It is not a second source of truth for skill behavior; the owner contracts remai
 | User request | Route | Why |
 | --- | --- | --- |
 | `扫一下 spoon 项目看看架构方面的问题` | `vico-ground` | whole-repo orientation and architecture review |
-| `我们其实是不是把问题看错了，reframe 一下` | `vico-ground` | the current interpretation itself is the target |
-| `把我们现在的 operating brief 导出到 AGENTS.md` | `vico-ground` | export current shared ground into repo-local instructions |
+| `我们其实是不是把问题看错了，clarify 一下` | `vico-ground` | the current interpretation or scope needs clarification before action |
+| `把我们现在的 operating brief 导出到 AGENTS.md` | repo utility | export current workflow rules into a project-local instruction file |
 | `看下这个函数为什么 panic` | `direct_execute` or direct answer | narrow local debugging request |
 | `做个计划把这个需求落成 tracked work` | `vico-plan` | explicit tracked planning intent |
 | `verify 一下这个 active plan 能不能 close` | `vico-plan` | verification and close-out control belong to plan |

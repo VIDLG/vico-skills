@@ -18,7 +18,11 @@ Keep commands, labels, and GitHub literals unchanged.
 - check likely duplicates when useful
 - suggest `create`, `reopen`, or `comment` when a duplicate check finds a likely existing issue
 - create the GitHub issue only after explicit user confirmation
-- surface `Skill route` and `Route reason` in the first visible update
+- show this route-debug shape in the first visible update:
+  - `Skill route: vico-feedback`
+  - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
+  - optional `Route detail: <workflow_feedback | issue_draft_request | exact trigger phrase>`
+  - optional `Route mode: <default | help>`
 
 ## Outputs
 

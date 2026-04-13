@@ -145,6 +145,16 @@ Codex does not have equivalent event hooks. Use the same execute loop directly a
 - the Claude runner can keep looping until execution is done, blocked, stale, or waiting on the user
 - after execution, route back to `vico-plan verify` or `vico-plan close` as needed
 
+## User-Facing Output
+
+- use the user's primary working language when it is clear from the conversation
+- keep mode names, status literals, file paths, and machine-facing fields stable
+- surface this route-debug shape in the first visible update when `vico-exec` is selected:
+  - `Skill route: vico-exec`
+  - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
+  - optional `Route detail: <persistent_implementation | continue_until_complete | exact trigger phrase>`
+  - optional `Route mode: <default | cc | help>`
+
 ## References
 
 - Use [references/execute-loop.md](references/execute-loop.md) for the step-by-step loop.
