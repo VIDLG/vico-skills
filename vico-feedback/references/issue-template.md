@@ -10,7 +10,7 @@ Type
 - bug | ux_friction | contract_gap | feature_request
 
 Affected skills
-- vico-probe
+- vico-ground
 - vico-plan
 - vico-exec
 

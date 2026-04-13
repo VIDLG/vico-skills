@@ -34,7 +34,7 @@ Vico 不只是想检查仓库、写计划或执行任务。
 - `Accepted Decisions`
 - `Active Assumptions`
 - `Open Questions`
-- `Ground / Probe Handoff`
+- `Ground Handoff`
 
 ### Conversational Grounding
 

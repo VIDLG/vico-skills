@@ -34,7 +34,7 @@ Best Vico mapping:
 - `Accepted Decisions`
 - `Active Assumptions`
 - `Open Questions`
-- `Ground / Probe Handoff`
+- `Ground Handoff`
 
 ### Conversational Grounding
 

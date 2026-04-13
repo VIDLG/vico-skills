@@ -55,6 +55,9 @@ Keep commands and move literals unchanged.
 
 - `vico-ground`
 - `vico-ground scan`
+- `scan the repo`
+- `扫一下这个项目`
+- `看下架构`
 - `vico-ground clarify`
 - `vico-ground map`
 - `vico-ground align`

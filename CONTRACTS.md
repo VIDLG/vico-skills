@@ -30,13 +30,22 @@ It is not the user-facing workflow guide and not a second source of skill behavi
   - `vico-plan`
   - `vico-plan -> vico-exec`
 
-## Route Shift Policy
+## Trigger Model
 
-- Escalation and de-escalation are both valid workflow moves.
-- `vico-ground` may route into `vico-plan` when shared ground is strong enough to shape tracked execution.
-- If work grows beyond safe local execution, route into `vico-plan` or `vico-exec` as needed.
-- If work shrinks back into a local, low-risk change, prefer `direct_execute` over keeping the user inside a heavier workflow.
-- When re-entering tracked workflow after direct execution, perform the minimum reconcile or sync needed to align `.vico` state with current repository reality.
+- Route Vico skills by intent cluster first, not by literal phrase match alone.
+- Treat natural-language examples as strong hints, not as the only legal entrypoints.
+- Use phrase lists to improve recall, especially for short colloquial requests, but do not let phrase matching override clearer intent signals.
+- Apply route preconditions before locking a skill:
+  - `vico-ground`: user is trying to orient, inspect, align, map, challenge, review, or build shared ground
+  - `vico-plan`: user is trying to create, reconcile, verify, sync, replan, or close tracked work
+  - `vico-exec`: user wants persistent implementation continuation and an active plan exists
+  - `vico-feedback`: user is giving feedback about `vico-skills` behavior or asking to draft/file an issue about it
+- Prefer one short clarification question when the same wording could reasonably map to more than one route.
+- Prefer direct execution or direct answer when the request is clearly narrow, local, and does not benefit from Vico routing.
+- Short colloquial repo-orientation phrases such as `scan`, `quick pass`, `orient me`, `扫一下`, `摸底`, `盘一下`, or `过一遍整体` should be treated as strong `vico-ground` hints when they target the whole repo, architecture, boundaries, or overall structure.
+- Short colloquial tracked-work phrases such as `做个计划`, `收个口`, `对一下 plan`, `继续推进这个计划`, `verify 一下`, or `close 这个` should be treated as strong `vico-plan` hints when tracked work is already in scope.
+- Short colloquial persistence phrases such as `继续做`, `一直做完`, `别停`, `接着跑`, or `继续直到完成` should be treated as strong `vico-exec` hints only when an active plan already exists.
+- Short colloquial feedback phrases such as `提个 issue`, `记个反馈`, `这个体验别扭`, `这个触发不对`, or `帮我整理成 issue` should be treated as strong `vico-feedback` hints when they clearly target `vico-skills` itself.
 
 ## Workflow Re-entry Rule
 

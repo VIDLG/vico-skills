@@ -9,8 +9,12 @@ description: Default front door for Vico-style repo-local planning. Decide wheth
 
 `vico-plan` is the only default front door for tracked Vico work.
 
-Treat natural requests such as `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, or `how do I use vico-plan` as valid `vico-plan` entrypoints even when the user does not name the skill explicitly.
+Treat natural requests such as `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `close this plan`, or `how do I use vico-plan` as valid `vico-plan` entrypoints even when the user does not name the skill explicitly.
+
+Treat tracked-work controller intent as the main routing signal. Use `vico-plan` by default when the user is trying to start tracked work, reshape the execution contract, verify tracked completion, sync stale tracked docs, close out tracked work, or continue an existing tracked thread without asking for persistent implementation looping yet.
+
 If the user's intent could reasonably map to lightweight direct execution instead of tracked planning, and repository evidence does not clearly justify `.vico` tracking, ask a short clarification question before creating tracked work.
+If the user's wording mainly signals persistent implementation continuation and an active plan already exists, prefer `vico-exec` instead of `vico-plan`.
 
 It owns four decisions before planning:
 

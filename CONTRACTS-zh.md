@@ -30,13 +30,22 @@
   - `vico-plan`
   - `vico-plan -> vico-exec`
 
-## Route Shift 策略
+## Trigger Model
 
-- 升级和降级都应是合法的 workflow move。
-- 当 shared ground 已经足以支撑 tracked execution 时，`vico-ground` 可以进入 `vico-plan`。
-- 当工作超出安全的局部执行范围时，应按需要升级到 `vico-plan` 或 `vico-exec`。
-- 当工作又缩回到局部、低风险修改时，应优先回到 `direct_execute`，而不是继续把用户困在更重的流程里。
-- 当 direct execution 之后重新回到 tracked workflow 时，应自动执行最小 reconcile / sync，让 `.vico` 状态重新对齐当前代码现实。
+- Vico skill 的路由应先看意图簇，而不是只看字面 trigger phrase。
+- 自然语言例子是强提示，不是唯一合法入口。
+- phrase 列表主要用于提升召回，尤其是短口语表达；但不能让字面匹配压过更清楚的用户意图。
+- 在锁定 skill 前，先检查 route 前置条件：
+  - `vico-ground`：用户是在做整体摸底、查看、对齐、建图、challenge、review，或建立 shared ground
+  - `vico-plan`：用户是在创建、对账、verify、sync、replan、close tracked work
+  - `vico-exec`：用户要持续推进实现，而且已经存在 active plan
+  - `vico-feedback`：用户是在反馈 `vico-skills` 自身行为，或要求整理 / 发 issue
+- 当同一句话可以合理落到多个 route 时，优先用一句短确认消歧。
+- 当请求明显是窄范围、局部、且不需要 Vico workflow 时，优先 direct execution 或直接回答。
+- `scan`、`quick pass`、`orient me`、`扫一下`、`摸底`、`盘一下`、`过一遍整体` 这类仓库摸底式表达，如果目标是整个 repo、架构、边界或整体结构，应视为 `vico-ground` 强信号。
+- `做个计划`、`收个口`、`对一下 plan`、`继续推进这个计划`、`verify 一下`、`close 这个` 这类 tracked-work 表达，在 tracked work 已经进入上下文时，应视为 `vico-plan` 强信号。
+- `继续做`、`一直做完`、`别停`、`接着跑`、`继续直到完成` 这类持续执行表达，只有在 active plan 已存在时才应视为 `vico-exec` 强信号。
+- `提个 issue`、`记个反馈`、`这个体验别扭`、`这个触发不对`、`帮我整理成 issue` 这类反馈表达，在目标明确是 `vico-skills` 本身时，应视为 `vico-feedback` 强信号。
 
 ## Workflow Re-entry 规则
 

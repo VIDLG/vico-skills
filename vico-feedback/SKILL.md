@@ -9,6 +9,10 @@ Turn user feedback about `vico-skills` into structured GitHub issues.
 
 Treat natural requests such as `file an issue`, `report a bug`, `this workflow feels awkward`, `I have feedback about vico-skills`, `draft a GitHub issue`, or `how do I use vico-feedback` as valid `vico-feedback` entrypoints even when the user does not name the skill explicitly.
 
+Treat feedback-about-the-workflow intent as the main routing signal. Use `vico-feedback` when the user is describing friction, bugs, naming problems, trigger misses, or feature gaps in `vico-skills`, and wants that turned into a structured report or GitHub issue flow.
+
+If the user is only reporting a repository bug unrelated to `vico-skills` itself, do not route here automatically.
+
 ## Goals
 
 - capture user feedback in a structured form

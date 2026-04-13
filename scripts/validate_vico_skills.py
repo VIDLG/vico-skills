@@ -78,6 +78,7 @@ def validate_current_contracts(root: Path) -> list[str]:
     required: dict[str, tuple[str, ...]] = {
         "vico-ground/SKILL.md": (
             "shared-ground construction workflow",
+            "Treat short repo-orientation requests as strong `vico-ground` signals by default",
             "## Theory Basis",
             "## Grounding Principles",
             "## State Model",
@@ -126,6 +127,10 @@ def validate_current_contracts(root: Path) -> list[str]:
             "- export-md",
             "keep findings and issues separate",
         ),
+        "vico-ground/agents/openai.yaml": (
+            "Think before acting",
+            "Prefer the minimum grounding move",
+        ),
         "vico-ground/scripts/export_vico_operating_md.py": (
             "Export a repo-local Vico operating brief to AGENTS.md or CLAUDE.md.",
             "## Vico Operating Brief",
@@ -142,11 +147,17 @@ def validate_current_contracts(root: Path) -> list[str]:
         ),
         "vico-plan/SKILL.md": (
             "## Simplicity Discipline",
+            "Treat tracked-work controller intent as the main routing signal",
             "`vico-ground` handoff",
         ),
         "vico-plan/references/templates/help-template.md": (
             "`verify close`",
             "`sync`: use when code moved and the current plan should catch up",
+        ),
+        "vico-plan/agents/openai.yaml": (
+            "Apply simplicity first",
+            "prefer the smallest execution contract",
+            "avoid speculative phases or abstractions",
         ),
         "vico-plan/references/templates/ground-handoff-template.md": (
             "# Ground Handoff Template",
@@ -165,6 +176,7 @@ def validate_current_contracts(root: Path) -> list[str]:
             "## Surgical Execution Discipline",
             "## Success Criteria Discipline",
             "Loop until verified",
+            "Treat persistent implementation intent as the main routing signal",
             "`vico-ground` handoffs",
         ),
         "vico-exec/references/help-template.md": (
@@ -173,6 +185,11 @@ def validate_current_contracts(root: Path) -> list[str]:
             "vico-exec cc",
             "run this with cc",
             "handoff to cc",
+        ),
+        "vico-exec/agents/openai.yaml": (
+            "Use surgical changes and goal-driven execution",
+            "define success criteria before calling work done",
+            "loop until verification evidence is strong enough",
         ),
         "vico-exec/references/automation.md": (
             "## Claude Runner Loop",
@@ -200,26 +217,64 @@ def validate_current_contracts(root: Path) -> list[str]:
         ),
         "vico-feedback/SKILL.md": (
             "GitHub issue draft",
+            "Treat feedback-about-the-workflow intent as the main routing signal",
             "how do I use vico-feedback",
+        ),
+        "vico-feedback/agents/openai.yaml": (
+            "Think before filing",
+            "separate workflow feedback from unrelated repository bugs",
+            "prefer the smallest accurate draft",
         ),
         "README.md": (
             "`vico-ground`",
+            "Trigger examples: [TRIGGERS.md](TRIGGERS.md)",
             "problem framing and execution structure are separate escalation axes",
             "### Escalation Map",
             "Codex: vico-plan -> Claude Code: vico-exec",
             "vico-ground export-md AGENTS.md",
             "## External Influences",
             "forrestchang/andrej-karpathy-skills",
+            "### Karpathy Mapping",
+            "Think Before Coding",
+            "Surgical Changes",
             "Consensus guide: [CONSENSUS.md](CONSENSUS.md)",
             "## Start Here",
             "Three common paths",
+            "Route by intent cluster first, phrase match second.",
         ),
         "README-zh.md": (
             "`vico-ground`",
+            "触发示例: [TRIGGERS-zh.md](TRIGGERS-zh.md)",
             "Codex: vico-plan -> Claude Code: vico-exec",
             "共识模型参考: [CONSENSUS-zh.md](CONSENSUS-zh.md)",
+            "### Karpathy 映射",
+            "Think Before Coding",
+            "Surgical Changes",
             "## 从这里开始",
             "三条最常见路径",
+            "应先按意图簇路由，再用短语匹配补召回。",
+        ),
+        "TRIGGERS.md": (
+            "# Trigger Examples",
+            "## Routing Order",
+            "Route by intent cluster first.",
+            "## Intent Clusters",
+            "Repo orientation, architecture scan, alignment, mapping, challenge, review",
+            "Persistent implementation continuation",
+            "## Example Decisions",
+            "## Short Clarification Patterns",
+            "## Anti-Patterns",
+        ),
+        "TRIGGERS-zh.md": (
+            "# 触发示例矩阵",
+            "## 路由顺序",
+            "先按意图簇路由。",
+            "## 意图簇",
+            "仓库摸底、架构扫描、对齐、建图、challenge、review",
+            "持续推进实现",
+            "## 路由示例",
+            "## 短确认模板",
+            "## 反模式",
         ),
         "CONSENSUS.md": (
             "# Consensus Models",

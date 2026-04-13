@@ -1,13 +1,17 @@
 ---
 name: vico-ground
-description: Build shared ground between the user, the repository, and the current work object before planning or execution. Use when the user wants to clarify intent, inspect a repo or design, map assumptions, align terminology, reframe the problem, surface tradeoffs, pressure-test a proposal, review current understanding, export the current operating brief, or resolve the current ground into a handoff for vico-plan.
+description: Build shared ground between the user, the repository, and the current work object before planning or execution. Use when the user wants to clarify intent, inspect a repo or design, scan or orient around a codebase, map assumptions, align terminology, reframe the problem, surface tradeoffs, pressure-test a proposal, review current understanding, export the current operating brief, or resolve the current ground into a handoff for vico-plan.
 ---
 
 # Vico Ground
 
 `vico-ground` is the shared-ground construction workflow in Vico.
 
-Treat natural requests such as `scan the repo`, `inspect the codebase`, `clarify this`, `what are we actually solving`, `align on terms`, `map the decision`, `map the problem`, `reframe this`, `surface the tradeoff`, `stress-test this`, `grill this plan`, `challenge this assumption`, `review what we know`, `where are we disagreeing`, `export these rules to AGENTS.md`, `write the operating brief to CLAUDE.md`, `resolve this into a handoff`, or `how do I use vico-ground` as valid entrypoints even when the user does not name the skill explicitly.
+Treat natural requests such as `scan the repo`, `inspect the codebase`, `scan the architecture`, `take a quick pass over the project`, `orient me in this repo`, `clarify this`, `what are we actually solving`, `align on terms`, `map the decision`, `map the problem`, `reframe this`, `surface the tradeoff`, `stress-test this`, `grill this plan`, `challenge this assumption`, `review what we know`, `where are we disagreeing`, `export these rules to AGENTS.md`, `write the operating brief to CLAUDE.md`, `resolve this into a handoff`, or `how do I use vico-ground` as valid entrypoints even when the user does not name the skill explicitly.
+
+Treat short repo-orientation requests as strong `vico-ground` signals by default, especially when the user is asking for overall structure, architecture, boundaries, assumptions, or a fast repo scan.
+
+Do not force `vico-ground` for every short inspection request. If the wording clearly asks for a narrow direct answer, a one-off file read, or immediate implementation, route normally. When the same phrase could mean either quick inspection or explicit shared-ground building, prefer one short clarification rather than silently skipping the skill.
 
 ## Theory Basis
 
@@ -230,11 +234,11 @@ Use `grill` when the next best action is adversarial clarification or pressure-t
 - use counterexamples, edge cases, and irreversibility checks when useful
 - allow direct recommendation when one option clearly dominates and another question would be performative
 - support short answer modifiers:
-  - `推` or `rec`
-  - `做` or `do`
-  - `留` or `hold`
-  - `继续` or `cont`
-  - `收口` or `close`
+  - `rec`
+  - `do`
+  - `hold`
+  - `cont`
+  - `close`
 
 ## Challenge Contract
 

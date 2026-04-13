@@ -41,6 +41,8 @@ Keep commands and mode literals unchanged.
 ## Examples
 
 - `vico-exec`
+- `继续做`
+- `别停`
 - `vico-exec cc`
 - `run this with cc`
 - `handoff to cc`

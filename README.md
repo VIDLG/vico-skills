@@ -4,6 +4,7 @@ Repository-native Vico skills for planning and execution under `.vico/`.
 
 Chinese version: [README-zh.md](README-zh.md)
 Contract map: [CONTRACTS.md](CONTRACTS.md)
+Trigger examples: [TRIGGERS.md](TRIGGERS.md)
 Consensus guide: [CONSENSUS.md](CONSENSUS.md)
 
 ## Why Vico?
@@ -18,7 +19,7 @@ The repo still uses `vico-*` skill names today. `vico-skills` is the broader pro
 
 ## Skill Set
 
-- `vico-ground`: build shared ground before planning or execution through clarify, scan, map, align, tradeoff, grill, review, and resolve
+- `vico-ground`: build shared ground before planning or execution through clarify, scan, map, align, reframe, tradeoff, grill, challenge, review, export, and resolve
 - `vico-plan`: the only default front door; decide `no-doc / plan_only / prd_backed`, reconcile state, create or update the active plan, and absorb ground handoff
 - `vico-exec`: execute the active plan until complete or truly blocked
 - `vico-feedback`: turn feedback about `vico-skills` into a GitHub issue draft and optionally file it after explicit confirmation
@@ -125,13 +126,19 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 
 ## Natural Triggers
 
-- `vico-ground`: `scan the repo`, `inspect the codebase`, `clarify this`, `what are we actually solving`, `align on terms`, `map the problem`, `map the decision`, `reframe this`, `surface the tradeoff`, `stress-test this`, `challenge this assumption`, `where are we disagreeing`, `grill this plan`, `export these rules to AGENTS.md`, `write the operating brief to CLAUDE.md`, `review what we know`, `resolve this into a handoff`, `how do I use vico-ground`
-- `vico-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `verify close`, `verify sync`, `verify replan`, `close this plan`, `how do I use vico-plan`
-- `vico-exec`: `keep going`, `continue until complete`, `execute the active plan`, `carry this through unless blocked`, `vico-exec cc`, `run this with cc`, `handoff to cc`, `use claude code runner`, `how do I use vico-exec`
-- `vico-feedback`: `file an issue`, `report a bug`, `I have feedback about vico-skills`, `draft a GitHub issue`, `how do I use vico-feedback`
+- `vico-ground`: `scan the repo`, `inspect the codebase`, `scan the architecture`, `take a quick pass over the project`, `orient me in this repo`, `clarify this`, `what are we actually solving`, `align on terms`, `map the problem`, `map the decision`, `reframe this`, `surface the tradeoff`, `stress-test this`, `challenge this assumption`, `where are we disagreeing`, `grill this plan`, `export these rules to AGENTS.md`, `write the operating brief to CLAUDE.md`, `review what we know`, `resolve this into a handoff`, `扫一下这个项目`, `扫一下架构`, `摸一下这个仓库`, `摸个底`, `盘一下这个代码库`, `过一遍整体结构`, `先看看整体`, `看下架构`, `how do I use vico-ground`
+- `vico-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `verify close`, `verify sync`, `verify replan`, `close this plan`, `做个计划`, `建个 tracked plan`, `整理成执行步骤`, `对一下 plan`, `verify 一下`, `收个口`, `close 这个 plan`, `how do I use vico-plan`
+- `vico-exec`: `keep going`, `continue until complete`, `execute the active plan`, `carry this through unless blocked`, `vico-exec cc`, `run this with cc`, `handoff to cc`, `use claude code runner`, `继续做`, `一直做到完成`, `别停`, `接着跑`, `继续推进直到完成`, `how do I use vico-exec`
+- `vico-feedback`: `file an issue`, `report a bug`, `I have feedback about vico-skills`, `draft a GitHub issue`, `提个 issue`, `记个反馈`, `这个 workflow 有点别扭`, `这个触发不太对`, `帮我整理成 issue`, `how do I use vico-feedback`
 
 If a natural-language request could reasonably mean more than one of these routes, prefer a short clarification over guessing the wrong workflow.
+Route by intent cluster first, phrase match second.
 If the wording is about understanding, aligning, mapping, tradeoffs, or pressure-testing before planning, prefer `vico-ground`.
+If the wording is a short repo-orientation phrase such as `scan`, `quick pass`, `orient me`, `扫一下`, `摸底`, `盘一下`, or `过一遍整体`, treat it as a strong default hint toward `vico-ground` when the request is about the whole project rather than one narrow file or an immediate code change.
+If the wording is about tracked-work control such as making a plan, syncing, replanning, verifying, or closing tracked docs, prefer `vico-plan`.
+If the wording is about persistent implementation continuation such as `keep going`, `别停`, or `一直做到完成`, prefer `vico-exec` only when an active plan already exists; otherwise ask or route through `vico-plan`.
+If the wording is about bugs, UX friction, trigger misses, naming, or workflow complaints in `vico-skills` itself, prefer `vico-feedback`.
+If the request is clearly narrow and local, prefer direct answer or direct execution instead of forcing a Vico skill.
 
 ## Using Vico Ground
 
@@ -447,6 +454,27 @@ These references influenced the shape of `vico-skills`, even though Vico keeps i
   influenced the Claude Code side of the model: team orchestration, staged execution pipelines, and explicit Codex/Claude cross-runtime handoff surfaces.
 
 Vico intentionally stays smaller and more repo-native than those systems. These are inspirations, not compatibility targets.
+
+### Karpathy Mapping
+
+`forrestchang/andrej-karpathy-skills` is most useful to Vico as a principle layer, not as a workflow replacement:
+
+- `Think Before Coding` maps to `vico-ground`, explicit assumptions, clarification-first routing, and tradeoff surfacing.
+- `Simplicity First` maps to `vico-plan` simplicity discipline and the preference for smaller execution contracts.
+- `Surgical Changes` maps to `vico-exec` surgical execution discipline and Vico's small-scope edit bias.
+- `Goal-Driven Execution` maps to verify-driven loops in `vico-exec` and close-out verification in `vico-plan verify`.
+
+What Vico should continue absorbing:
+
+- stronger confusion management: ask rather than guess when uncertainty is material
+- stronger simplicity pressure on plans and implementations
+- clearer success criteria before declaring work done
+
+What Vico should not absorb directly:
+
+- replacing the workflow system with one generic `CLAUDE.md`
+- collapsing route-specific behavior into one flat instruction block
+- assuming tests-first wording fits every grounding, planning, and execution situation
 
 ## Development Notes
 

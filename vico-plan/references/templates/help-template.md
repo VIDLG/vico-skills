@@ -63,8 +63,11 @@ Keep commands and mode literals unchanged.
 ## Examples
 
 - `vico-plan`
+- `做个计划`
+- `对一下 plan`
 - `vico-plan review`
 - `vico-plan verify`
+- `verify 一下`
 - `vico-plan verify sync`
 - `vico-plan verify replan`
 - `vico-plan sync`

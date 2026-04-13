@@ -4,6 +4,7 @@
 
 English version: [README.md](README.md)
 契约映射: [CONTRACTS-zh.md](CONTRACTS-zh.md)
+触发示例: [TRIGGERS-zh.md](TRIGGERS-zh.md)
 共识模型参考: [CONSENSUS-zh.md](CONSENSUS-zh.md)
 
 ## 为什么叫 Vico？
@@ -129,13 +130,19 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 ## 自然触发词
 
-- `vico-ground`：`scan 仓库`、`inspect codebase`、`clarify 这个目标`、`我们到底在解决什么`、`align 这些术语`、`map 一下这个问题`、`map 一下这个决策空间`、`reframe 一下这个问题`、`surface 这个 tradeoff`、`stress-test 这个方案`、`challenge 这个假设`、`我们到底在哪些点没对齐`、`grill 这个 plan`、`把这些规则导出到 AGENTS.md`、`把 operating brief 写到 CLAUDE.md`、`review 我们已经知道什么`、`把这个 resolve 成 handoff`、`vico-ground 如何使用`
-- `vico-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify close`、`verify sync`、`verify replan`、`close 这个 plan`、`vico-plan 如何使用`
-- `vico-exec`：`继续做`、`一直做到完成`、`执行 active plan`、`除非阻塞否则继续`、`vico-exec cc`、`用 cc 跑这个 plan`、`切到 cc`、`vico-exec 如何使用`
-- `vico-feedback`：`提个 issue`、`报告 bug`、`我对 vico-skills 有反馈`、`整理成 GitHub issue`、`vico-feedback 如何使用`
+- `vico-ground`：`scan 仓库`、`inspect codebase`、`scan 一下架构`、`快速过一遍项目`、`先带我摸一下这个仓库`、`clarify 这个目标`、`我们到底在解决什么`、`align 这些术语`、`map 一下这个问题`、`map 一下这个决策空间`、`reframe 一下这个问题`、`surface 这个 tradeoff`、`stress-test 这个方案`、`challenge 这个假设`、`我们到底在哪些点没对齐`、`grill 这个 plan`、`把这些规则导出到 AGENTS.md`、`把 operating brief 写到 CLAUDE.md`、`review 我们已经知道什么`、`把这个 resolve 成 handoff`、`扫一下这个项目`、`扫一下架构`、`摸一下这个仓库`、`摸个底`、`盘一下这个代码库`、`过一遍整体结构`、`先看看整体`、`看下架构`、`vico-ground 如何使用`
+- `vico-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`对一下 plan`、`verify一下`、`verify this plan`、`verify close`、`verify sync`、`verify replan`、`收个口`、`close 这个 plan`、`vico-plan 如何使用`
+- `vico-exec`：`继续做`、`一直做到完成`、`执行 active plan`、`除非阻塞否则继续`、`vico-exec cc`、`用 cc 跑这个 plan`、`切到 cc`、`别停`、`接着跑`、`继续推进直到完成`、`vico-exec 如何使用`
+- `vico-feedback`：`提个 issue`、`报告 bug`、`我对 vico-skills 有反馈`、`整理成 GitHub issue`、`记个反馈`、`这个 workflow 有点别扭`、`这个触发不太对`、`帮我整理成 issue`、`vico-feedback 如何使用`
 
 如果一条自然语言请求同时可能落到多个 route 上，优先用一句简短确认来消歧，不要直接猜。
+应先按意图簇路由，再用短语匹配补召回。
 如果用户在 planning 前想先澄清、对齐、建图、摊开 tradeoff、或做 pressure-test，优先走 `vico-ground`。
+如果用户使用的是 `扫一下`、`摸一下`、`摸底`、`盘一下`、`过一遍整体`、`先看看整体` 这类仓库摸底式说法，而且目标是整个项目、架构、边界或整体结构，默认应把它当成 `vico-ground` 的强信号；只有在语义明显更像单点问答、单文件查看或立刻改代码时，才不要自动进入该 skill。
+如果用户是在控制 tracked work，例如做计划、sync、replan、verify 或 close active docs，优先走 `vico-plan`。
+如果用户表达的是持续实现推进，例如 `继续做`、`别停`、`一直做到完成`，只有在 active plan 已存在时才优先走 `vico-exec`；否则应先简短确认或转到 `vico-plan`。
+如果用户是在反馈 `vico-skills` 自己的 bug、UX friction、触发失误、命名问题或 workflow 问题，优先走 `vico-feedback`。
+如果请求明显只是局部、单点、低风险，不要强行套 Vico skill，优先直接回答或直接执行。
 
 ## 如何使用 Vico Ground
 
@@ -449,6 +456,27 @@ python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/proje
   影响了 Claude Code 这一侧的设计：team orchestration、分阶段执行流水线，以及 Codex/Claude 之间显式 handoff 的表面。
 
 Vico 会刻意保持比这些系统更小、更 repo-native。这里是借鉴来源，不是兼容性目标。
+
+### Karpathy 映射
+
+`forrestchang/andrej-karpathy-skills` 对 Vico 最有价值的部分，是“行为原则层”，不是 workflow 替代品：
+
+- `Think Before Coding` 对应 `vico-ground`、显式假设、clarification-first 路由，以及 tradeoff 摊开。
+- `Simplicity First` 对应 `vico-plan` 的 simplicity discipline，以及对更小执行契约的偏好。
+- `Surgical Changes` 对应 `vico-exec` 的 surgical execution discipline，以及 Vico 的小范围改动倾向。
+- `Goal-Driven Execution` 对应 `vico-exec` 里的 verify-driven loop，以及 `vico-plan verify` 的 close-out 校验。
+
+Vico 还应该继续吸收的点：
+
+- 更强的 confusion management：只要不确定性实质存在，就先问，不要猜
+- 对 plan 和 implementation 都持续施加简单性压力
+- 在声明完成前，先把 success criteria 说清
+
+Vico 不应该直接吸收的点：
+
+- 不要把整个 workflow system 退化成一份通用 `CLAUDE.md`
+- 不要把 route-specific 行为全部压扁成一块平铺指令
+- 不要假设 tests-first 的表述适用于所有 grounding、planning 和 execution 场景
 
 ## 开发说明
 

@@ -34,7 +34,7 @@ Likely recommendations
 
 Open questions worth asking
 
-- Should the umbrella concept be `ground` rather than `probe`?
+- Should `challenge` and `grill` stay distinct public moves, or should one become a stronger submove of the other?
 
 Suggested next move
 

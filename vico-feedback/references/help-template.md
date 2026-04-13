@@ -32,6 +32,8 @@ Keep commands, labels, and GitHub literals unchanged.
 ## Examples
 
 - `I have feedback about vico-skills`
+- `提个 issue`
+- `这个触发不太对`
 - `draft an issue for this`
 - `file a bug against vico-plan`
 - `how do I use vico-feedback`

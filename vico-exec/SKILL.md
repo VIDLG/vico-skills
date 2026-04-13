@@ -40,7 +40,11 @@ This skill owns implementation progress and plan synchronization, not final clos
 - `done` requires both implementation evidence and verification evidence.
 
 Treat natural requests such as `keep going`, `continue until complete`, `execute the active plan`, `carry this through unless blocked`, `vico-exec cc`, `run this with cc`, `handoff to cc`, `use claude code runner`, or `how do I use vico-exec` as valid `vico-exec` entrypoints when an active plan already exists.
+
+Treat persistent implementation intent as the main routing signal. Use `vico-exec` when the user wants the agent to keep implementing through multiple slices without stopping after each small step, and an active tracked execution contract already exists.
+
 If the user sounds like they want persistent execution but no active plan exists, ask a short clarification question or route them through `vico-plan` instead of guessing.
+If the user's wording is really about reviewing, verifying, syncing, or closing tracked docs rather than continuing implementation, prefer `vico-plan` instead of `vico-exec`.
 
 ## Inputs
 
