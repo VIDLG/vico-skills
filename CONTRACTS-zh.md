@@ -60,6 +60,14 @@
 - 当工作又缩回到局部、低风险修改时，应优先回到 `direct_execute`，而不是继续把用户困在更重的流程里。
 - 当 direct execution 之后重新回到 tracked workflow 时，应自动执行最小 reconcile / sync，让 `.vico` 状态重新对齐当前代码现实。
 
+## 前向契约原则
+
+- 默认按前向设计处理，并假设不存在历史负担；只有用户明确说兼容性重要时，才进入兼容性思维。
+- 不要默认保留旧命名、别名、模式、文件或结构。
+- 优先一个清晰契约，而不是长期并存的过渡表面。
+- 当旧表面已经在误导当前系统时，优先直接替换，而不是继续背兼容层。
+- 先更新 owner source，再刷新派生层，最后移除过时表面。
+
 ## 核验权威性
 
 - `Status`、checklist 完成情况、以及 index linkage 只是 operational planning signals，不是最终完成证明。

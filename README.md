@@ -61,11 +61,20 @@ Three common paths:
 - grounding and execution are separate escalation axes rather than one forced heavyweight workflow
 - problem framing and execution structure are separate escalation axes rather than one forced heavyweight workflow
 - `vico-ground` is the shared-ground workflow along the problem-framing axis
-- grounding can move among `clarify`, `scan`, `map`, `align`, `tradeoff`, `grill`, `review`, and `resolve`
+- grounding can move among `clarify`, `scan`, `map`, `align`, `reframe`, `tradeoff`, `grill`, `challenge`, `review`, `export-md`, and `resolve`
 - execution can scale from direct vibe execution to `vico-plan`, `prd_backed`, and `vico-exec`
 - heavier modes exist to reduce ambiguity and coordination cost, not to front-load process onto every task
 - workflow re-entry is first-class: work may move from vibe execution into tracked workflow and back again without being treated as an error state
 - direct execution may happen before, during, or after tracked workflow; when tracked workflow resumes, the active Vico route should reconcile against repository reality before trusting `.vico` state
+
+## Forward-Only Design
+
+- default to forward design; do not assume historical burden
+- unless the user explicitly says compatibility matters, do not preserve legacy names, aliases, modes, files, or structures
+- prefer one clear term over two overlapping terms
+- prefer one clean workflow over transitional dual paths
+- when an old surface is actively confusing, replace it instead of soft-deprecating it indefinitely
+- update owner sources first, then refresh derived forms, then remove the old surface completely
 
 ### Escalation Map
 

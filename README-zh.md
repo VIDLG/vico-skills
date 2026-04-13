@@ -20,7 +20,7 @@ English version: [README.md](README.md)
 ## 技能列表
 
 - `vico-ground`
-  在 planning 或 execution 之前建立 shared ground；可以做 clarify、scan、map、align、tradeoff、grill、review、resolve。
+  在 planning 或 execution 之前建立 shared ground；可以做 clarify、scan、map、align、reframe、tradeoff、grill、challenge、review、export-md、resolve。
 - `vico-plan`
   唯一默认入口；负责判断 `no-doc / plan_only / prd_backed`、轻量对账、创建或更新 active plan，并吸收 ground handoff。
 - `vico-exec`
@@ -65,11 +65,20 @@ English version: [README.md](README.md)
 - grounding 和 execution 是两条独立的升级轴，不是单条强制的重流程
 - 问题澄清强度和执行结构强度是两条独立的升级轴，不是单条强制的重流程
 - `vico-ground` 是问题澄清轴上的 shared-ground workflow
-- grounding 可以在 `clarify`、`scan`、`map`、`align`、`tradeoff`、`grill`、`review`、`resolve` 之间移动
+- grounding 可以在 `clarify`、`scan`、`map`、`align`、`reframe`、`tradeoff`、`grill`、`challenge`、`review`、`export-md`、`resolve` 之间移动
 - execution 可以从直接 vibe 式执行逐步升级到 `vico-plan`、`prd_backed`、`vico-exec`
 - 更重的模式是为了降低歧义和协作成本，不是为了给每个任务预先加流程
 - workflow re-entry 是一等能力：工作可以在 vibe execution 与 tracked workflow 之间往返，而不应被视为异常状态
 - direct execution 可以发生在 tracked workflow 之前、之中或之后；当 workflow 恢复时，当前 Vico 路由应先根据仓库现实做 reconcile，再决定是否继续信任 `.vico` 状态
+
+## 前向设计原则
+
+- 默认按前向设计处理，不预设历史负担
+- 除非用户明确说兼容性重要，否则不要保留旧命名、别名、模式、文件或结构
+- 优先一个清晰术语，而不是两个部分重叠的术语并存
+- 优先一条干净工作流，而不是长期保留双轨过渡路径
+- 当旧表面已经在制造困惑时，优先直接替换，而不是无限期软弃用
+- 先更新 owner source，再刷新派生层，最后彻底移除旧表面
 
 ### 升级坐标图
 

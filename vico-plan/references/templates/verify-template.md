@@ -10,6 +10,9 @@ Keep commands, verdict literals, status literals, and slug/path literals unchang
 - Selected slug: ...
 - Completion verdict: `verified_complete` | `not_complete` | `ambiguous`
 - Tracking mode: `plan_only` | `prd_backed`
+- Confidence: high | medium | low
+- Scope impact: local | active_slug | cross_slug | repo_wide
+- Uncertainty source: missing evidence | stale plan | weak tests | ambiguous ownership
 
 ## Evidence
 
@@ -37,6 +40,14 @@ Keep commands, verdict literals, status literals, and slug/path literals unchang
 - `replan`
 - `prd`
 - `vico-exec`
+
+## Risk If Skipped
+
+- what remains exposed if the recommended next mode is ignored
+
+## Alternative Next Modes
+
+- optional backup modes when the primary recommendation is not chosen
 ```
 
 `verify` must be read-only. It should not rewrite plan state, update index metadata, or mutate active docs.

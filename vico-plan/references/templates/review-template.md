@@ -12,6 +12,9 @@ Keep commands, mode literals, status literals, and slug/path literals unchanged.
 - Tracking mode: `plan_only` | `prd_backed`
 - Current progress: `not_started` | `partially_completed` | `mostly_complete` | `done`
 - Drift risk: low | medium | high
+- Confidence: high | medium | low
+- Scope impact: local | active_slug | cross_slug | repo_wide
+- Uncertainty source: stale docs | weak verification | overlap ambiguity | scope drift
 
 ## Current State
 
@@ -27,6 +30,14 @@ Keep commands, mode literals, status literals, and slug/path literals unchanged.
 - replace the active slug
 - upgrade to `prd_backed`
 - mark as `close` or `cancel`
+
+## Risk If Skipped
+
+- what gets worse if the recommended next step is deferred
+
+## Alternative Next Steps
+
+- optional secondary route when the primary recommendation is blocked or declined
 ```
 
 `review` must be read-only. It should not rewrite plan state, update index metadata, or mutate active docs.

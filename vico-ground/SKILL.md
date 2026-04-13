@@ -35,6 +35,14 @@ The goal is not merely to answer. The goal is to build enough shared ground for 
 - Do not pick silently when ambiguity exists.
 - Build and maintain shared ground, not just local model confidence.
 
+## Forward-Only Design Discipline
+
+- Default to forward design and assume no historical burden unless the user explicitly says compatibility matters.
+- Do not preserve legacy names, aliases, modes, files, or structures by default.
+- When the current frame is polluted by stale historical surfaces, prefer `reframe` toward one cleaner model.
+- Prefer one clear shared-ground model over dual-path transitional wording.
+- If an old surface is actively confusing the current work, recommend replacement rather than indefinite soft deprecation.
+
 ## State Model
 
 `vico-ground` should organize session-local state around:
@@ -216,6 +224,9 @@ Use this default shape:
 - `<target> | <topic-path>`
 - `Mode: concise | available: concise, detailed`
 - optional `Priority: critical|important|detail`
+- optional `Confidence: high|medium|low`
+- optional `Uncertainty source`
+- optional `Scope impact: local|active_slug|cross_slug|repo_wide`
 - optional `Intent overlay`
 - `Findings`
 - `Evidence`
@@ -224,6 +235,9 @@ Use this default shape:
 - `Likely recommendations`
 - `Open questions worth asking`
 - `Suggested next move`
+- `Recommended next action`
+- optional `Risk if skipped`
+- optional `Alternative next actions`
 
 ## Grill Contract
 
@@ -297,6 +311,11 @@ Preferred top-level sections:
 - `Commitments`
 - `Open questions`
 - `Recommended next action`
+- optional `Confidence`
+- optional `Uncertainty source`
+- optional `Scope impact`
+- optional `Risk if skipped`
+- optional `Alternative next actions`
 
 ## References
 

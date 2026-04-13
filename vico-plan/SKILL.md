@@ -1,6 +1,6 @@
 ---
 name: vico-plan
-description: Default front door for Vico-style repo-local planning. Decide whether work should stay `no-doc`, become `plan_only`, or upgrade to `prd_backed`; reconcile active state when needed; then create or update the active plan under `.vico/plans/active/`. Use when the user wants to start tracked work, make a plan, create a tracked plan, continue tracked work, recover from Vico drift, or turn probed decisions into an executable plan.
+description: Default front door for Vico-style repo-local planning. Decide whether work should stay `no-doc`, become `plan_only`, or upgrade to `prd_backed`; reconcile active state when needed; then create or update the active plan under `.vico/plans/active/`. Use when the user wants to start tracked work, make a plan, create a tracked plan, continue tracked work, recover from Vico drift, or turn grounded decisions into an executable plan.
 ---
 
 # Vico Plan
@@ -38,6 +38,13 @@ Default to a single active plan document that carries both intent and execution.
 - If `plan_only` is sufficient, do not escalate to `prd_backed`.
 - If a smaller plan shape can support reliable execution, prefer it.
 - Keep every planned slice directly tied to the user's requested outcome.
+
+## Forward-Only Planning Discipline
+
+- Default to forward design and assume no historical burden unless the user explicitly says compatibility matters.
+- Prefer clean replacement over compatibility scaffolding when the old execution contract is now confusing.
+- Do not preserve legacy names, aliases, plan shapes, or stale workflow branches by default.
+- Prefer one clear active execution contract over overlapping transitional artifacts.
 
 The plan is the primary execution document. Its checklist defines the intended path of work and the smallest next executable units.
 
@@ -140,7 +147,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
    - optional `Issue classes`
    - `Accepted decisions`
    - optional `Problem bundle`
-   - optional `Resolved during probe`
+   - optional `Resolved during grounding`
    - `Unresolved decisions`
    - `Suggested edits`
    And absorb these as soft execution-shaping hints when present:
@@ -212,7 +219,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - User decisions, blockers, and unresolved scope forks should be explicit in the plan or PRD rather than implied by missing checklist detail.
 - If the current plan is too coarse, too stale, or too ambiguous for the next step to be chosen reliably, stay in `vico-plan` and `sync` or `replan` before routing into `vico-exec`.
 - Prefer using ground handoff hints to sharpen the first execution slice when they materially reduce ambiguity.
-- Treat `Resolved during probe` as already handled work; do not reopen those items as unresolved planning questions unless repository evidence now conflicts with them.
+- Treat `Resolved during grounding` as already handled work; do not reopen those items as unresolved planning questions unless repository evidence now conflicts with them.
 
 ## Verification Rules
 

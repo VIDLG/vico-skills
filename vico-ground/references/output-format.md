@@ -6,6 +6,9 @@
 repo | architecture > current-understanding
 Mode: concise | available: concise, detailed
 Priority: critical
+Confidence: medium
+Uncertainty source: vocabulary drift plus incomplete operator-facing examples
+Scope impact: repo_wide
 
 Findings
 
@@ -39,6 +42,21 @@ Open questions worth asking
 Suggested next move
 
 - `tradeoff`
+
+Recommended next action
+
+- `vico-ground tradeoff`
+
+Risk if skipped
+
+- public routes and output fields may keep drifting even if the underlying workflow logic is sound
+
+Alternative next actions
+
+- `vico-ground align`
+  - use when the main issue is term mismatch rather than value conflict
+- `vico-ground challenge`
+  - use when the current proposal is already sharp enough for stronger adversarial review
 ```
 
 ## Ground Handoff Example

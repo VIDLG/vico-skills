@@ -60,6 +60,14 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 - If work shrinks back into a local, low-risk change, prefer `direct_execute` over keeping the user inside a heavier workflow.
 - When re-entering tracked workflow after direct execution, perform the minimum reconcile or sync needed to align `.vico` state with current repository reality.
 
+## Forward-Only Contract Discipline
+
+- Default to forward design and assume no historical burden unless the user explicitly says compatibility matters.
+- Do not preserve legacy names, aliases, modes, files, or structures by default.
+- Prefer one clear contract over overlapping transitional surfaces.
+- When an old surface is actively misleading, replace it instead of carrying an indefinite compatibility layer.
+- Update owner sources first, then refresh derived forms, then remove the obsolete surface.
+
 ## Verification Authority
 
 - `Status`, checklist completion, and index linkage are operational planning signals, not final proof of completion.

@@ -30,7 +30,7 @@ Use this shape when `vico-ground` hands decisions into `vico-plan`.
   - ...
 - Optional: Commitments
   - ...
-- Optional: Resolved during probe
+- Optional: Resolved during grounding
   - ...
 - Unresolved decisions
   - ...
@@ -59,7 +59,7 @@ Treat these as soft context inputs:
 - `Preferences`
 - `Tradeoffs`
 - `Commitments`
-- `Resolved during probe`
+- `Resolved during grounding`
 - `Recommended tracking mode`
 - `Suggested first slice`
 - `Execution readiness risks`
