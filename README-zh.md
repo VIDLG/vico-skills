@@ -4,6 +4,7 @@
 
 English version: [README.md](README.md)
 契约映射: [CONTRACTS-zh.md](CONTRACTS-zh.md)
+共识模型参考: [CONSENSUS-zh.md](CONSENSUS-zh.md)
 
 ## 为什么叫 Vico？
 
@@ -17,18 +18,30 @@ English version: [README.md](README.md)
 
 ## 技能列表
 
-- `vico-grill`
-  面向任意主题的持续追问；在仓库证据还没成为主约束之前，用来拷问想法、决策和取舍。
+- `vico-ground`
+  在 planning 或 execution 之前建立 shared ground；可以做 clarify、scan、map、align、tradeoff、grill、review、resolve。
 - `vico-plan`
-  唯一默认入口；负责判断 `no-doc / plan_only / prd_backed`、轻量对账、创建或更新 active plan，并吸收 probe handoff。
+  唯一默认入口；负责判断 `no-doc / plan_only / prd_backed`、轻量对账、创建或更新 active plan，并吸收 ground handoff。
 - `vico-exec`
   按 active plan 持续执行，直到完成或遇到真实阻塞。
-- `vico-probe`
-  检查当前 plan、设计或代码库；先扫描问题，再按需追问，并产出可被 `vico-plan` 消费的 handoff block。
 - `vico-feedback`
   把针对 `vico-skills` 的反馈整理成 GitHub issue 草稿，并在用户明确确认后再发 issue。
 
-`vico-probe` 的输出示例见 [vico-probe/references/output-format.md](vico-probe/references/output-format.md)。
+`vico-ground` 的输出示例见 [vico-ground/references/output-format.md](vico-ground/references/output-format.md)。
+
+## 从这里开始
+
+如果你现在还不知道该从哪个 workflow 开始，可以先按这个判断：
+
+- 如果你还在对齐问题、术语、假设或 tradeoff：先用 `vico-ground`
+- 如果工作已经够清楚，而且应该进入 tracked execution：先用 `vico-plan`
+- 如果 active plan 已经存在，而且你要持续实现：先用 `vico-exec`
+
+三条最常见路径：
+
+- `vico-ground -> vico-plan`
+- `vico-plan -> vico-exec`
+- `vico-plan -> Claude Code vico-exec cc`
 
 ## 默认模型
 
@@ -48,12 +61,10 @@ English version: [README.md](README.md)
 `默认从轻，按需升级。`
 
 - `vico-skills` 的目标是在低复杂度下保持 vibe-friendly，只在工作真正需要时才升级到更正式的流程
-- probing 和 execution 是两条独立的升级轴，不是单条强制的重流程
-- freeform grilling 是最轻的追问通道
+- grounding 和 execution 是两条独立的升级轴，不是单条强制的重流程
 - 问题澄清强度和执行结构强度是两条独立的升级轴，不是单条强制的重流程
-- freeform grilling 是最轻的问题澄清通道，`vico-probe` 是面向仓库对象的正式问题澄清通道
-- freeform questioning 可以从 `vico-grill` 升级到 `vico-probe` 或 `vico-plan`，当下一个关键约束变成仓库现实或 tracked execution 时再升级
-- probing 可以从直接澄清逐步升级到 `vico-probe`、`scan`、`grill`
+- `vico-ground` 是问题澄清轴上的 shared-ground workflow
+- grounding 可以在 `clarify`、`scan`、`map`、`align`、`tradeoff`、`grill`、`review`、`resolve` 之间移动
 - execution 可以从直接 vibe 式执行逐步升级到 `vico-plan`、`prd_backed`、`vico-exec`
 - 更重的模式是为了降低歧义和协作成本，不是为了给每个任务预先加流程
 - workflow re-entry 是一等能力：工作可以在 vibe execution 与 tracked workflow 之间往返，而不应被视为异常状态
@@ -66,9 +77,9 @@ English version: [README.md](README.md)
 ^
 |                                      vico-exec
 |                           vico-plan (plan_only / prd_backed)
-|                  vico-probe -> vico-plan
-|         vico-probe
-|  vico-grill
+|                  vico-ground -> vico-plan
+|            vico-ground
+|      vico-ground clarify / scan / tradeoff
 +------------------------------------------------------------> 更高的问题澄清强度
   direct vibe execution
 ```
@@ -84,19 +95,17 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 ## 落盘原则
 
-- `vico-grill`：默认把 freeform grill state 保持在会话内，不写 `.vico` artifact
-- `vico-probe`：默认把 probe state 保持在会话内；只有用户明确要求写回时才落盘
+- `vico-ground`：默认把 grounding state 保持在会话内；只有用户明确要求 capture 或 export 时才写回
 - `vico-plan`：只要在塑造 tracked work，就默认写入或更新 active plan、可选 PRD 和派生 index
 - `vico-exec`：当连续执行依赖准确状态，或用户希望文档保持最新时，落盘 plan、index 或临时 reconcile 更新
 
 ## 最常用路径
 
-- 自由追问：`vico-grill`
-- 自由追问后进入正式检查：`vico-grill -> vico-probe`
-- 自由追问后直接立项：`vico-grill -> vico-plan`
+- 建立 shared ground：`vico-ground`
+- 建立 shared ground 后进入 tracked planning：`vico-ground -> vico-plan`
 - 直接 vibe 式执行：不需要 tracked workflow 时，直接对话并立即实现
-- 先检查再规划：`vico-probe -> vico-plan`
-- 继续细化现有 plan：`vico-probe grill plan -> vico-plan`
+- 先建立共识再规划：`vico-ground -> vico-plan`
+- 对现有 plan 做对抗式 pressure-test：`vico-ground grill -> vico-plan`
 - 只做 tracked planning：`vico-plan`
 - 跨 agent handoff：`Codex vico-plan -> Claude Code vico-exec`
 - Claude runner 循环：`Codex vico-plan -> Claude runner -> vico-plan verify`
@@ -104,33 +113,81 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 ## 升级提示
 
-- 当你想围绕一个想法、决策或取舍做自由追问，而仓库证据还没成为核心约束时，使用 `vico-grill`
+- 当你想先围绕 repo、设计、决策、术语、tradeoff 建立 shared ground 时，使用 `vico-ground`
 - 当任务局部、低风险、且不需要跨轮 tracked 协调时，停留在直接 vibe 式执行
-- 当对象不清晰、有争议，或明显适合先做 evidence-first 追问时，使用 `vico-probe`
 - 当工作应升级为 `.vico/` 下的 tracked execution contract 时，使用 `vico-plan`
 - 只有在 active plan 已经存在、且用户希望持续推进直到真正完成或遇到真实阻塞时，才进入 `vico-exec`
 - 如果 tracked work 又缩回到局部、低风险修改，优先降级回 `direct_execute`
 
 ## Route Shifts
 
-- `vico-grill -> vico-probe`：当 freeform 追问已经碰到 repo plan、PRD、design、codebase，或下一个判断必须依赖仓库证据时升级
-- `vico-grill -> vico-plan`：当追问结果已经足以定义 `.vico/` 下的 tracked work 时升级
+- `vico-ground -> vico-plan`：当 shared ground 已经足以定义 `.vico/` 下的 tracked work 时升级
 - `direct_execute -> vico-plan`：当轻量执行演化成 tracked work 时，`vico-plan` 应自动做最小 reconcile / sync，重新锚定当前代码现实
 - `vico-plan -> direct_execute`：当剩余工作已经足够小且低风险时，优先回到更轻的执行路径，而不是继续把用户留在重流程里
-- `vico-probe -> direct_execute`：当 probe 已经确认下一步是局部实现时，直接路由去做，不要强行再过 planning
+- `vico-ground -> direct_execute`：当当前共识已经足以支持局部实现时，直接路由去做，不要强行再过 planning
 - 如果 tracked work 又缩回到局部、低风险修改，优先降级回 `direct_execute`
 
 ## 自然触发词
 
-- `vico-grill`：`grill 这个想法`、`grill 我`、`拷问这个决策`、`deep interview 这个问题`、`discuss 这个取舍`、`vico-grill 如何使用`
-- `vico-probe`：`scan 仓库`、`inspect codebase`、`grill 这个 plan`、`grill 这个 PRD`、`继续细化这个 plan`、`vico-probe 如何使用`
-- `vico-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify close`、`verify sync`、`verify replan`、`close 这个 plan`、`把这些规则导出到 AGENTS.md`、`把 operating brief 写到 CLAUDE.md`、`vico-plan 如何使用`
+- `vico-ground`：`scan 仓库`、`inspect codebase`、`clarify 这个目标`、`我们到底在解决什么`、`align 这些术语`、`map 一下这个问题`、`map 一下这个决策空间`、`reframe 一下这个问题`、`surface 这个 tradeoff`、`stress-test 这个方案`、`challenge 这个假设`、`我们到底在哪些点没对齐`、`grill 这个 plan`、`把这些规则导出到 AGENTS.md`、`把 operating brief 写到 CLAUDE.md`、`review 我们已经知道什么`、`把这个 resolve 成 handoff`、`vico-ground 如何使用`
+- `vico-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`verify一下`、`verify this plan`、`verify close`、`verify sync`、`verify replan`、`close 这个 plan`、`vico-plan 如何使用`
 - `vico-exec`：`继续做`、`一直做到完成`、`执行 active plan`、`除非阻塞否则继续`、`vico-exec cc`、`用 cc 跑这个 plan`、`切到 cc`、`vico-exec 如何使用`
 - `vico-feedback`：`提个 issue`、`报告 bug`、`我对 vico-skills 有反馈`、`整理成 GitHub issue`、`vico-feedback 如何使用`
 
 如果一条自然语言请求同时可能落到多个 route 上，优先用一句简短确认来消歧，不要直接猜。
-如果用户只说 `grill 这个`、`grill 这个问题`，且没有点名 repo object，优先走 `vico-grill`。
-如果用户说的是 `grill 这个 plan`、`grill 这个 PRD`，或直接指向 `.vico` artifact，优先走 `vico-probe`。
+如果用户在 planning 前想先澄清、对齐、建图、摊开 tradeoff、或做 pressure-test，优先走 `vico-ground`。
+
+## 如何使用 Vico Ground
+
+大多数时候直接从这里开始：
+
+- `vico-ground`
+
+只有当你已经明确知道下一步缺什么时，再点名具体 move：
+
+- `vico-ground clarify`
+  当目标、边界、成功标准还不够清楚时
+- `vico-ground scan`
+  当事实基础还不够稳时
+- `vico-ground map`
+  当问题结构或决策结构还看不清时
+- `vico-ground align`
+  当术语、边界、定义没有对齐时
+- `vico-ground reframe`
+  当当前解释框架太窄、太旧或根本看错问题时
+- `vico-ground tradeoff`
+  当优先级、约束、风险需要协调时
+- `vico-ground grill`
+  当某个方案、finding 或 plan 需要 pressure-test 时
+- `vico-ground challenge`
+  当你想做更强的 adversarial review、反例压测或 rebuttal 时
+- `vico-ground review`
+  当你想先 checkpoint 当前共识时
+- `vico-ground export-md`
+  当当前 shared ground 应该变成 repo-local instructions 时
+- `vico-ground resolve`
+  当 shared ground 已经足够强，可以 hand forward 时
+
+### Move 流转图
+
+```text
+clarify -> scan -> map -> tradeoff -> grill/challenge -> review -> resolve
+             |       |        |            |
+             |       |        |            +-> align
+             |       |        +----------------> reframe
+             +-------------------------------> review
+```
+
+- `clarify`：目标还不清楚
+- `scan`：事实还不够稳
+- `map`：结构还看不清
+- `align`：术语或边界没对齐
+- `reframe`：当前解释框架太窄了
+- `tradeoff`：真正缺的是优先级和约束协调
+- `grill`：需要持续、互动式 pressure-test
+- `challenge`：需要更强的 adversarial review / counterexample
+- `review`：需要 checkpoint
+- `resolve`：已经足够 hand forward
 
 ## 路由可见性
 
@@ -142,13 +199,12 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 
 ## 什么时候用哪个 Skill
 
-- 需要先围绕想法、决策或取舍做高强度自由追问：`vico-grill`
+- 需要先围绕 repo、设计、决策、术语或 tradeoff 建立 shared ground：`vico-ground`
 - 需要开始、更新、对账或重建 tracked work：`vico-plan`
 - 需要在 close-out 前根据真实代码库核实 plan 是否真的完成：`vico-plan verify`
 - 基于 active plan 继续实现：`vico-exec`
 - 需要对 tracked work 做 close-out 或 cancel 并删除 active docs：`vico-plan`
 - 需要判断怎么做架构沉淀：`vico-plan`
-- 需要先对 plan、设计或代码库做深入检查：`vico-probe`
 - 需要把反馈整理成 GitHub issue 草稿，或确认后直接发 issue：`vico-feedback`
 
 `vico-feedback` 默认应根据用户表达和上下文自动归类为 `bug`、`ux_friction`、`contract_gap` 或 `feature_request`，只有类别确实不清楚时才反问用户。
@@ -196,8 +252,7 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 为指定 agent 安装单个 skill：
 
 ```bash
-npx skills@latest add VIDLG/vico-skills --skill vico-grill --agent codex
-npx skills@latest add VIDLG/vico-skills --skill vico-probe --agent codex
+npx skills@latest add VIDLG/vico-skills --skill vico-ground --agent codex
 npx skills@latest add VIDLG/vico-skills --skill vico-plan --agent codex
 npx skills@latest add VIDLG/vico-skills --skill vico-exec --agent codex
 npx skills@latest add VIDLG/vico-skills --skill vico-feedback --agent codex
@@ -237,8 +292,7 @@ npx skills@latest add VIDLG/vico-skills --list
 用 `npx skills@latest` 卸载单个 skill：
 
 ```bash
-npx skills@latest remove vico-grill
-npx skills@latest remove vico-probe
+npx skills@latest remove vico-ground
 npx skills@latest remove vico-plan
 npx skills@latest remove vico-exec
 npx skills@latest remove vico-feedback
@@ -295,17 +349,17 @@ vico-plan verify replan
 vico-plan help
 ```
 
-### 先 Probe 再 Plan
+### 先 Ground 再 Plan
 
 ```text
-vico-probe -> vico-plan
+vico-ground -> vico-plan
 ```
 
 ### 导出仓库操作说明
 
 ```text
-vico-plan export-md AGENTS.md
-vico-plan export-md CLAUDE.md
+vico-ground export-md AGENTS.md
+vico-ground export-md CLAUDE.md
 ```
 
 当你希望把当前 Vico discipline 和 repo-local workflow 规则导出到项目里的说明文件时，用这个 mode。
@@ -314,25 +368,37 @@ vico-plan export-md CLAUDE.md
 
 ```text
 vico-exec help
-vico-probe help
+vico-ground help
 ```
 
-## Probe 工作流
+## Ground 工作流
 
-- `vico-probe`
-  - 默认入口；先做轻量 scan，再根据 issue state 决定是直接建议、发一问、进入 `review`，还是直接收口
-- `vico-probe scan`
-  - 只做深度检查；建立 evidence、issues 和 topic map，不进入长追问
-- `vico-probe grill`
-  - 强制进入持续性的高强度追问模式，围绕最重要的未决问题连续发问
-- `vico-probe grill plan`
-  - 把当前 active plan 当作被 grill 的对象；当低风险澄清可以立即落地时，直接 refine plan 文本
-- `vico-probe review`
-  - 查看当前已接受结论、未决问题和推荐下一步
-- `vico-probe resolve`
-  - 停止追问，输出 final summary 或给 `vico-plan` 的 `Probe Handoff`
-- `vico-probe help`
-  - 查看模式和推荐使用方式
+- `vico-ground`
+  - 默认 controller；在 planning 或 execution 之前选择当前最有价值的 grounding move
+- `vico-ground clarify`
+  - 对齐目标、边界、术语和成功标准
+- `vico-ground scan`
+  - 建立 evidence、findings、issues 和 topic map，不直接进入长追问
+- `vico-ground map`
+  - 把当前问题空间、依赖关系或决策空间结构外显出来
+- `vico-ground align`
+  - 修复词义、边界或假设不一致
+- `vico-ground reframe`
+  - 当问题框架本身不对时，替换当前解释方式
+- `vico-ground tradeoff`
+  - 对齐优先级、约束、风险和不可逆性
+- `vico-ground grill`
+  - 对 assumptions、findings、plans、maps 或 proposed decisions 做对抗式 pressure-test
+- `vico-ground challenge`
+  - 用更强的 counterexample、rebuttal 和 adversarial review 压测当前共识
+- `vico-ground export-md`
+  - 把当前 shared ground 导出成 repo-local instructions
+- `vico-ground review`
+  - 查看当前 shared ground，不继续扩张
+- `vico-ground resolve`
+  - 停止扩张 ground，输出 final summary 或给 `vico-plan` 的 `Ground Handoff`
+- `vico-ground help`
+  - 查看 moves 和推荐使用方式
 
 ### 执行后手动 Close
 
@@ -374,7 +440,7 @@ python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/proje
 - [`forrestchang/andrej-karpathy-skills`](https://github.com/forrestchang/andrej-karpathy-skills)
   影响了我们对这几件事的强调：显式说出假设、持续施压简单性、外科式修改、以及目标驱动执行。这些思想和 Vico 里的 evidence-first probe、小范围改动、以及 verify 驱动的执行循环是高度一致的。
 - [`mattpocock/skills` 的 `grill-me`](https://github.com/mattpocock/skills/tree/main/grill-me)
-  影响了 `vico-grill` 这条 freeform grilling 通道，尤其是一问一答、持续拷问的风格。
+  影响了现在收进 `vico-ground grill` 里的对抗式、一问一答、持续拷问风格。
 - [`gsd-build/get-shit-done`](https://github.com/gsd-build/get-shit-done)
   影响了 repo-local planning artifact 和 context-engineered execution 这条思路。GSD 当前把规划状态放在 `.plans/` 下。
 - [`Yeachan-Heo/oh-my-codex`](https://github.com/Yeachan-Heo/oh-my-codex)

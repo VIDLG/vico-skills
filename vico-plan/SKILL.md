@@ -9,7 +9,7 @@ description: Default front door for Vico-style repo-local planning. Decide wheth
 
 `vico-plan` is the only default front door for tracked Vico work.
 
-Treat natural requests such as `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `export these rules to AGENTS.md`, `write the operating brief to CLAUDE.md`, or `how do I use vico-plan` as valid `vico-plan` entrypoints even when the user does not name the skill explicitly.
+Treat natural requests such as `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, or `how do I use vico-plan` as valid `vico-plan` entrypoints even when the user does not name the skill explicitly.
 If the user's intent could reasonably map to lightweight direct execution instead of tracked planning, and repository evidence does not clearly justify `.vico` tracking, ask a short clarification question before creating tracked work.
 
 It owns four decisions before planning:
@@ -40,7 +40,7 @@ The plan is the primary execution document. Its checklist defines the intended p
 Default to `plan_only` when that is sufficient. A PRD is an escalation, not a baseline requirement.
 When a slug is `prd_backed`, this skill owns the plan side of that contract and keeps its execution details current.
 When the current state is unclear, this skill performs the minimum reconcile needed before rewriting the plan.
-When a recent `vico-probe` handoff block exists in the current conversation, this skill should consume that probe handoff by default.
+When a recent `vico-ground` handoff block exists in the current conversation, this skill should consume that ground handoff by default.
 When work re-enters tracked planning after direct execution, perform the minimum reconcile or sync needed to align active docs with current repository reality before planning further.
 Treat that re-entry behavior as first-class rather than exceptional; do not assume the user stayed inside tracked workflow the whole time.
 
@@ -51,7 +51,7 @@ Treat that re-entry behavior as first-class rather than exceptional; do not assu
 - direct user intent in the current turn
 - the current active plan and optional active PRD
 - current code and test state
-- the latest `vico-probe` handoff block in the current conversation
+- the latest `vico-ground` handoff block in the current conversation
 
 Treat these as ordered inputs, not as peer truth sources.
 Treat them as one planning input bundle after precedence has been resolved; do not let the last conversational subtopic silently replace the broader work object.
@@ -61,13 +61,13 @@ Treat them as one planning input bundle after precedence has been resolved; do n
 When multiple inputs are present, resolve them in this order:
 
 1. explicit user input
-2. matching `vico-probe` handoff
+2. matching `vico-ground` handoff
 3. current active plan / optional active PRD
 4. current code reality
 
 Use code reality to verify and correct stale planning state, but do not let it silently override explicit user intent or a matching current-turn handoff.
 
-Treat a probe handoff as matching only when:
+Treat a ground handoff as matching only when:
 
 - its `Slug` matches the tracked work in scope, or
 - when no slug exists yet, its `Target` clearly matches the current requested work object
@@ -78,8 +78,8 @@ Treat any `Issue classes` in the handoff as strong routing hints:
 - `execution` usually stays in the plan
 - `durable_truth` may justify `vico-plan truth`
 
-If the latest probe handoff clearly targets a different active slug or work object than the current request, do not absorb it implicitly.
-If a matching probe handoff came from a broad repo scan or architectural pass, treat it as describing the whole tracked work object rather than just the last grilled issue.
+If the latest ground handoff clearly targets a different active slug or work object than the current request, do not absorb it implicitly.
+If a matching ground handoff came from a broad scan or architectural pass, treat it as describing the whole tracked work object rather than just the last grounded issue.
 
 ## Mode Contract
 
@@ -103,8 +103,6 @@ If a matching probe handoff came from a broad repo scan or architectural pass, t
   - delete the current active docs and continue with one fresh dated slug
 - `truth`
   - explicitly extract durable truth into `docs/architecture/`
-- `export-md`
-  - export a repo-local operating brief into `AGENTS.md` or `CLAUDE.md`
 - `close`
   - delete active docs because the work is complete
 - `cancel`
@@ -131,7 +129,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
    - `plan_only` by default
    - `prd_backed` only when the work clearly needs a separate PRD
 6. If `prd_backed`, ensure the paired PRD exists and its header points back to the plan.
-7. If a recent `vico-probe` handoff block exists, absorb these as strong inputs:
+7. If a recent `vico-ground` handoff block exists, absorb these as strong inputs:
    - `Target`
    - optional `Program objective`
    - optional `Slug`
@@ -209,7 +207,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - The current slice should expose observable acceptance criteria and at least one focused verification path.
 - User decisions, blockers, and unresolved scope forks should be explicit in the plan or PRD rather than implied by missing checklist detail.
 - If the current plan is too coarse, too stale, or too ambiguous for the next step to be chosen reliably, stay in `vico-plan` and `sync` or `replan` before routing into `vico-exec`.
-- Prefer using probe handoff hints to sharpen the first execution slice when they materially reduce ambiguity.
+- Prefer using ground handoff hints to sharpen the first execution slice when they materially reduce ambiguity.
 - Treat `Resolved during probe` as already handled work; do not reopen those items as unresolved planning questions unless repository evidence now conflicts with them.
 
 ## Verification Rules
@@ -303,9 +301,8 @@ Use the full phased template for medium and large work. For small plan-only work
 - Use [references/templates/help-template.md](references/templates/help-template.md) for `vico-plan help`.
 - Use [references/templates/review-template.md](references/templates/review-template.md) for `vico-plan review`.
 - Use [references/templates/verify-template.md](references/templates/verify-template.md) for `vico-plan verify`.
-- Use [references/templates/probe-handoff-template.md](references/templates/probe-handoff-template.md) for the expected `vico-probe` handoff block shape.
+- Use [references/templates/ground-handoff-template.md](references/templates/ground-handoff-template.md) for the expected `vico-ground` handoff block shape.
 - Use [references/templates/truth-template.md](references/templates/truth-template.md) for `vico-plan truth`.
-- Use [scripts/export_vico_operating_md.py](scripts/export_vico_operating_md.py) when explicitly exporting a repo-local operating brief to `AGENTS.md` or `CLAUDE.md`.
 - Use [references/ops/reconcile.md](references/ops/reconcile.md) when reconcile is needed before planning.
 - Use [references/rules/status-vocabulary.md](references/rules/status-vocabulary.md) when expressing progress or divergence.
 - Use [references/ops/automation.md](references/ops/automation.md) for sync and close-out automation.

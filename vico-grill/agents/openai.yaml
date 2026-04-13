@@ -1,4 +1,0 @@
-interface:
-  display_name: "Vico Grill"
-  short_description: "Freeform sustained questioning for ideas, decisions, and tradeoffs"
-  default_prompt: "Grill the current freeform topic. Keep one high-value question active at a time, challenge assumptions directly, provide short numbered options with the recommended choice marked inline when useful, accept `rec`, `cont`, `close`, `probe`, and `plan` shortcuts, stay session-only by default, do not claim repository-backed evidence, and follow the contract in SKILL.md."

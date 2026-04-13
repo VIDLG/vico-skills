@@ -116,6 +116,7 @@ For Claude Code, this skill can be paired with bundled hook scripts or a stronge
 
 - [references/hooks-setup.md](references/hooks-setup.md)
 - [references/runner.md](references/runner.md)
+- [references/cc-operator.md](references/cc-operator.md)
 - `scripts/claude_exec_runner.py`
 - `scripts/session_start_hook.ps1`
 - `scripts/stop_hook.ps1`
@@ -133,7 +134,7 @@ Codex does not have equivalent event hooks. Use the same execute loop directly a
 
 ## Cross-Agent Handoff
 
-`vico-plan` and `vico-probe` handoffs can be consumed across agents, not just within one tool.
+`vico-plan` and `vico-ground` handoffs can be consumed across agents, not just within one tool.
 
 - Codex can create or refine the tracked plan
 - Claude Code can take that active plan and run `vico-exec`
@@ -150,3 +151,4 @@ Codex does not have equivalent event hooks. Use the same execute loop directly a
 - Use [references/automation.md](references/automation.md) when refreshing index state.
 - Use [references/hooks-setup.md](references/hooks-setup.md) for Claude Code hook wiring.
 - Use [references/runner.md](references/runner.md) for the Claude runner loop.
+- Use [references/cc-operator.md](references/cc-operator.md) for `vico-exec cc` operator guidance.

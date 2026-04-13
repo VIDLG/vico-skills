@@ -54,3 +54,4 @@ Claude must return exactly one of:
 - use the runner when you want an explicit repeat-until-stop loop
 - the runner does not perform close-out deletion
 - after `done`, prefer `vico-plan verify` or `vico-plan close` based on user intent
+- see [cc-operator.md](cc-operator.md) for the recommended human operator flow around exit codes and reruns

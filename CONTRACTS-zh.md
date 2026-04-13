@@ -12,8 +12,7 @@
 
 ## 落盘原则
 
-- `vico-grill` 的状态默认仅存在于会话中，不应写入 `.vico` artifact。
-- `vico-probe` 的状态默认仅存在于会话中，只有用户明确要求时才应写回。
+- `vico-ground` 的状态默认仅存在于会话中；除非用户明确要求 capture 或 export 结论，否则不应写入 `.vico` artifact。
 - `vico-plan` 负责 active plan、可选 PRD 以及派生 index 的 tracked-doc 写入。
 - `vico-exec` 只在连续执行依赖准确持久化状态时，才写入 plan、index 或临时 reconcile 状态。
 
@@ -22,7 +21,7 @@
 - 面向用户的输出应优先呈现让用户继续推进所需的最小结论、决策和下一步。
 - 只要额外细节主要服务于路由、连续性或校验，内部状态可以比面向用户的输出更丰富。
 - 不要把完整的内部调度图、issue bank 或执行启发式默认直接摊给用户，除非用户明确要求这些细节，或这些细节会实质影响下一步决策。
-- 不要把 freeform `vico-grill` 的结论包装成基于仓库证据的发现，或包装成已经成立的 tracked-plan 承诺。
+- 不要把 `vico-ground` 中仍然停留在假设层或未充分 grounding 的结论包装成基于仓库证据的发现，或包装成已经成立的 tracked-plan 承诺。
 - 即使外围文案为了用户可读性做了优化，机器消费字段也应保持稳定。
 - 一旦选中了某个 Vico skill，应在第一条可见 update 中显式展示当前 skill 路由和路由原因，让用户能区分 skill 路由行为与普通模型行为。
 - 当输出的是面向用户的 checkpoint、summary、verification result 或 handoff 时，如果下一步动作并不显而易见，优先给出 `Recommended action`。
@@ -34,7 +33,7 @@
 ## Route Shift 策略
 
 - 升级和降级都应是合法的 workflow move。
-- 当下一个关键约束变成仓库现实或 tracked execution 时，`vico-grill` 可以升级到 `vico-probe` 或 `vico-plan`。
+- 当 shared ground 已经足以支撑 tracked execution 时，`vico-ground` 可以进入 `vico-plan`。
 - 当工作超出安全的局部执行范围时，应按需要升级到 `vico-plan` 或 `vico-exec`。
 - 当工作又缩回到局部、低风险修改时，应优先回到 `direct_execute`，而不是继续把用户困在更重的流程里。
 - 当 direct execution 之后重新回到 tracked workflow 时，应自动执行最小 reconcile / sync，让 `.vico` 状态重新对齐当前代码现实。
