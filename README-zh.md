@@ -27,6 +27,8 @@ English version: [README.md](README.md)
   按 active plan 持续执行，直到完成或遇到真实阻塞。
 - `vico-feedback`
   把针对 `vico-skills` 的反馈整理成 GitHub issue 草稿，并在用户明确确认后再发 issue。
+- `vico-ops`
+  repo-local operations surface；负责 bootstrap、sync、close、cancel、truth extraction 和 workspace validation。
 
 `vico-ground` 的输出示例见 [vico-ground/references/output-format.md](vico-ground/references/output-format.md)。
 
@@ -48,14 +50,14 @@ English version: [README.md](README.md)
 
 - `vico-skills` 是强意见、强路由的工作流，不是松散工具箱
 - `vico-plan` 是唯一默认入口
-- `vico-plan` 内部负责 bootstrap、轻量 reconcile、PRD 升级和 active slug 替换
-- `vico-plan` 还应暴露显式模式，例如 `help`、`review`、`sync`、`prd`、`replace`、`close`、`cancel`
+- `vico-plan` 聚焦 tracked planning、verify、PRD 升级和 execution-contract 重写
 - `plan_only` 是默认的 tracked workflow
 - `PRD` 是内部升级路径，不是默认入口
 - slug 一旦升级到 `prd_backed`，就不再原地降级
 - 临时 reconcile 状态仍然可能存在，但 `resume` 不再是主要用户入口
 - 每个 tracked slug 都应有 `.vico/index/<slug>.json`
 - `index` 是派生出来的 linkage metadata，不是主文档
+- `vico-ops` 承担 repo-local maintenance 和 lifecycle 操作，而不是继续挂在 planning surface 上
 
 ## 设计原则
 
@@ -118,9 +120,10 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 - 先建立共识再规划：`vico-ground -> vico-plan`
 - 在 planning 前做 pressure-test：`vico-ground stress -> vico-plan`
 - 只做 tracked planning：`vico-plan`
+- repo-local 维护：`vico-ops`
 - 跨 agent handoff：`Codex vico-plan -> Claude Code vico-exec`
 - Claude runner 循环：`Codex vico-plan -> Claude runner -> vico-plan verify`
-- 端到端 tracked execution：`vico-plan -> vico-exec -> vico-plan close`
+- 端到端 tracked execution：`vico-plan -> vico-exec -> vico-plan verify -> vico-ops close`
 
 ## 升级提示
 
@@ -141,17 +144,19 @@ owner map、派生层、同步边界、分发前提和 validator 责任见 [CONT
 ## 自然触发词
 
 - `vico-ground`：`scan 仓库`、`inspect codebase`、`scan 一下架构`、`快速过一遍项目`、`先带我摸一下这个仓库`、`clarify 这个目标`、`我们到底在解决什么`、`align 这些术语`、`stress-test 这个方案`、`challenge 这个假设`、`我们到底在哪些点没对齐`、`review 我们已经知道什么`、`把这个 resolve 成 handoff`、`扫一下这个项目`、`扫一下架构`、`摸一下这个仓库`、`摸个底`、`盘一下这个代码库`、`过一遍整体结构`、`先看看整体`、`看下架构`、`vico-ground 如何使用`
-- `vico-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`对一下 plan`、`verify一下`、`verify this plan`、`verify close`、`verify sync`、`verify replan`、`收个口`、`close 这个 plan`、`vico-plan 如何使用`
+- `vico-plan`：`做个计划`、`建个 tracked plan`、`整理成执行步骤`、`对账当前 plan`、`对一下 plan`、`verify一下`、`verify this plan`、`replan 这个 slug`、`vico-plan 如何使用`
 - `vico-exec`：`继续做`、`一直做到完成`、`执行 active plan`、`除非阻塞否则继续`、`vico-exec cc`、`用 cc 跑这个 plan`、`切到 cc`、`别停`、`接着跑`、`继续推进直到完成`、`vico-exec 如何使用`
 - `vico-feedback`：`提个 issue`、`报告 bug`、`我对 vico-skills 有反馈`、`整理成 GitHub issue`、`记个反馈`、`这个 workflow 有点别扭`、`这个触发不太对`、`帮我整理成 issue`、`vico-feedback 如何使用`
+- `vico-ops`：`bootstrap 一个新 slug`、`sync 当前 active docs`、`close 这个 tracked work`、`cancel 这个 slug`、`抽取 architecture truth`、`校验 vico workspace`、`vico-ops 如何使用`
 
 如果一条自然语言请求同时可能落到多个 route 上，优先用一句简短确认来消歧，不要直接猜。
 应先按意图簇路由，再用短语匹配补召回。
 如果用户在 planning 前想先澄清、对齐、建图、摊开 tradeoff、或做 pressure-test，优先走 `vico-ground`。
 如果用户使用的是 `扫一下`、`摸一下`、`摸底`、`盘一下`、`过一遍整体`、`先看看整体` 这类仓库摸底式说法，而且目标是整个项目、架构、边界或整体结构，默认应把它当成 `vico-ground` 的强信号；只有在语义明显更像单点问答、单文件查看或立刻改代码时，才不要自动进入该 skill。
-如果用户是在控制 tracked work，例如做计划、sync、replan、verify 或 close active docs，优先走 `vico-plan`。
+如果用户是在控制 tracked work，例如做计划、replan、verify 当前 execution contract，优先走 `vico-plan`。
 如果用户表达的是持续实现推进，例如 `继续做`、`别停`、`一直做到完成`，只有在 active plan 已存在时才优先走 `vico-exec`；否则应先简短确认或转到 `vico-plan`。
 如果用户是在反馈 `vico-skills` 自己的 bug、UX friction、触发失误、命名问题或 workflow 问题，优先走 `vico-feedback`。
+如果用户是在做 repo-local maintenance，例如 bootstrap、sync、close、cancel、truth extraction 或 workspace validation，优先走 `vico-ops`。
 如果请求明显只是局部、单点、低风险，不要强行套 Vico skill，优先直接回答或直接执行。
 
 ## 如何使用 Vico Ground
@@ -203,8 +208,8 @@ scan -> clarify -> stress -> handoff
 - 需要开始、更新、对账或重建 tracked work：`vico-plan`
 - 需要在 close-out 前根据真实代码库核实 plan 是否真的完成：`vico-plan verify`
 - 基于 active plan 继续实现：`vico-exec`
-- 需要对 tracked work 做 close-out 或 cancel 并删除 active docs：`vico-plan`
-- 需要判断怎么做架构沉淀：`vico-plan`
+- 需要对 tracked work 做 close-out 或 cancel 并删除 active docs：`vico-ops`
+- 需要做 repo-local sync、bootstrap、truth extraction 或 workspace validation：`vico-ops`
 - 需要把反馈整理成 GitHub issue 草稿，或确认后直接发 issue：`vico-feedback`
 
 `vico-feedback` 默认应根据用户表达和上下文自动归类为 `bug`、`ux_friction`、`contract_gap` 或 `feature_request`，只有类别确实不清楚时才反问用户。
@@ -230,18 +235,19 @@ scan -> clarify -> stress -> handoff
 
 ## 自动化脚本
 
-- `vico-plan/scripts/bootstrap_vico_slug.py`
-  当 `vico-plan` 判断需要新 slug 时，为其创建最小骨架。
-- `vico-plan/scripts/sync_vico_headers.py`
+- `runtime/cli/bootstrap_vico_slug.py`
+  当需要 repo-local bootstrap 时，创建最小 active plan / PRD / architecture 骨架。
+- `runtime/cli/sync_vico_headers.py`
   同步 plan / PRD 的 header 和交叉引用。
-- `vico-plan/scripts/sync_vico_index.py`
+- `runtime/cli/sync_vico_index.py`
   从当前 artifact 重新生成最小化 `.vico/index/*.json`。
-- `vico-plan/scripts/close_vico_slug.py`
+- `runtime/cli/close_vico_slug.py`
   删除已完成 slug 的 active docs，并清理临时 resume / index 状态。
-- `vico-plan/scripts/validate_vico_workspace.py`
+- `runtime/cli/validate_vico_workspace.py`
   按 Vico schema 校验当前 `.vico` 工作区。
 - `scripts/validate_vico_skills.py`
   校验整个 Vico skill 仓库、辅助脚本和测试。
+repo-local operations 的公开入口是 `vico-ops`；`vico-plan/scripts/` 路径保留为兼容 wrapper。
 
 ## 安装与卸载
 
@@ -328,19 +334,7 @@ vico-plan verify
 ### Verify 通过后直接 Close
 
 ```text
-vico-plan verify close
-```
-
-### Verify 后直接 Sync
-
-```text
-vico-plan verify sync
-```
-
-### Verify 后直接 Replan
-
-```text
-vico-plan verify replan
+vico-plan verify -> vico-ops close
 ```
 
 ### 查看可用模式
@@ -389,14 +383,15 @@ vico-ground help
 ### 执行后手动 Close
 
 ```text
-vico-exec -> 用户确认 -> vico-plan close
+vico-exec -> vico-plan verify -> vico-ops close
 ```
 
 即使用户表达的是“做到真正完成”，生命周期仍然保持简单：
 
 - `vico-exec` 负责完成实现并同步 plan
-- `vico-plan close` 负责 close-out 删除
-- agent 应在展示完成证据后停下，等待用户手动输入 close 命令
+- `vico-plan verify` 负责根据代码现实确认完成
+- `vico-ops close` 负责 close-out 删除
+- agent 应在展示完成证据后停下，等待用户手动输入 `vico-ops close`
 
 ### Codex 做 Plan，Claude 执行
 
@@ -418,6 +413,7 @@ python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/proje
 
 当你希望 Claude Code 持续执行“实现 + verify + 判断是否继续”直到进入 `done`、`blocked`、`needs_user` 或 `stale_plan` 时，使用这个 runner。
 自然入口可以直接说：`vico-exec cc`、`用 cc 跑这个 plan`、`切到 cc`。
+owner 源在 `adapters/claude/claude_exec_runner.py`；`vico-exec/scripts/` 路径保留为兼容 wrapper。
 
 ## 外部参考
 
@@ -443,7 +439,7 @@ Vico 会刻意保持比这些系统更小、更 repo-native。这里是借鉴来
 - `Think Before Coding` 对应 `vico-ground`、显式假设、clarification-first 路由，以及轻量的 pre-plan pressure-test。
 - `Simplicity First` 对应 `vico-plan` 的 simplicity discipline，以及对更小执行契约的偏好。
 - `Surgical Changes` 对应 `vico-exec` 的 surgical execution discipline，以及 Vico 的小范围改动倾向。
-- `Goal-Driven Execution` 对应 `vico-exec` 里的 verify-driven loop，以及 `vico-plan verify` 的 close-out 校验。
+- `Goal-Driven Execution` 对应 `vico-exec` 里的 verify-driven loop，以及 `vico-plan verify` 的完成门禁作用。
 
 Vico 还应该继续吸收的点：
 
@@ -461,8 +457,11 @@ Vico 不应该直接吸收的点：
 
 - `vico-skills/` 是单一事实来源。
 - 开发时优先让项目内 `.codex/skills/` 和 `.claude/skills/` 指向这些目录，而不是复制内容。
-- Claude Code 相关 hook 脚本在 `vico-exec/scripts/`，项目级 hook 配置在 `.claude/settings*.json`。
-- Claude Code 更强的外层循环 runner 在 `vico-exec/scripts/claude_exec_runner.py`。
+- Claude Code 的 adapter owner 源放在 `adapters/claude/`。
+- repo-local Vico plan 自动化的 CLI owner 源放在 `runtime/cli/`。
+- 当需要稳定的 skill 本地路径时，保留 `vico-plan/scripts/` 作为轻量兼容 wrapper。
+- 当需要稳定的 skill 本地路径时，保留 `vico-exec/scripts/` 作为轻量兼容 wrapper。
+- `vico-ops` 是覆盖 `runtime/cli/` 的 repo-local operations surface。
 - `scripts/export_vico_operating_md.py` 是仓库级 utility，不属于 `vico-ground` 的公开接口。
 
 ## 校验

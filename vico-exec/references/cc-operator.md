@@ -32,7 +32,7 @@ Do not use `vico-exec cc` when:
 
 1. ensure one active plan is clearly in scope
 2. run `vico-exec cc`
-3. if exit code is `0`, prefer `vico-plan verify` or `vico-plan close`
+3. if exit code is `0`, prefer `vico-plan verify` and then `vico-ops close` when the user wants cleanup
 4. if exit code is `2`, inspect the blocker and decide whether to unblock or pause
 5. if exit code is `3`, answer the pending user decision and rerun
 6. if exit code is `4`, route back through `vico-plan`
@@ -52,7 +52,7 @@ Choose the runner when you want deterministic outer-loop control and explicit st
 ### Example: `done`
 
 - implementation and focused verification both passed
-- next operator action: `vico-plan verify` or `vico-plan close`
+- next operator action: `vico-plan verify` and then `vico-ops close` when cleanup is desired
 
 ### Example: `blocked`
 
@@ -74,4 +74,4 @@ Choose the runner when you want deterministic outer-loop control and explicit st
 - start with the repo-local plan already reconciled
 - prefer a narrower slug when more than one active plan exists
 - prefer `acceptEdits` or a similarly scoped permission mode instead of broad bypass modes
-- keep the runner non-destructive; let `vico-plan close` handle close-out deletion
+- keep the runner non-destructive; let `vico-ops close` handle close-out deletion after verification

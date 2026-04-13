@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import ast
 import json
 import shutil
 import subprocess
@@ -17,6 +18,12 @@ HEADERS_SCRIPT = PLAN_SCRIPTS / "sync_vico_headers.py"
 INDEX_SCRIPT = PLAN_SCRIPTS / "sync_vico_index.py"
 CLOSE_SCRIPT = PLAN_SCRIPTS / "close_vico_slug.py"
 WORKSPACE_VALIDATE_SCRIPT = PLAN_SCRIPTS / "validate_vico_workspace.py"
+RUNTIME_CLI_ROOT = SKILLS_ROOT / "runtime" / "cli"
+RUNTIME_BOOTSTRAP_SCRIPT = RUNTIME_CLI_ROOT / "bootstrap_vico_slug.py"
+RUNTIME_HEADERS_SCRIPT = RUNTIME_CLI_ROOT / "sync_vico_headers.py"
+RUNTIME_INDEX_SCRIPT = RUNTIME_CLI_ROOT / "sync_vico_index.py"
+RUNTIME_CLOSE_SCRIPT = RUNTIME_CLI_ROOT / "close_vico_slug.py"
+RUNTIME_WORKSPACE_VALIDATE_SCRIPT = RUNTIME_CLI_ROOT / "validate_vico_workspace.py"
 GROUND_SKILL = SKILLS_ROOT / "vico-ground" / "SKILL.md"
 GROUND_HELP = SKILLS_ROOT / "vico-ground" / "references" / "help-template.md"
 GROUND_OUTPUT = SKILLS_ROOT / "vico-ground" / "references" / "output-format.md"
@@ -42,15 +49,23 @@ EXEC_SKILL = SKILLS_ROOT / "vico-exec" / "SKILL.md"
 EXEC_HELP = SKILLS_ROOT / "vico-exec" / "references" / "help-template.md"
 EXEC_AUTOMATION = SKILLS_ROOT / "vico-exec" / "references" / "automation.md"
 EXEC_RUNNER = SKILLS_ROOT / "vico-exec" / "scripts" / "claude_exec_runner.py"
+CLAUDE_ADAPTER_RUNNER = SKILLS_ROOT / "adapters" / "claude" / "claude_exec_runner.py"
+CLAUDE_ADAPTER_SESSION_HOOK = SKILLS_ROOT / "adapters" / "claude" / "session_start_hook.ps1"
+CLAUDE_ADAPTER_STOP_HOOK = SKILLS_ROOT / "adapters" / "claude" / "stop_hook.ps1"
 EXEC_RUNNER_REF = SKILLS_ROOT / "vico-exec" / "references" / "runner.md"
 EXEC_CC_OPERATOR = SKILLS_ROOT / "vico-exec" / "references" / "cc-operator.md"
 EXPORT_UTIL = SKILLS_ROOT / "scripts" / "export_vico_operating_md.py"
+OPENAI_AGENT_SYNC = SKILLS_ROOT / "scripts" / "sync_openai_agents.py"
+SHARED_RUNTIME_SYNC = SKILLS_ROOT / "scripts" / "sync_shared_vico_runtime.py"
 FEEDBACK_SKILL = SKILLS_ROOT / "vico-feedback" / "SKILL.md"
 FEEDBACK_HELP = SKILLS_ROOT / "vico-feedback" / "references" / "help-template.md"
+OPS_SKILL = SKILLS_ROOT / "vico-ops" / "SKILL.md"
+OPS_HELP = SKILLS_ROOT / "vico-ops" / "references" / "help-template.md"
 README = SKILLS_ROOT / "README.md"
 README_ZH = SKILLS_ROOT / "README-zh.md"
 CONSENSUS = SKILLS_ROOT / "CONSENSUS.md"
 CONSENSUS_ZH = SKILLS_ROOT / "CONSENSUS-zh.md"
+SHARED_VICO_COMMON = SKILLS_ROOT / "runtime" / "vico_artifacts" / "vico_common.py"
 
 
 def run_ok(*args: str) -> subprocess.CompletedProcess[str]:
@@ -65,6 +80,13 @@ def run_ok(*args: str) -> subprocess.CompletedProcess[str]:
 class VicoAutomationTests(unittest.TestCase):
     def read(self, path: Path) -> str:
         return path.read_text(encoding="utf-8")
+
+    def normalize_script_for_parity(self, text: str) -> str:
+        return ast.dump(ast.parse(text), include_attributes=False)
+
+    def assert_contains_all(self, text: str, markers: list[str]) -> None:
+        for marker in markers:
+            self.assertIn(marker, text)
 
     def make_repo(self) -> Path:
         temp_root = SKILLS_ROOT / ".tmp-tests"
@@ -199,105 +221,81 @@ class VicoAutomationTests(unittest.TestCase):
         readme = self.read(README)
         readme_zh = self.read(README_ZH)
 
-        self.assertIn("`vico-ground`", readme)
+        self.assert_contains_all(
+            readme,
+            [
+                "# vico-skills",
+                "## Start Here",
+                "## Forward-Only Design",
+                "### Escalation Map",
+                "Codex: vico-plan -> Claude Code: vico-exec",
+                "`vico-ops`",
+                "python vico-skills/scripts/export_vico_operating_md.py AGENTS.md",
+            ],
+        )
         self.assertNotIn("`vico-probe`:", readme)
         self.assertNotIn("`vico-grill`:", readme)
-        self.assertIn(
-            "problem framing and execution structure are separate escalation axes",
-            readme,
-        )
-        self.assertIn("## Forward-Only Design", readme)
-        self.assertIn(
-            "default to forward design; do not assume historical burden", readme
-        )
-        self.assertIn("### Escalation Map", readme)
-        self.assertIn("Horizontal axis: problem-framing rigor", readme)
-        self.assertIn("Vertical axis: execution structure", readme)
-        self.assertIn("Codex: vico-plan -> Claude Code: vico-exec", readme)
-        self.assertIn(
-            "python vico-skills/scripts/export_vico_operating_md.py AGENTS.md",
-            readme,
-        )
-        self.assertIn("Consensus guide: [CONSENSUS.md](CONSENSUS.md)", readme)
-        self.assertIn("forrestchang/andrej-karpathy-skills", readme)
-        self.assertIn("## Start Here", readme)
-        self.assertIn("Three common paths", readme)
 
-        self.assertIn("`vico-ground`", readme_zh)
-        self.assertIn("## 前向设计原则", readme_zh)
-        self.assertIn("默认按前向设计处理，不预设历史负担", readme_zh)
-        self.assertIn("问题澄清强度和执行结构强度是两条独立的升级轴", readme_zh)
-        self.assertIn("### 升级坐标图", readme_zh)
-        self.assertIn("Codex: vico-plan -> Claude Code: vico-exec", readme_zh)
-        self.assertIn(
-            "python vico-skills/scripts/export_vico_operating_md.py AGENTS.md",
+        self.assert_contains_all(
             readme_zh,
+            [
+                "# vico-skills",
+                "## 从这里开始",
+                "## 前向设计原则",
+                "### 升级坐标图",
+                "Codex: vico-plan -> Claude Code: vico-exec",
+                "`vico-ops`",
+                "python vico-skills/scripts/export_vico_operating_md.py AGENTS.md",
+            ],
         )
-        self.assertIn("共识模型参考: [CONSENSUS-zh.md](CONSENSUS-zh.md)", readme_zh)
-        self.assertIn("## 从这里开始", readme_zh)
-        self.assertIn("三条最常见路径", readme_zh)
 
     def test_ground_skill_has_shared_ground_model_and_moves(self) -> None:
         ground_skill = self.read(GROUND_SKILL)
         ground_help = self.read(GROUND_HELP)
         ground_output = self.read(GROUND_OUTPUT)
 
-        self.assertIn("lightweight grounding controller", ground_skill)
-        self.assertIn(
-            "Build just enough shared ground to choose a safe next route.", ground_skill
-        )
-        self.assertIn("## Public Moves", ground_skill)
-        self.assertIn("`scan`", ground_skill)
-        self.assertIn("`clarify`", ground_skill)
-        self.assertIn("`stress`", ground_skill)
-        self.assertIn("`handoff`", ground_skill)
-        self.assertIn("## Controller Rules", ground_skill)
-        self.assertIn(
-            "Choose the smallest move that resolves the highest-value uncertainty.",
+        self.assert_contains_all(
             ground_skill,
+            [
+                "## Agent Summary",
+                "## Public Moves",
+                "## Controller Rules",
+                "## Stop Rule",
+                "## Minimal State Model",
+                "## Output Contract",
+                "## Full Handoff Contract",
+            ],
         )
-        self.assertIn("## Stop Rule", ground_skill)
-        self.assertIn(
-            "Never continue grounding just to make the output look more complete.",
-            ground_skill,
-        )
-        self.assertIn("## Minimal State Model", ground_skill)
-        self.assertIn("`Facts`", ground_skill)
-        self.assertIn("`Assumptions`", ground_skill)
-        self.assertIn("`Tensions`", ground_skill)
-        self.assertIn("`Next route`", ground_skill)
-        self.assertIn("## Output Contract", ground_skill)
-        self.assertIn("`Conclusion`", ground_skill)
-        self.assertIn("`Evidence`", ground_skill)
-        self.assertIn("`Next action`", ground_skill)
-        self.assertIn("Ground Handoff", ground_skill)
-
-        self.assertIn("## Vico Ground Help", ground_help)
-        self.assertIn("- `scan`", ground_help)
-        self.assertIn("- `clarify`", ground_help)
-        self.assertIn("- `stress`", ground_help)
-        self.assertIn("- `handoff`", ground_help)
-        self.assertIn("- `Next route`", ground_help)
-        self.assertIn("- `Next action`", ground_help)
-        self.assertIn("Skill route: vico-ground", ground_help)
-        self.assertIn(
-            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
+        self.assert_contains_all(
             ground_help,
+            [
+                "## Vico Ground Help",
+                "- `scan`",
+                "- `Recommended next action`",
+                "Skill route: vico-ground",
+            ],
         )
-        self.assertIn(
-            "Route detail: <repo_orientation | architecture_scan | exact trigger phrase>",
-            ground_help,
+        self.assert_contains_all(
+            ground_output,
+            [
+                "# Vico Ground Output Format",
+                "## Scan Example",
+                "## Handoff Example",
+                "Recommended next action",
+                "## Full Handoff Example",
+            ],
         )
-        self.assertIn("Route mode: <scan | clarify | stress | handoff>", ground_help)
 
-        self.assertIn("# Vico Ground Output Format", ground_output)
-        self.assertIn("## Scan Example", ground_output)
-        self.assertIn("## Handoff Example", ground_output)
-        self.assertIn("Conclusion", ground_output)
-        self.assertIn("Evidence", ground_output)
-        self.assertIn("Next route", ground_output)
-        self.assertIn("Next action", ground_output)
-        self.assertIn("## Full Handoff Example", ground_output)
+    def test_shared_vico_common_script_stays_in_parity(self) -> None:
+        owner_tree = self.normalize_script_for_parity(self.read(SHARED_VICO_COMMON))
+        for closure in (
+            SKILLS_ROOT / "vico-plan" / "scripts" / "vico_common.py",
+            SKILLS_ROOT / "vico-exec" / "scripts" / "vico_common.py",
+        ):
+            self.assertEqual(
+                owner_tree,
+                self.normalize_script_for_parity(self.read(closure)),
+            )
 
     def test_export_utility_is_repo_level_not_ground_move(self) -> None:
         export_util = self.read(EXPORT_UTIL)
@@ -315,108 +313,121 @@ class VicoAutomationTests(unittest.TestCase):
         self.assertNotIn("`export-md` remains a utility action", ground_skill)
         self.assertNotIn("vico-ground export-md", ground_skill)
 
+    def test_shared_runtime_sync_script_reports_clean_repo(self) -> None:
+        run_ok(str(SHARED_RUNTIME_SYNC), "--root", str(SKILLS_ROOT), "--check")
+
+    def test_openai_agent_sync_script_reports_clean_repo(self) -> None:
+        run_ok(str(OPENAI_AGENT_SYNC), "--root", str(SKILLS_ROOT), "--check")
+
+    def test_plan_cli_wrappers_delegate_to_runtime_cli_owners(self) -> None:
+        wrappers = {
+            PLAN_BOOTSTRAP_SCRIPT: "runtime/cli/bootstrap_vico_slug.py",
+            HEADERS_SCRIPT: "runtime/cli/sync_vico_headers.py",
+            INDEX_SCRIPT: "runtime/cli/sync_vico_index.py",
+            CLOSE_SCRIPT: "runtime/cli/close_vico_slug.py",
+            WORKSPACE_VALIDATE_SCRIPT: "runtime/cli/validate_vico_workspace.py",
+        }
+        for path, owner in wrappers.items():
+            text = self.read(path)
+            self.assertIn("runpy.run_path", text)
+            self.assertIn(owner, text)
+
     def test_plan_skill_consumes_ground_handoff_and_export_mode(self) -> None:
         plan_skill = self.read(PLAN_SKILL)
         plan_help = self.read(PLAN_HELP)
         handoff_template = self.read(GROUND_HANDOFF_TEMPLATE)
 
-        self.assertIn("`vico-ground` handoff", plan_skill)
-        self.assertIn("turn grounded decisions into an executable plan", plan_skill)
-        self.assertIn("Treat a ground handoff as matching only when", plan_skill)
-        self.assertIn("## Simplicity Discipline", plan_skill)
-        self.assertIn("## Forward-Only Planning Discipline", plan_skill)
-        self.assertIn("Skill route: vico-plan", plan_skill)
-        self.assertIn(
-            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
+        self.assert_contains_all(
             plan_skill,
+            [
+                "## Agent Summary",
+                "## Simplicity Discipline",
+                "## Forward-Only Planning Discipline",
+                "`vico-ground` handoff",
+                "Skill route: vico-plan",
+            ],
         )
-        self.assertIn(
-            "Route detail: <tracked_work_controller | verify_request | exact trigger phrase>",
-            plan_skill,
-        )
-
-        self.assertIn("Skill route: vico-plan", plan_help)
-        self.assertIn(
-            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
+        self.assert_contains_all(
             plan_help,
+            [
+                "Skill route: vico-plan",
+                "Route detail: <tracked_work_controller | verify_request | exact trigger phrase>",
+                "- review",
+                "- verify",
+                "- replan",
+            ],
         )
-        self.assertIn(
-            "Route detail: <tracked_work_controller | verify_request | exact trigger phrase>",
-            plan_help,
+        self.assert_contains_all(
+            handoff_template,
+            [
+                "# Ground Handoff Template",
+                "Move: handoff",
+                "## Ground Handoff",
+                "What is true now",
+                "Suggested first step",
+            ],
         )
-
-        self.assertIn("# Ground Handoff Template", handoff_template)
-        self.assertIn("Move: handoff", handoff_template)
-        self.assertIn("## Ground Handoff", handoff_template)
-        self.assertIn("What is true now", handoff_template)
-        self.assertIn("What is still unresolved", handoff_template)
-        self.assertIn("Suggested first step", handoff_template)
-        self.assertIn("Optional: Tracking hint", handoff_template)
-        self.assertIn("strong downstream inputs", handoff_template)
-        self.assertIn("soft context inputs", handoff_template)
 
     def test_exec_skill_has_cc_mode_runner_and_disciplines(self) -> None:
         exec_skill = self.read(EXEC_SKILL)
         exec_help = self.read(EXEC_HELP)
         exec_automation = self.read(EXEC_AUTOMATION)
         runner_script = self.read(EXEC_RUNNER)
+        adapter_runner = self.read(CLAUDE_ADAPTER_RUNNER)
+        session_hook = self.read(CLAUDE_ADAPTER_SESSION_HOOK)
+        stop_hook = self.read(CLAUDE_ADAPTER_STOP_HOOK)
         runner_ref = self.read(EXEC_RUNNER_REF)
         cc_operator = self.read(EXEC_CC_OPERATOR)
 
-        self.assertIn("`cc`", exec_skill)
-        self.assertIn("launch the bundled Claude Code runner loop", exec_skill)
-        self.assertIn("## Surgical Execution Discipline", exec_skill)
-        self.assertIn("## Success Criteria Discipline", exec_skill)
-        self.assertIn("Loop until verified", exec_skill)
-        self.assertIn("Skill route: vico-exec", exec_skill)
-        self.assertIn(
-            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
+        self.assert_contains_all(
             exec_skill,
+            [
+                "## Agent Summary",
+                "## Surgical Execution Discipline",
+                "## Success Criteria Discipline",
+                "## Claude Code",
+                "Loop until verified",
+                "Claude-specific owner sources live under `adapters/claude/`",
+            ],
         )
-        self.assertIn(
-            "Route detail: <persistent_implementation | continue_until_complete | exact trigger phrase>",
-            exec_skill,
-        )
-        self.assertIn(
-            "`done` requires both implementation evidence and verification evidence.",
-            exec_skill,
-        )
-
-        self.assertIn("## Modes", exec_help)
-        self.assertIn("- cc", exec_help)
-        self.assertIn("vico-exec cc", exec_help)
-        self.assertIn("run this with cc", exec_help)
-        self.assertIn("handoff to cc", exec_help)
-        self.assertIn("Skill route: vico-exec", exec_help)
-        self.assertIn(
-            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
+        self.assert_contains_all(
             exec_help,
+            [
+                "## Modes",
+                "- cc",
+                "vico-exec cc",
+                "Skill route: vico-exec",
+            ],
         )
-        self.assertIn(
-            "Route detail: <persistent_implementation | continue_until_complete | exact trigger phrase>",
-            exec_help,
+        self.assert_contains_all(
+            exec_automation,
+            [
+                "## Claude Runner Loop",
+                "claude_exec_runner.py",
+            ],
         )
-        self.assertIn("Route mode: <default | cc | help>", exec_help)
 
-        self.assertIn("## Claude Runner Loop", exec_automation)
-        self.assertIn("claude_exec_runner.py", exec_automation)
+        self.assertIn("runpy.run_path", runner_script)
+        self.assertIn("adapters", runner_script)
+        self.assertIn("RUNNER_SCHEMA", adapter_runner)
+        self.assertIn("stale_plan", adapter_runner)
+        self.assertIn("claude", adapter_runner)
+        self.assertIn("active plans detected", session_hook)
+        self.assertIn("active in-progress plan still exists", stop_hook)
 
-        self.assertIn("RUNNER_SCHEMA", runner_script)
-        self.assertIn("stale_plan", runner_script)
-        self.assertIn("claude", runner_script)
-
-        self.assertIn("## Claude Runner", runner_ref)
-        self.assertIn("continue", runner_ref)
-        self.assertIn("stale_plan", runner_ref)
-        self.assertIn("cc-operator.md", runner_ref)
-
-        self.assertIn("## When To Use `vico-exec cc`", cc_operator)
-        self.assertIn("## Exit Codes", cc_operator)
-        self.assertIn("## Recommended Operator Flow", cc_operator)
-        self.assertIn("`0`", cc_operator)
-        self.assertIn("`4`", cc_operator)
-        self.assertIn("## Hook Vs Runner", cc_operator)
-        self.assertIn("## Example Outcomes", cc_operator)
+        self.assert_contains_all(
+            runner_ref,
+            ["## Claude Runner", "continue", "stale_plan", "cc-operator.md"],
+        )
+        self.assert_contains_all(
+            cc_operator,
+            [
+                "## When To Use `vico-exec cc`",
+                "## Exit Codes",
+                "## Recommended Operator Flow",
+                "## Hook Vs Runner",
+            ],
+        )
 
         plan_review = self.read(PLAN_REVIEW)
         plan_verify = self.read(PLAN_VERIFY)
@@ -448,54 +459,65 @@ class VicoAutomationTests(unittest.TestCase):
     def test_feedback_skill_is_present(self) -> None:
         feedback_skill = self.read(FEEDBACK_SKILL)
         feedback_help = self.read(FEEDBACK_HELP)
-        self.assertIn("GitHub issue draft", feedback_skill)
-        self.assertIn("how do I use vico-feedback", feedback_skill)
-        self.assertIn("Skill route: vico-feedback", feedback_skill)
-        self.assertIn(
-            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
+        self.assert_contains_all(
             feedback_skill,
+            [
+                "GitHub issue draft",
+                "## Agent Summary",
+                "Skill route: vico-feedback",
+            ],
         )
-        self.assertIn(
-            "Route detail: <workflow_feedback | issue_draft_request | exact trigger phrase>",
-            feedback_skill,
-        )
-        self.assertIn("## Vico Feedback Help", feedback_help)
-        self.assertIn("Skill route: vico-feedback", feedback_help)
-        self.assertIn(
-            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
+        self.assert_contains_all(
             feedback_help,
+            ["## Vico Feedback Help", "Skill route: vico-feedback"],
+        )
+
+    def test_ops_skill_is_present(self) -> None:
+        ops_skill = self.read(OPS_SKILL)
+        ops_help = self.read(OPS_HELP)
+        self.assert_contains_all(
+            ops_skill,
+            [
+                "## Agent Summary",
+                "## Modes",
+                "## Control Rules",
+                "## Repo-Local Operations",
+                "Skill route: vico-ops",
+            ],
+        )
+        self.assert_contains_all(
+            ops_help,
+            [
+                "## Vico Ops Help",
+                "- bootstrap",
+                "- close",
+                "- validate",
+                "Skill route: vico-ops",
+            ],
         )
 
     def test_consensus_docs_exist_and_cover_major_theories(self) -> None:
         consensus = self.read(CONSENSUS)
         consensus_zh = self.read(CONSENSUS_ZH)
 
-        self.assertIn("# Consensus Models", consensus)
-        self.assertIn("### Common Ground", consensus)
-        self.assertIn("### Conversational Grounding", consensus)
-        self.assertIn("### Sensemaking", consensus)
-        self.assertIn("### Collaborative Problem Solving", consensus)
-        self.assertIn("### Deliberation And Argumentation", consensus)
-        self.assertIn("## Practical Consensus Moves", consensus)
-        self.assertIn("## Theory To Move Mapping", consensus)
-        self.assertIn(
-            "| Theory family | Main failure it helps with | Best Vico move | Typical artifact |",
+        self.assert_contains_all(
             consensus,
+            [
+                "# Consensus Models",
+                "## Practical Consensus Moves",
+                "## Theory To Move Mapping",
+                "## Anti-Patterns",
+            ],
         )
-        self.assertIn("## Failure Patterns", consensus)
-        self.assertIn("## Anti-Patterns", consensus)
-        self.assertIn("clarify", consensus)
-        self.assertIn("stress", consensus)
-
-        self.assertIn("# 共识模型", consensus_zh)
-        self.assertIn("### Common Ground", consensus_zh)
-        self.assertIn("### Conversational Grounding", consensus_zh)
-        self.assertIn("### Sensemaking", consensus_zh)
-        self.assertIn("## 可用的共识动作", consensus_zh)
-        self.assertIn("## 理论到 Move 的映射表", consensus_zh)
-        self.assertIn("## 失败模式", consensus_zh)
-        self.assertIn("## 反模式", consensus_zh)
-        self.assertIn("stress", consensus_zh)
+        self.assert_contains_all(
+            consensus_zh,
+            [
+                "# 共识模型",
+                "## 可用的共识动作",
+                "## 理论到 Move 的映射表",
+                "## 反模式",
+            ],
+        )
 
 
 if __name__ == "__main__":

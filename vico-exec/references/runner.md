@@ -17,14 +17,16 @@ The runner repeatedly calls `claude -p`, asks Claude Code to execute one `vico-e
 ## Command
 
 ```bash
-python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon
+python vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon
 ```
 
 When more than one active plan exists, pass `--slug`:
 
 ```bash
-python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon --slug 2026-04-12-example
+python vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon --slug 2026-04-12-example
 ```
+
+These commands assume a repository checkout or copied local utility path. They are not the primary installed-skill entrypoint.
 
 Useful options:
 
@@ -53,5 +55,5 @@ Claude must return exactly one of:
 - use hooks when you only want lightweight execution discipline
 - use the runner when you want an explicit repeat-until-stop loop
 - the runner does not perform close-out deletion
-- after `done`, prefer `vico-plan verify` or `vico-plan close` based on user intent
+- after `done`, prefer `vico-plan verify` and then `vico-ops close` when the user wants cleanup
 - see [cc-operator.md](cc-operator.md) for the recommended human operator flow around exit codes and reruns

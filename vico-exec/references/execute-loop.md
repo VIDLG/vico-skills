@@ -69,7 +69,7 @@ Stop when:
 When all planned work is complete:
 
 - update the plan so completion is explicit
-- recommend `vico-plan close` or `vico-plan verify close` only after showing the completion evidence
+- recommend `vico-plan verify` and then `vico-ops close` only after showing the completion evidence
 - wait for explicit user confirmation before any close-out deletion step
 - do not perform close-out deletion inside `vico-exec`
 

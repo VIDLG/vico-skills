@@ -25,11 +25,10 @@ Keep commands, mode literals, status literals, and slug/path literals unchanged.
 ## Recommended Next Step
 
 - continue with current plan
-- sync the plan to current code
+- route to `vico-ops sync`
 - replan the current slug
-- replace the active slug
 - upgrade to `prd_backed`
-- mark as `close` or `cancel`
+- route to `vico-ops close` or `vico-ops cancel`
 
 ## Risk If Skipped
 

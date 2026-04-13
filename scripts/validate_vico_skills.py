@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import ast
 import argparse
 import os
 import re
@@ -67,295 +68,206 @@ def remove_pycache_dirs(root: Path) -> None:
         path.rmdir()
 
 
-def validate_skill_markers(
-    root: Path, relative_path: str, markers: tuple[str, ...]
-) -> list[str]:
+SKILL_CONTRACTS = {
+    "vico-ground": {
+        "display_name": "Vico Ground",
+        "sections": [
+            "## Agent Summary",
+            "## Public Moves",
+            "## Controller Rules",
+            "## Stop Rule",
+            "## Minimal State Model",
+            "## Output Contract",
+        ],
+        "tokens": ["`scan`", "`clarify`", "`stress`", "`handoff`"],
+    },
+    "vico-plan": {
+        "display_name": "Vico Plan",
+        "sections": [
+            "## Agent Summary",
+            "## Simplicity Discipline",
+            "## Forward-Only Planning Discipline",
+            "## Mode Contract",
+            "## Workflow",
+            "## Output Contract",
+        ],
+        "tokens": ["`vico-ground` handoff", "`plan_only`", "`prd_backed`"],
+    },
+    "vico-exec": {
+        "display_name": "Vico Exec",
+        "sections": [
+            "## Agent Summary",
+            "## Surgical Execution Discipline",
+            "## Success Criteria Discipline",
+            "## Mode Contract",
+            "## Execution Loop",
+            "## Claude Code",
+        ],
+        "tokens": ["`cc`", "Loop until verified", "`vico-ground` handoffs"],
+    },
+    "vico-feedback": {
+        "display_name": "Vico Feedback",
+        "sections": [
+            "## Agent Summary",
+            "## Goals",
+            "## Inputs",
+            "## Workflow",
+            "## Safety Rules",
+            "## Output Contract",
+        ],
+        "tokens": ["GitHub issue draft", "explicit user confirmation"],
+    },
+    "vico-ops": {
+        "display_name": "Vico Ops",
+        "sections": [
+            "## Agent Summary",
+            "## Modes",
+            "## Control Rules",
+            "## Multi-Active Safety Rules",
+            "## Repo-Local Operations",
+            "## Output Contract",
+        ],
+        "tokens": ["`bootstrap`", "`sync`", "`close`", "`validate`", "`runtime/cli/`"],
+    },
+}
+
+CORE_DOCS = {
+    "README.md": ("# vico-skills", "## Start Here", "## Validation"),
+    "README-zh.md": ("# vico-skills", "## 从这里开始", "## 校验"),
+    "CONTRACTS.md": ("# Vico Contracts", "## Contract Layers", "## Sync Policy"),
+    "CONTRACTS-zh.md": ("# Vico 契约映射", "## 契约层级", "## 同步策略"),
+    "TRIGGERS.md": ("# Trigger Examples", "## Routing Order", "## Anti-Patterns"),
+    "TRIGGERS-zh.md": ("# 触发示例矩阵", "## 路由顺序", "## 反模式"),
+    "CONSENSUS.md": ("# Consensus Models", "## Practical Consensus Moves", "## Anti-Patterns"),
+    "CONSENSUS-zh.md": ("# 共识模型", "## 可用的共识动作", "## 反模式"),
+}
+
+REQUIRED_PATHS = [
+    "scripts/export_vico_operating_md.py",
+    "scripts/sync_shared_vico_runtime.py",
+    "scripts/sync_openai_agents.py",
+    "runtime/cli/bootstrap_vico_slug.py",
+    "runtime/cli/close_vico_slug.py",
+    "runtime/cli/sync_vico_headers.py",
+    "runtime/cli/sync_vico_index.py",
+    "runtime/cli/validate_vico_workspace.py",
+    "runtime/vico_artifacts/vico_common.py",
+    "adapters/claude/claude_exec_runner.py",
+    "adapters/claude/session_start_hook.ps1",
+    "adapters/claude/stop_hook.ps1",
+    "vico-ground/references/output-format.md",
+    "vico-plan/references/templates/architecture-template.md",
+    "vico-ops/references/help-template.md",
+    "vico-plan/references/templates/ground-handoff-template.md",
+    "vico-exec/references/runner.md",
+    "vico-exec/references/cc-operator.md",
+]
+
+AGENT_SUMMARY_MARKERS = [
+    "- `Display name`:",
+    "- `Short description`:",
+    "- `Default prompt`:",
+]
+
+
+def validate_skill_contracts(root: Path) -> list[str]:
     failures: list[str] = []
-    path = root / relative_path
-    if not path.exists():
-        return [f"Missing file: {path}"]
-    text = path.read_text(encoding="utf-8")
-    for marker in markers:
-        if marker not in text:
-            failures.append(f"{relative_path} missing marker: {marker}")
+    for skill_name, contract in SKILL_CONTRACTS.items():
+        path = root / skill_name / "SKILL.md"
+        if not path.exists():
+            failures.append(f"Missing skill contract: {path}")
+            continue
+        text = path.read_text(encoding="utf-8")
+        lines = text.splitlines()
+        frontmatter = "\n".join(lines[:8])
+        for marker in ("---", f"name: {skill_name}", "description:"):
+            if marker not in frontmatter:
+                failures.append(f"{path.relative_to(root)} missing frontmatter marker: {marker}")
+        for section in contract["sections"]:
+            if section not in text:
+                failures.append(f"{path.relative_to(root)} missing section: {section}")
+        for marker in AGENT_SUMMARY_MARKERS:
+            if marker not in text:
+                failures.append(f"{path.relative_to(root)} missing agent summary field: {marker}")
+        display_marker = f"- `Display name`: `{contract['display_name']}`"
+        if display_marker not in text:
+            failures.append(f"{path.relative_to(root)} missing display name marker: {display_marker}")
+        for token in contract["tokens"]:
+            if token not in text:
+                failures.append(f"{path.relative_to(root)} missing contract token: {token}")
+    return failures
+
+
+def validate_core_docs(root: Path) -> list[str]:
+    failures: list[str] = []
+    for relative_path, markers in CORE_DOCS.items():
+        path = root / relative_path
+        if not path.exists():
+            failures.append(f"Missing core doc: {path}")
+            continue
+        text = path.read_text(encoding="utf-8")
+        for marker in markers:
+            if marker not in text:
+                failures.append(f"{relative_path} missing core doc marker: {marker}")
+    return failures
+
+
+def validate_required_paths(root: Path) -> list[str]:
+    failures: list[str] = []
+    for relative_path in REQUIRED_PATHS:
+        path = root / relative_path
+        if not path.exists():
+            failures.append(f"Missing required path: {path}")
+    return failures
+
+
+def validate_generated_forms(root: Path) -> list[str]:
+    failures: list[str] = []
+    checks = [
+        [sys.executable, str(root / "scripts" / "sync_shared_vico_runtime.py"), "--root", str(root), "--check"],
+        [sys.executable, str(root / "scripts" / "sync_openai_agents.py"), "--root", str(root), "--check"],
+    ]
+    for cmd in checks:
+        result = run(cmd, root)
+        if result.returncode != 0:
+            failures.append(
+                "generated form drift:\n"
+                + " ".join(cmd)
+                + "\n"
+                + (result.stdout + result.stderr).strip()
+            )
+    return failures
+
+
+def validate_thin_wrappers(root: Path) -> list[str]:
+    failures: list[str] = []
+    wrappers = {
+        "vico-plan/scripts/bootstrap_vico_slug.py": "runtime/cli/bootstrap_vico_slug.py",
+        "vico-plan/scripts/close_vico_slug.py": "runtime/cli/close_vico_slug.py",
+        "vico-plan/scripts/sync_vico_headers.py": "runtime/cli/sync_vico_headers.py",
+        "vico-plan/scripts/sync_vico_index.py": "runtime/cli/sync_vico_index.py",
+        "vico-plan/scripts/validate_vico_workspace.py": "runtime/cli/validate_vico_workspace.py",
+        "vico-exec/scripts/claude_exec_runner.py": "adapters/claude/claude_exec_runner.py",
+    }
+    for relative_path, owner in wrappers.items():
+        path = root / relative_path
+        if not path.exists():
+            failures.append(f"Missing wrapper: {path}")
+            continue
+        text = path.read_text(encoding="utf-8")
+        for marker in ("runpy.run_path", owner):
+            if marker not in text:
+                failures.append(f"{relative_path} missing wrapper marker: {marker}")
     return failures
 
 
 def validate_current_contracts(root: Path) -> list[str]:
     failures: list[str] = []
-    required: dict[str, tuple[str, ...]] = {
-        "vico-ground/SKILL.md": (
-            "lightweight grounding controller",
-            "Build just enough shared ground to choose a safe next route.",
-            "Treat short repo-orientation requests as strong `vico-ground` signals by default",
-            "## Public Moves",
-            "`scan`",
-            "`clarify`",
-            "`stress`",
-            "`handoff`",
-            "## Controller Rules",
-            "Choose the smallest move that resolves the highest-value uncertainty.",
-            "## Stop Rule",
-            "Never continue grounding just to make the output look more complete.",
-            "## Minimal State Model",
-            "`Facts`",
-            "`Assumptions`",
-            "`Tensions`",
-            "`Next route`",
-            "## Output Contract",
-            "`Conclusion`",
-            "`Evidence`",
-            "`Next action`",
-            "## Full Handoff Contract",
-        ),
-        "vico-ground/references/help-template.md": (
-            "## Vico Ground Help",
-            "- `scan`",
-            "- `clarify`",
-            "- `stress`",
-            "- `handoff`",
-            "- `Next route`",
-            "- `Next action`",
-            "Skill route: vico-ground",
-            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
-            "Route detail: <repo_orientation | architecture_scan | exact trigger phrase>",
-            "Route mode: <scan | clarify | stress | handoff>",
-        ),
-        "vico-ground/agents/openai.yaml": (
-            "Think before acting",
-            "Keep the public interface small",
-            "stop grounding once the next route is clear",
-        ),
-        "scripts/export_vico_operating_md.py": (
-            "Export a repo-local Vico operating brief to AGENTS.md or CLAUDE.md.",
-            "## Vico Operating Brief",
-            "Use `vico-ground` to build just enough shared ground to choose a safe next route before action.",
-            "Use `vico-ground scan`, `clarify`, `stress`, and `handoff` as the primary public moves.",
-        ),
-        "vico-ground/references/output-format.md": (
-            "# Vico Ground Output Format",
-            "## Scan Example",
-            "## Handoff Example",
-            "Conclusion",
-            "Evidence",
-            "Next route",
-            "Next action",
-            "## Full Handoff Example",
-        ),
-        "vico-plan/SKILL.md": (
-            "## Simplicity Discipline",
-            "## Forward-Only Planning Discipline",
-            "turn grounded decisions into an executable plan",
-            "Default to forward design and assume no historical burden unless the user explicitly says compatibility matters.",
-            "Treat tracked-work controller intent as the main routing signal",
-            "`vico-ground` handoff",
-        ),
-        "vico-plan/references/templates/help-template.md": (
-            "`verify close`",
-            "`sync`: use when code moved and the current plan should catch up",
-            "Skill route: vico-plan",
-            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
-            "Route detail: <tracked_work_controller | verify_request | exact trigger phrase>",
-        ),
-        "vico-plan/references/templates/review-template.md": (
-            "Confidence: high | medium | low",
-            "Scope impact: local | active_slug | cross_slug | repo_wide",
-            "Uncertainty source:",
-            "## Risk If Skipped",
-            "## Alternative Next Steps",
-        ),
-        "vico-plan/references/templates/verify-template.md": (
-            "Confidence: high | medium | low",
-            "Scope impact: local | active_slug | cross_slug | repo_wide",
-            "Uncertainty source:",
-            "## Risk If Skipped",
-            "## Alternative Next Modes",
-        ),
-        "vico-plan/agents/openai.yaml": (
-            "Apply simplicity first",
-            "prefer the smallest execution contract",
-            "avoid speculative phases or abstractions",
-        ),
-        "vico-plan/references/templates/ground-handoff-template.md": (
-            "# Ground Handoff Template",
-            "Move: handoff",
-            "## Ground Handoff",
-            "What is true now",
-            "What is still unresolved",
-            "Suggested first step",
-            "Optional: Tracking hint",
-            "strong downstream inputs",
-            "soft context inputs",
-        ),
-        "vico-exec/SKILL.md": (
-            "`cc`",
-            "launch the bundled Claude Code runner loop against the active plan",
-            "## Surgical Execution Discipline",
-            "## Success Criteria Discipline",
-            "Loop until verified",
-            "Treat persistent implementation intent as the main routing signal",
-            "`vico-ground` handoffs",
-            "Skill route: vico-exec",
-            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
-            "Route detail: <persistent_implementation | continue_until_complete | exact trigger phrase>",
-        ),
-        "vico-exec/references/help-template.md": (
-            "## Modes",
-            "- cc",
-            "vico-exec cc",
-            "run this with cc",
-            "handoff to cc",
-            "Skill route: vico-exec",
-            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
-            "Route detail: <persistent_implementation | continue_until_complete | exact trigger phrase>",
-            "Route mode: <default | cc | help>",
-        ),
-        "vico-exec/agents/openai.yaml": (
-            "Use surgical changes and goal-driven execution",
-            "define success criteria before calling work done",
-            "loop until verification evidence is strong enough",
-        ),
-        "vico-exec/references/automation.md": (
-            "## Claude Runner Loop",
-            "claude_exec_runner.py",
-        ),
-        "vico-exec/references/execution-report-template.md": (
-            "Confidence: high | medium | low",
-            "Scope impact: local | active_slug | cross_slug | repo_wide",
-            "Uncertainty source:",
-            "## Risk If Skipped",
-            "## Alternative Next Steps",
-        ),
-        "vico-exec/references/runner.md": (
-            "## Claude Runner",
-            "continue",
-            "stale_plan",
-            "cc-operator.md",
-        ),
-        "vico-exec/references/cc-operator.md": (
-            "## When To Use `vico-exec cc`",
-            "## Exit Codes",
-            "## Recommended Operator Flow",
-            "## Hook Vs Runner",
-            "## Example Outcomes",
-            "`0`",
-            "`4`",
-        ),
-        "vico-exec/scripts/claude_exec_runner.py": (
-            "RUNNER_SCHEMA",
-            "claude",
-            "stale_plan",
-        ),
-        "vico-feedback/SKILL.md": (
-            "GitHub issue draft",
-            "Treat feedback-about-the-workflow intent as the main routing signal",
-            "how do I use vico-feedback",
-            "Skill route: vico-feedback",
-            "Route reason: <explicit_skill_request | intent_cluster | natural_trigger>",
-            "Route detail: <workflow_feedback | issue_draft_request | exact trigger phrase>",
-        ),
-        "vico-feedback/agents/openai.yaml": (
-            "Think before filing",
-            "separate workflow feedback from unrelated repository bugs",
-            "prefer the smallest accurate draft",
-        ),
-        "README.md": (
-            "`vico-ground`",
-            "Trigger examples: [TRIGGERS.md](TRIGGERS.md)",
-            "problem framing and execution structure are separate escalation axes",
-            "build just enough shared ground to choose a safe next route",
-            "## Forward-Only Design",
-            "default to forward design; do not assume historical burden",
-            "### Escalation Map",
-            "Codex: vico-plan -> Claude Code: vico-exec",
-            "python vico-skills/scripts/export_vico_operating_md.py AGENTS.md",
-            "## External Influences",
-            "forrestchang/andrej-karpathy-skills",
-            "### Karpathy Mapping",
-            "Think Before Coding",
-            "Surgical Changes",
-            "Consensus guide: [CONSENSUS.md](CONSENSUS.md)",
-            "## Start Here",
-            "Three common paths",
-            "Route by intent cluster first, phrase match second.",
-            "Route detail: <the strongest route-specific detail>",
-            "Route mode: <public mode or move>",
-        ),
-        "README-zh.md": (
-            "`vico-ground`",
-            "触发示例: [TRIGGERS-zh.md](TRIGGERS-zh.md)",
-            "建立“足够行动”的 shared ground",
-            "## 前向设计原则",
-            "默认按前向设计处理，不预设历史负担",
-            "Codex: vico-plan -> Claude Code: vico-exec",
-            "python vico-skills/scripts/export_vico_operating_md.py AGENTS.md",
-            "共识模型参考: [CONSENSUS-zh.md](CONSENSUS-zh.md)",
-            "### Karpathy 映射",
-            "Think Before Coding",
-            "Surgical Changes",
-            "## 从这里开始",
-            "三条最常见路径",
-            "应先按意图簇路由，再用短语匹配补召回。",
-            "Route detail: <最强的路由细节>",
-            "Route mode: <public mode or move>",
-        ),
-        "CONTRACTS.md": (
-            "## Forward-Only Contract Discipline",
-            "Default to forward design and assume no historical burden unless the user explicitly says compatibility matters.",
-            "Do not preserve legacy names, aliases, modes, files, or structures by default.",
-        ),
-        "CONTRACTS-zh.md": (
-            "## 前向契约原则",
-            "默认按前向设计处理，并假设不存在历史负担；只有用户明确说兼容性重要时，才进入兼容性思维。",
-            "不要默认保留旧命名、别名、模式、文件或结构。",
-        ),
-        "TRIGGERS.md": (
-            "# Trigger Examples",
-            "## Routing Order",
-            "Route by intent cluster first.",
-            "## Intent Clusters",
-            "Repo orientation, architecture scan, clarification, pressure-test, handoff",
-            "Persistent implementation continuation",
-            "## Example Decisions",
-            "## Short Clarification Patterns",
-            "## Anti-Patterns",
-        ),
-        "TRIGGERS-zh.md": (
-            "# 触发示例矩阵",
-            "## 路由顺序",
-            "先按意图簇路由。",
-            "## 意图簇",
-            "仓库摸底、架构扫描、澄清、pressure-test、handoff",
-            "持续推进实现",
-            "## 路由示例",
-            "## 短确认模板",
-            "## 反模式",
-        ),
-        "CONSENSUS.md": (
-            "# Consensus Models",
-            "### Common Ground",
-            "### Conversational Grounding",
-            "### Sensemaking",
-            "### Collaborative Problem Solving",
-            "### Deliberation And Argumentation",
-            "## Practical Consensus Moves",
-            "## Theory To Move Mapping",
-            "## Failure Patterns",
-            "## Anti-Patterns",
-        ),
-        "CONSENSUS-zh.md": (
-            "# 共识模型",
-            "### Common Ground",
-            "### Conversational Grounding",
-            "### Sensemaking",
-            "## 可用的共识动作",
-            "## 理论到 Move 的映射表",
-            "## 失败模式",
-            "## 反模式",
-        ),
-    }
-    for relative_path, markers in required.items():
-        failures.extend(validate_skill_markers(root, relative_path, markers))
+    failures.extend(validate_skill_contracts(root))
+    failures.extend(validate_core_docs(root))
+    failures.extend(validate_required_paths(root))
+    failures.extend(validate_generated_forms(root))
+    failures.extend(validate_thin_wrappers(root))
     return failures
 
 
@@ -417,6 +329,35 @@ def validate_runtime_closure(root: Path) -> list[str]:
                     and resolved not in visited
                 ):
                     queue.append(resolved)
+    return failures
+
+
+def validate_shared_script_parity(root: Path) -> list[str]:
+    failures: list[str] = []
+    owner = root / "runtime" / "vico_artifacts" / "vico_common.py"
+    closures = [
+        root / "vico-plan" / "scripts" / "vico_common.py",
+        root / "vico-exec" / "scripts" / "vico_common.py",
+    ]
+    if not owner.exists():
+        return [f"Missing shared script owner: {owner}"]
+    missing_closures = [path for path in closures if not path.exists()]
+    if missing_closures:
+        return [f"Missing shared script closure: {path}" for path in missing_closures]
+
+    owner_text = ast.dump(
+        ast.parse(owner.read_text(encoding="utf-8")), include_attributes=False
+    )
+    for closure in closures:
+        closure_text = ast.dump(
+            ast.parse(closure.read_text(encoding="utf-8")), include_attributes=False
+        )
+        if owner_text != closure_text:
+            failures.append(
+                "shared script drift: "
+                f"{closure.relative_to(root)} must stay in semantic parity with owner source "
+                f"{owner.relative_to(root)}"
+            )
     return failures
 
 
@@ -509,6 +450,15 @@ def main() -> int:
         )
     else:
         print("[ok] runtime closure")
+
+    shared_script_parity_failures = validate_shared_script_parity(root)
+    if shared_script_parity_failures:
+        failures.append(
+            "shared script parity validation failed:\n"
+            + "\n".join(shared_script_parity_failures)
+        )
+    else:
+        print("[ok] shared script parity")
 
     if pycache_dirs(root):
         failures.append("Unexpected __pycache__ entries remain")

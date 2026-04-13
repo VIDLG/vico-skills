@@ -16,9 +16,10 @@ It is not a second source of truth for skill behavior; the owner contracts remai
 | Intent cluster | Default route | Core precondition | Examples |
 | --- | --- | --- | --- |
 | Repo orientation, architecture scan, clarification, pressure-test, handoff | `vico-ground` | user is working on the whole target or overall decision surface | `scan the repo`, `inspect the codebase`, `scan the architecture`, `clarify this`, `stress-test this`, `resolve this into a handoff`, `扫一下这个项目`, `摸个底`, `盘一下这个代码库`, `看下架构` |
-| Tracked-work control, planning, verify, sync, replan, close | `vico-plan` | tracked work is in scope or should become tracked | `make a plan`, `verify this plan`, `做个计划`, `对一下 plan`, `verify 一下`, `收个口`, `close 这个 plan` |
+| Tracked-work control, planning, verify, replan | `vico-plan` | tracked work is in scope or should become tracked | `make a plan`, `verify this plan`, `做个计划`, `对一下 plan`, `verify 一下`, `replan this slug` |
 | Persistent implementation continuation | `vico-exec` | an active plan already exists | `keep going`, `continue until complete`, `继续做`, `别停`, `接着跑`, `一直做到完成` |
 | Feedback about `vico-skills` itself | `vico-feedback` | the complaint or suggestion targets the workflow or skill behavior | `file an issue`, `I have feedback about vico-skills`, `提个 issue`, `记个反馈`, `这个触发不太对`, `帮我整理成 issue` |
+| Repo-local maintenance, lifecycle, and truth extraction | `vico-ops` | tracked artifacts or `.vico` state are already in scope | `bootstrap a new slug`, `sync the active docs`, `close this tracked work`, `cancel this slug`, `extract architecture truth`, `validate the vico workspace` |
 
 ## Example Decisions
 
@@ -29,7 +30,9 @@ It is not a second source of truth for skill behavior; the owner contracts remai
 | `把我们现在的 operating brief 导出到 AGENTS.md` | repo utility | export current workflow rules into a project-local instruction file |
 | `看下这个函数为什么 panic` | `direct_execute` or direct answer | narrow local debugging request |
 | `做个计划把这个需求落成 tracked work` | `vico-plan` | explicit tracked planning intent |
-| `verify 一下这个 active plan 能不能 close` | `vico-plan` | verification and close-out control belong to plan |
+| `verify 一下这个 active plan 能不能 close` | `vico-plan` | verification belongs to planning; cleanup comes later |
+| `close 这个 tracked work` | `vico-ops` | lifecycle cleanup is a repo-local operations action |
+| `sync 一下当前 .vico 状态` | `vico-ops` | state alignment is maintenance, not planning |
 | `继续做，别停，直到完成` with active plan present | `vico-exec` | persistent execution intent plus active-plan precondition satisfied |
 | `继续做这个需求` with no active plan | short clarification or `vico-plan` | execution intent exists but `vico-exec` precondition is missing |
 | `这个 vico-ground 的触发不太对，帮我提个 issue` | `vico-feedback` | workflow feedback targeted at `vico-skills` |

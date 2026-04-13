@@ -27,7 +27,7 @@ Recommended minimums:
 2. Confirm that the user explicitly asked for close-out in the current turn.
 3. Extract any still-relevant facts into architecture docs.
 4. Record any important `Outcome`, `Deviations`, or `Follow-up` notes elsewhere if they still matter.
-5. Delete the active file.
+5. Delete the active file through the repo-local lifecycle surface such as `vico-ops close` or `vico-ops cancel`.
 6. Remove stale temporary reconcile snapshots and delete the index once no active artifact set remains.
 
 ## Completion Summary Template

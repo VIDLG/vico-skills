@@ -32,11 +32,7 @@ Keep commands, verdict literals, status literals, and slug/path literals unchang
 
 ## Recommended Next Mode
 
-- `close`
-- `verify close`
-- `verify sync`
-- `verify replan`
-- `sync`
+- `vico-ops close`
 - `replan`
 - `prd`
 - `vico-exec`

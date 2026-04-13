@@ -6,6 +6,7 @@ import re
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
+
 META_LINE_RE = re.compile(r"^\s*>?\s*([A-Za-z][A-Za-z ]*[A-Za-z]):\s*(.*?)\s*$")
 META_START_RE = re.compile(
     r"^\s*>?\s*(Status|Mode|Progress|Slug|Manifest|Created|Updated|Completed|Source PRD|Execution Plan|Related plan|Current architecture|Superseded by):\s*"

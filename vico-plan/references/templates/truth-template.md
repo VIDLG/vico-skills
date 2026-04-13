@@ -1,6 +1,6 @@
 # Truth Template
 
-Use this shape for `vico-plan truth`.
+Use this shape for `vico-ops truth`.
 Render headings and prose in the user's primary working language when it is clear from the conversation.
 Keep commands, path literals, and stable field labels unchanged when another workflow consumes them.
 

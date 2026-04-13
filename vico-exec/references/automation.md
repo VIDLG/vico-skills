@@ -9,10 +9,12 @@ Use `scripts/claude_exec_runner.py` when Claude Code should keep executing and v
 Examples:
 
 ```bash
-python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon
-python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon --slug 2026-04-12-example --max-iterations 20
-python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon --permission-mode acceptEdits --effort high
+python vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon
+python vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon --slug 2026-04-12-example --max-iterations 20
+python vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon --permission-mode acceptEdits --effort high
 ```
+
+These commands assume a repository checkout or copied local utility path.
 
 Use it when:
 
@@ -29,9 +31,9 @@ Use `scripts/sync_vico_index.py` to rebuild `.vico/index/*.json` from the curren
 Examples:
 
 ```bash
-python3 vico-skills/vico-exec/scripts/sync_vico_index.py --repo-root D:/projects/spoon
-python3 vico-skills/vico-exec/scripts/sync_vico_index.py architecture-cleanup --repo-root D:/projects/spoon
-python3 vico-skills/vico-exec/scripts/sync_vico_index.py --repo-root D:/projects/spoon --prune --dry-run
+python vico-skills/vico-exec/scripts/sync_vico_index.py --repo-root D:/projects/spoon
+python vico-skills/vico-exec/scripts/sync_vico_index.py architecture-cleanup --repo-root D:/projects/spoon
+python vico-skills/vico-exec/scripts/sync_vico_index.py --repo-root D:/projects/spoon --prune --dry-run
 ```
 
 Use it after:

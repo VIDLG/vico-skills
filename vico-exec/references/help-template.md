@@ -23,7 +23,7 @@ Keep commands and mode literals unchanged.
 - verify after each meaningful step
 - keep the plan current while executing
 - use the bundled Claude runner when hooks are not enough and you want a stronger repeat-until-stop loop
-- route to `vico-plan close` when end-to-end completion is requested
+- when end-to-end completion is requested and implementation is complete, recommend `vico-plan verify` then `vico-ops close` rather than closing automatically
 - show this route-debug shape in the first visible update when `vico-exec` is selected:
   - `Skill route: vico-exec`
   - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
@@ -38,7 +38,7 @@ Keep commands and mode literals unchanged.
 
 ## Safety Rules
 
-- do not perform close-out deletion directly
+- do not perform close-out deletion directly; `vico-exec` may only recommend `vico-plan verify` or `vico-ops close`
 - route back through `vico-plan` when execution state is unclear
 - do not guess the execution target when multiple active slugs are plausible
 

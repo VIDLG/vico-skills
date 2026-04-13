@@ -7,14 +7,20 @@ description: Default front door for Vico-style repo-local planning. Decide wheth
 
 ## Overview
 
-`vico-plan` is the only default front door for tracked Vico work.
+`vico-plan` is the default front door for tracked Vico work.
 
-Treat natural requests such as `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `close this plan`, or `how do I use vico-plan` as valid `vico-plan` entrypoints even when the user does not name the skill explicitly.
+Treat natural requests such as `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, or `how do I use vico-plan` as valid `vico-plan` entrypoints even when the user does not name the skill explicitly.
 
-Treat tracked-work controller intent as the main routing signal. Use `vico-plan` by default when the user is trying to start tracked work, reshape the execution contract, verify tracked completion, sync stale tracked docs, close out tracked work, or continue an existing tracked thread without asking for persistent implementation looping yet.
+Treat tracked-work controller intent as the main routing signal. Use `vico-plan` by default when the user is trying to start tracked work, reshape the execution contract, verify tracked completion, or continue an existing tracked thread without asking for persistent implementation looping yet.
 
 If the user's intent could reasonably map to lightweight direct execution instead of tracked planning, and repository evidence does not clearly justify `.vico` tracking, ask a short clarification question before creating tracked work.
 If the user's wording mainly signals persistent implementation continuation and an active plan already exists, prefer `vico-exec` instead of `vico-plan`.
+
+## Agent Summary
+
+- `Display name`: `Vico Plan`
+- `Short description`: `Default to plan_only and write Vico execution plans`
+- `Default prompt`: `Act as the default front door for Vico planning. Decide whether work should stay `no-doc`, become `plan_only`, or upgrade to `prd_backed`; perform lightweight reconcile when active state is stale or overlapping; choose the clearest active execution contract; absorb the latest `vico-ground` handoff block by default; and then update the active plan under .vico/plans/active with derived index alignment as needed. Apply simplicity first: prefer the smallest execution contract that can guide reliable work, ask rather than guess when tracking scope is materially ambiguous, and avoid speculative phases or abstractions.`
 
 It owns four decisions before planning:
 
@@ -23,13 +29,9 @@ It owns four decisions before planning:
 3. should this upgrade to `prd_backed`
 4. does the current active slug need reuse, repair, or replacement
 
-It also owns two terminal state transitions:
-
-5. is this tracked work `close`
-6. is this tracked work `cancelled`
-
 After that, it writes or updates the active plan under `.vico/plans/active/`.
 Default to a single active plan document that carries both intent and execution. When work outgrows that shape, upgrade the slug to `prd_backed` and keep the plan as the execution document. Prefer dated slugs, capture status and dates in metadata, and prefer vertical slices over horizontal layer-by-layer plans.
+Route repo-local lifecycle and maintenance operations through `vico-ops`.
 
 ## Simplicity Discipline
 
@@ -104,27 +106,15 @@ If a matching ground handoff came from a broad scan or architectural pass, treat
   - inspect the current active state and report it without writing any docs
 - `verify`
   - check the active plan against current code and test evidence before close-out, without writing any docs
-- `sync`
-  - update the active plan so it catches up to current code and tests
 - `prd`
   - upgrade or update `prd_backed` state
 - `replan`
   - rewrite the current execution contract under the same slug
-- `replace`
-  - delete the current active docs and continue with one fresh dated slug
-- `truth`
-  - explicitly extract durable truth into `docs/architecture/`
-- `close`
-  - delete active docs because the work is complete
-- `cancel`
-  - delete active docs because the work is abandoned
 
 `review` must be strictly read-only.
 `verify` must be strictly read-only.
-`truth` is manual only. Do not trigger it automatically.
 Use `replan` as the single public mode for same-slug execution-contract rewrites. Do not expose a separate public `reset` mode.
-Use `verify close` as the explicit combined path when the user manually asks for verification followed immediately by close-out and the verdict is `verified_complete`.
-Use `verify sync` when the user wants verification to gate an immediate plan-state refresh, and `verify replan` when they want verification to gate an immediate execution-contract rewrite.
+Route lifecycle and maintenance follow-ups such as `close`, `cancel`, `truth`, `sync`, or workspace validation through `vico-ops` rather than exposing them as `vico-plan` public modes.
 
 ## Workflow
 
@@ -151,25 +141,17 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 8. Explore the codebase to understand current architecture, ownership, and integration seams.
 9. Identify durable architectural decisions that should apply across all phases.
 10. Draft thin vertical slices that produce verifiable behavior end-to-end.
-11. Review slice granularity with the user and iterate until approved.
+11. If slice granularity or scope remains materially ambiguous, review it with the user and iterate until safe.
 12. Update `.vico/index/<slug>.json` as a derived machine-readable link to the primary artifacts. Prefer [scripts/sync_vico_index.py](scripts/sync_vico_index.py) when available instead of hand-editing derived linkage.
 13. Write or update the plan at `.vico/plans/active/<slug>.md` using [references/templates/plan-template.md](references/templates/plan-template.md). Prefer [scripts/sync_vico_headers.py](scripts/sync_vico_headers.py) when header cross-links drift.
 14. If there is a source PRD, update the PRD header so `Execution Plan` points to the new plan path.
-15. If overlap handling is more complex than a clean rewrite, delete the active docs and rebuild one fresh dated slug instead of preserving a confusing lineage.
-16. If the user intent is to stop rather than continue, support these explicit terminal actions only when the user asks for them explicitly in the current turn:
-   - `close`: delete active docs because the work is complete
-   - `cancel`: delete active docs because the work is abandoned
-17. If durable truth should be extracted into `docs/architecture/`, do that as part of this workflow instead of routing to a separate docs skill.
+15. If overlap handling is more complex than a clean rewrite, prefer a fresh dated slug over preserving a confusing lineage.
+16. When repo-local maintenance is now the real need, hand off to `vico-ops` instead of expanding the planning surface.
 
 ## Multi-Active Safety Rules
 
-- If more than one active slug exists, destructive modes must require an explicit slug:
-  - `replace`
-  - `close`
-  - `cancel`
-- Do not guess a destructive target from loose context when multiple active slugs exist.
 - `review` may summarize all active slugs, but should identify which one appears most relevant and why.
-- `sync`, `replan`, and `prd` should also prefer explicit slug selection when multiple active slugs are materially plausible.
+- `replan` and `prd` should prefer explicit slug selection when multiple active slugs are materially plausible.
 
 ## Planning Rules
 
@@ -195,15 +177,9 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - If tracked work advances, even via a tiny "vibe" change, sync the plan checklist and `Updated` date instead of silently relying on code state.
 - If scope, goals, or acceptance moved enough that the plan is no longer the right execution contract, upgrade or update the paired PRD inside this workflow.
 - If a request introduces a clearly new or cleaner execution contract, start a new dated slug instead of stretching the old one.
-- If overlap handling becomes awkward, delete the active docs and rebuild one fresh dated slug.
+- If overlap handling becomes awkward, prefer a fresh dated slug and route any destructive cleanup through `vico-ops`.
 - If a `plan_only` slug is upgraded to `prd_backed`, update plan header metadata, PRD header metadata, and index linkage atomically.
 - Do not support in-place downgrade from `prd_backed` to `plan_only`.
-- Treat truth extraction into `docs/architecture/` as an internal sub-step of planning or close-out, not as a separate default workflow.
-- Keep `truth` manual. Only perform truth extraction when the user explicitly asks for it or when a higher-level workflow explicitly enters `vico-plan truth`.
-- Support explicit terminal actions inside this workflow:
-  - `close` = delete-and-exit because work is complete
-  - `cancel` = delete-and-exit because work is abandoned
-- Never infer `close` from end-to-end completion, completed checklist state, or agent expectation alone. Wait for explicit user confirmation in the current turn before deleting active docs.
 - Treat the plan as the main human-readable execution artifact. The index is supporting metadata, not peer-level prose.
 
 ## Execution Readiness Rules
@@ -211,7 +187,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - A plan is `vico-exec` ready only when the next smallest unblocked slice can be chosen without guessing beyond the current plan or PRD.
 - The current slice should expose observable acceptance criteria and at least one focused verification path.
 - User decisions, blockers, and unresolved scope forks should be explicit in the plan or PRD rather than implied by missing checklist detail.
-- If the current plan is too coarse, too stale, or too ambiguous for the next step to be chosen reliably, stay in `vico-plan` and `sync` or `replan` before routing into `vico-exec`.
+- If the current plan is too coarse, too stale, or too ambiguous for the next step to be chosen reliably, stay in `vico-plan` and reconcile or `replan` before routing into `vico-exec`.
 - Prefer using ground handoff hints to sharpen the first execution slice when they materially reduce ambiguity.
 - Treat `What is true now` as grounded context that should sharpen planning unless repository evidence now conflicts with it.
 
@@ -219,20 +195,15 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 
 - `verify` is the close-out readiness gate for tracked work.
 - `verify` must compare the active plan and optional PRD against current code and test evidence instead of trusting `.vico` status alone.
-- Use `verify` when another agent claims the work is complete, when `Status` or checklist state may be stale, or before `close` deletes active docs.
+- Use `verify` when another agent claims the work is complete, when `Status` or checklist state may be stale, or before `vico-ops close` deletes active docs.
 - `verify` should produce a completion verdict:
   - `verified_complete`
   - `not_complete`
   - `ambiguous`
 - `verify` alone must not delete active docs or silently close out the slug.
-- If the user explicitly invokes `verify sync`, allow plan-state refresh only when the verification evidence shows the current execution contract still applies and mainly needs doc/state alignment.
-- If the user explicitly invokes `verify replan`, allow replan only when the verification evidence shows the same slug still applies but the execution contract itself is no longer reliable.
-- If the user explicitly invokes `verify close`, allow close-out only when the verdict is `verified_complete`; otherwise stop with the verification result and recommend the correct next mode.
-- If the verdict is not `verified_complete`, prefer `sync`, `replan`, `prd`, or resumed execution over `close`.
+- If the verdict is not `verified_complete`, prefer `replan`, `prd`, or resumed execution over lifecycle cleanup.
 - In multi-active situations, `verify` should require an explicit slug unless the target is unambiguous from current-turn user steering.
-- If completion evidence is strong but the user has not explicitly asked for `close`, stop after `verify` and recommend `close` instead of deleting active docs.
-- If the user explicitly says `close` or `close out` and the target slug is unambiguous, treat that as authorization to close out immediately when completion evidence is already strong from the current turn or a recent verification.
-- Only stop instead of executing `close` when completion is not yet verified strongly enough, a blocker prevents safe close-out, multiple active slugs make the destructive target ambiguous, or the user explicitly asks to keep the active docs.
+- If completion evidence is strong, stop after `verify` and recommend `vico-ops close` instead of deleting active docs.
 
 ## Sync Contract
 
@@ -241,9 +212,7 @@ Use `verify sync` when the user wants verification to gate an immediate plan-sta
 - existing slug, implementation advance only: update the plan and minimally refresh the index
 - existing slug, plan no longer matches implementation: perform `diverge-replan`
 - existing slug, plan no longer sufficient for scope framing: perform `upgrade-to-prd-backed` here
-- existing slug, task completed without explicit close confirmation: keep the active docs, mark completion clearly, and recommend `close`
-- existing slug, task completed with explicit close confirmation: run `close` here
-- existing slug, task abandoned: run `cancel` here
+- existing slug, task completed: keep the active docs and route lifecycle cleanup through `vico-ops`
 
 ## Output Contract
 
@@ -257,7 +226,6 @@ Write plans with at least:
 - optional `Manifest`
 - optional `Source PRD`
 - optional `What is still unresolved`
-- optional terminal status note when using `close` or `cancel`
 - architectural decisions section
 - phased slices
 - acceptance criteria per phase
@@ -272,7 +240,7 @@ For user-facing textual output:
   - `Skill route: vico-plan`
   - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
   - optional `Route detail: <tracked_work_controller | verify_request | exact trigger phrase>`
-  - optional `Route mode: <review | verify | sync | prd | replan | replace | truth | close | cancel>`
+  - optional `Route mode: <review | verify | prd | replan>`
 
 For `help`:
 
@@ -312,10 +280,9 @@ Use the full phased template for medium and large work. For small plan-only work
 - Use [references/templates/review-template.md](references/templates/review-template.md) for `vico-plan review`.
 - Use [references/templates/verify-template.md](references/templates/verify-template.md) for `vico-plan verify`.
 - Use [references/templates/ground-handoff-template.md](references/templates/ground-handoff-template.md) for the expected `vico-ground` handoff block shape.
-- Use [references/templates/truth-template.md](references/templates/truth-template.md) for `vico-plan truth`.
 - Use [references/ops/reconcile.md](references/ops/reconcile.md) when reconcile is needed before planning.
 - Use [references/rules/status-vocabulary.md](references/rules/status-vocabulary.md) when expressing progress or divergence.
-- Use [references/ops/automation.md](references/ops/automation.md) for sync and close-out automation.
+- Use [references/ops/automation.md](references/ops/automation.md) for repo-local planning automation context and `vico-ops` handoff boundaries.
 - Use [references/rules/routing.md](references/rules/routing.md) when deciding reuse / replace / PRD escalation or when active state is messy.
 - Use [references/rules/layout.md](references/rules/layout.md) when updating long-lived truth in `docs/architecture/`.
 - Use [scripts/bootstrap_vico_slug.py](scripts/bootstrap_vico_slug.py) when this workflow decides a new tracked slug is needed.

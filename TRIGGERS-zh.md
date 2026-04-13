@@ -16,9 +16,10 @@
 | 意图簇 | 默认 route | 核心前置条件 | 例子 |
 | --- | --- | --- | --- |
 | 仓库摸底、架构扫描、澄清、pressure-test、handoff | `vico-ground` | 用户目标是整个对象或整体决策面 | `scan the repo`、`inspect the codebase`、`scan the architecture`、`clarify 一下这个目标`、`stress-test 这个方案`、`把这个 resolve 成 handoff`、`扫一下这个项目`、`摸个底`、`盘一下这个代码库`、`看下架构` |
-| tracked work 控制、规划、verify、sync、replan、close | `vico-plan` | tracked work 已经在上下文里，或应该进入 tracked work | `make a plan`、`verify this plan`、`做个计划`、`对一下 plan`、`verify 一下`、`收个口`、`close 这个 plan` |
+| tracked work 控制、规划、verify、replan | `vico-plan` | tracked work 已经在上下文里，或应该进入 tracked work | `make a plan`、`verify this plan`、`做个计划`、`对一下 plan`、`verify 一下`、`replan 这个 slug` |
 | 持续推进实现 | `vico-exec` | 已经存在 active plan | `keep going`、`continue until complete`、`继续做`、`别停`、`接着跑`、`一直做到完成` |
 | 反馈 `vico-skills` 自身 | `vico-feedback` | 抱怨或建议的目标是 workflow / skill 行为本身 | `file an issue`、`I have feedback about vico-skills`、`提个 issue`、`记个反馈`、`这个触发不太对`、`帮我整理成 issue` |
+| repo-local 维护、生命周期操作与 truth extraction | `vico-ops` | tracked artifact 或 `.vico` 状态已经在上下文里 | `bootstrap 一个新 slug`、`sync 当前 active docs`、`close 这个 tracked work`、`cancel 这个 slug`、`抽取 architecture truth`、`校验 vico workspace` |
 
 ## 路由示例
 
@@ -29,7 +30,9 @@
 | `把我们现在的 operating brief 导出到 AGENTS.md` | 仓库级 utility | 把当前 workflow 规则导出成项目内说明文件 |
 | `看下这个函数为什么 panic` | `direct_execute` 或直接回答 | 单点、局部的排障请求 |
 | `做个计划把这个需求落成 tracked work` | `vico-plan` | 明确是在做 tracked planning |
-| `verify 一下这个 active plan 能不能 close` | `vico-plan` | verify 和 close-out 控制属于 plan |
+| `verify 一下这个 active plan 能不能 close` | `vico-plan` | verify 属于 planning，cleanup 在后续 ops |
+| `close 这个 tracked work` | `vico-ops` | 生命周期清理属于 repo-local operations |
+| `sync 一下当前 .vico 状态` | `vico-ops` | 状态对齐属于维护动作，不属于 planning |
 | 已有 active plan 时说 `继续做，别停，直到完成` | `vico-exec` | 持续执行意图明确，且前置条件满足 |
 | 没有 active plan 时说 `继续做这个需求` | 一句短确认或 `vico-plan` | 有执行意图，但 `vico-exec` 前置条件不成立 |
 | `这个 vico-ground 的触发不太对，帮我提个 issue` | `vico-feedback` | 反馈对象明确是 `vico-skills` 自己 |

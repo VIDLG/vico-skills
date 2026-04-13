@@ -22,9 +22,14 @@ Next route
 
 - `stay_in_ground` | `direct_execute` | `vico-plan`
 
-Next action
+Recommended next action
 
 - <exact command or action>
+
+Other next actions
+
+- <optional alternative>
+- <optional alternative>
 ```
 
 Minimum completion check:
@@ -33,5 +38,5 @@ Minimum completion check:
 - includes `Conclusion`
 - includes `Evidence`
 - includes `Next route`
-- includes `Next action`
+- includes `Recommended next action`
 - does not keep mapping the target once the next route is already clear

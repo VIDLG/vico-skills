@@ -4,14 +4,17 @@ Use automation to reduce repeatable Vico maintenance work.
 
 ## Bootstrap A New Slug
 
-Use `../vico-plan/scripts/bootstrap_vico_slug.py` when `vico-plan` decides a new tracked slug is needed.
+Use `vico-ops bootstrap` for the repo-local maintenance surface, backed by `runtime/cli/bootstrap_vico_slug.py`.
 
 Examples:
 
 ```bash
-python3 vico-skills/vico-plan/scripts/bootstrap_vico_slug.py tiny-fix "Tiny Fix" --repo-root D:/projects/spoon
-python3 vico-skills/vico-plan/scripts/bootstrap_vico_slug.py boundary-work "Boundary Work" --repo-root D:/projects/spoon --level prd_backed_arch
+python vico-skills/vico-plan/scripts/bootstrap_vico_slug.py tiny-fix "Tiny Fix" --repo-root D:/projects/spoon
+python vico-skills/vico-plan/scripts/bootstrap_vico_slug.py boundary-work "Boundary Work" --repo-root D:/projects/spoon --level prd_backed_arch
 ```
+
+These commands assume a repository checkout or copied local utility path.
+Owner sources live under `runtime/cli/`; `vico-plan/scripts/` remains the compatibility command path.
 
 Use it when:
 
@@ -21,13 +24,13 @@ Use it when:
 
 ## Sync Active Headers
 
-Use `scripts/sync_vico_headers.py` to repair plan and PRD headers after moves, new manifests, or cross-link drift.
+Use `vico-ops sync` to repair plan and PRD headers after moves, new manifests, or cross-link drift.
 
 Examples:
 
 ```bash
-python3 vico-skills/vico-plan/scripts/sync_vico_headers.py --repo-root D:/projects/spoon
-python3 vico-skills/vico-plan/scripts/sync_vico_headers.py architecture-cleanup --repo-root D:/projects/spoon --touch-updated
+python vico-skills/vico-plan/scripts/sync_vico_headers.py --repo-root D:/projects/spoon
+python vico-skills/vico-plan/scripts/sync_vico_headers.py architecture-cleanup --repo-root D:/projects/spoon --touch-updated
 ```
 
 Use it after:
@@ -39,12 +42,12 @@ Use it after:
 
 ## Validate The Workspace
 
-Use `scripts/validate_vico_workspace.py` to validate the current `.vico` workspace against the Vico schema.
+Use `vico-ops validate` to validate the current `.vico` workspace against the Vico schema.
 
 Examples:
 
 ```bash
-python3 vico-skills/vico-plan/scripts/validate_vico_workspace.py --repo-root D:/projects/spoon
+python vico-skills/vico-plan/scripts/validate_vico_workspace.py --repo-root D:/projects/spoon
 ```
 
 Use it after:
@@ -56,14 +59,14 @@ Use it after:
 
 ## Sync Derived Index
 
-Use `scripts/sync_vico_index.py` to rebuild `.vico/index/*.json` from the current active plan, PRD, resume, and architecture docs.
+Use `vico-ops sync` to rebuild `.vico/index/*.json` from the current active plan, PRD, resume, and architecture docs when derived state must catch up.
 
 Examples:
 
 ```bash
-python3 vico-skills/vico-plan/scripts/sync_vico_index.py --repo-root D:/projects/spoon
-python3 vico-skills/vico-plan/scripts/sync_vico_index.py architecture-cleanup --repo-root D:/projects/spoon
-python3 vico-skills/vico-plan/scripts/sync_vico_index.py --repo-root D:/projects/spoon --prune --dry-run
+python vico-skills/vico-plan/scripts/sync_vico_index.py --repo-root D:/projects/spoon
+python vico-skills/vico-plan/scripts/sync_vico_index.py architecture-cleanup --repo-root D:/projects/spoon
+python vico-skills/vico-plan/scripts/sync_vico_index.py --repo-root D:/projects/spoon --prune --dry-run
 ```
 
 Use it after:
@@ -76,13 +79,13 @@ Use it after:
 
 ## Close And Archive A Slug
 
-Use `scripts/close_vico_slug.py` to delete active plan and PRD files, clean temporary resume state, and remove index linkage.
+Use `vico-ops close` or `vico-ops cancel` to delete active plan and PRD files, clean temporary resume state, and remove index linkage.
 
 Examples:
 
 ```bash
-python3 vico-skills/vico-plan/scripts/close_vico_slug.py architecture-cleanup --repo-root D:/projects/spoon --dry-run
-python3 vico-skills/vico-plan/scripts/close_vico_slug.py architecture-cleanup --repo-root D:/projects/spoon
+python vico-skills/vico-plan/scripts/close_vico_slug.py architecture-cleanup --repo-root D:/projects/spoon --dry-run
+python vico-skills/vico-plan/scripts/close_vico_slug.py architecture-cleanup --repo-root D:/projects/spoon
 ```
 
 Default behavior:

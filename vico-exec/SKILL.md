@@ -23,7 +23,13 @@ Do not stop just because one small slice completed. Stop only when:
 - a user decision is required
 - the current plan is stale enough that execution would be misleading
 
-This skill owns implementation progress and plan synchronization, not final close-out deletion. When the work is truly complete, stop with the plan updated and recommend `vico-plan close`; do not delete active docs without explicit user confirmation.
+This skill owns implementation progress and plan synchronization, not final close-out deletion. When the work is truly complete, stop with the plan updated and recommend `vico-plan verify` or `vico-ops close`; do not delete active docs without explicit user confirmation.
+
+## Agent Summary
+
+- `Display name`: `Vico Exec`
+- `Short description`: `Execute the active Vico plan until complete or truly blocked`
+- `Default prompt`: `Read the active Vico plan, use temporary handoff or reconcile state only when it is actually needed, execute the smallest unblocked next step, verify it, update the plan, and clear stale temporary linkage once execution is steady again. Keep close-out deletion out of this skill; when implementation is complete, preserve the active docs, route to `vico-plan verify` automatically as the recommendation handoff, or recommend `vico-ops close` once verification is already strong instead of deleting anything automatically. Use surgical changes and goal-driven execution: touch only what the current slice requires, define success criteria before calling work done, and loop until verification evidence is strong enough.`
 
 ## Surgical Execution Discipline
 
@@ -44,7 +50,7 @@ Treat natural requests such as `keep going`, `continue until complete`, `execute
 Treat persistent implementation intent as the main routing signal. Use `vico-exec` when the user wants the agent to keep implementing through multiple slices without stopping after each small step, and an active tracked execution contract already exists.
 
 If the user sounds like they want persistent execution but no active plan exists, ask a short clarification question or route them through `vico-plan` instead of guessing.
-If the user's wording is really about reviewing, verifying, syncing, or closing tracked docs rather than continuing implementation, prefer `vico-plan` instead of `vico-exec`.
+If the user's wording is really about reviewing or verifying the execution contract, prefer `vico-plan`; if it is about repo-local sync or lifecycle cleanup, prefer `vico-ops` instead of `vico-exec`.
 
 ## Inputs
 
@@ -88,7 +94,7 @@ For each meaningful execution pass:
 - keep commands, status literals, blocker types, file paths, and other machine-meaningful literals stable unless that downstream contract is explicitly changed
 - persist plan, index, or temporary reconcile updates to disk when the user expects docs to stay current or when continuation depends on accurate execution state
 - do not fabricate disk writes when no execution-state change is needed
-- when implementation is complete, route to `vico-plan close` automatically only as a recommendation handoff, or recommend `vico-plan verify`, but do not route into close-out deletion without explicit user confirmation
+- when implementation is complete, route to `vico-plan verify` automatically as a recommendation handoff, or recommend `vico-ops close` once verification is already strong, but do not route into close-out deletion without explicit user confirmation
 - include the active source, active slug, and continuation basis in the execution report so the user can see why execution continued or stopped
 - keep deeper continuation heuristics implicit by default unless the user asks for execution internals or a blocker requires them to understand the exact boundary
 
@@ -109,14 +115,14 @@ High-level rules:
 - When a blocker is real, say exactly why execution cannot continue and what decision or input is needed.
 - Continue after each completed slice when another unblocked step exists.
 - Do not stop merely because one checklist item finished.
-- If the user intent is end-to-end completion and implementation is now complete, stop with completion evidence and recommend `vico-plan close` rather than deleting active docs automatically.
+- If the user intent is end-to-end completion and implementation is now complete, stop with completion evidence and recommend `vico-plan verify` then `vico-ops close` rather than deleting active docs automatically.
 
 For each execution pass, produce a compact execution report using [references/execution-report-template.md](references/execution-report-template.md).
 When blocked, classify the blocker and use the blocked output shape in [references/blocker-taxonomy.md](references/blocker-taxonomy.md).
 
 ## Claude Code
 
-For Claude Code, this skill can be paired with bundled hook scripts or a stronger repo-local runner loop:
+For Claude Code, this skill can be paired with bundled hook scripts or a stronger repo-local runner loop. Claude-specific owner sources live under `adapters/claude/`; keep `vico-exec/scripts/` entries as thin compatibility wrappers when stable skill-local paths still matter.
 
 - [references/hooks-setup.md](references/hooks-setup.md)
 - [references/runner.md](references/runner.md)

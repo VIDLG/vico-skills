@@ -13,6 +13,12 @@ Treat feedback-about-the-workflow intent as the main routing signal. Use `vico-f
 
 If the user is only reporting a repository bug unrelated to `vico-skills` itself, do not route here automatically.
 
+## Agent Summary
+
+- `Display name`: `Vico Feedback`
+- `Short description`: `Draft and optionally file GitHub issues for vico-skills`
+- `Default prompt`: `Turn user feedback about vico-skills into a structured GitHub issue draft. Ask only the shortest clarifying question needed, check likely duplicates when useful, and only create the issue after explicit user confirmation. Think before filing: separate workflow feedback from unrelated repository bugs, preserve the user's actual complaint without over-interpreting it, and prefer the smallest accurate draft that captures why the issue matters.`
+
 ## Goals
 
 - capture user feedback in a structured form

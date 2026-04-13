@@ -20,9 +20,10 @@ The repo still uses `vico-*` skill names today. `vico-skills` is the broader pro
 ## Skill Set
 
 - `vico-ground`: build just enough shared ground to choose a safe next route through `scan`, `clarify`, `stress`, and `handoff`
-- `vico-plan`: the only default front door; decide `no-doc / plan_only / prd_backed`, reconcile state, create or update the active plan, and absorb ground handoff
+- `vico-plan`: the default front door for tracked work; decide `no-doc / plan_only / prd_backed`, reconcile state, create or update the active plan, and absorb ground handoff
 - `vico-exec`: execute the active plan until complete or truly blocked
 - `vico-feedback`: turn feedback about `vico-skills` into a GitHub issue draft and optionally file it after explicit confirmation
+- `vico-ops`: repo-local operations surface for bootstrap, sync, close, cancel, truth extraction, and workspace validation
 
 For `vico-ground` output examples, see [vico-ground/references/output-format.md](vico-ground/references/output-format.md).
 
@@ -43,15 +44,15 @@ Three common paths:
 ## Default Model
 
 - `vico-skills` is a strongly routed workflow, not a loose toolbelt
-- `vico-plan` is the only default user-facing entrypoint
-- `vico-plan` internally handles bootstrap, lightweight reconcile, PRD escalation, and active-slug replacement decisions
-- `vico-plan` also exposes explicit controller modes such as `help`, `review`, `sync`, `prd`, `replace`, `close`, and `cancel`
+- `vico-plan` is the default user-facing entrypoint for tracked work
+- `vico-plan` focuses on tracked planning, verification, PRD escalation, and execution-contract rewrites
 - `plan_only` is the default tracked workflow
 - `PRD` is an internal escalation path, not a separate default entrypoint
 - once upgraded to `prd_backed`, a slug does not downgrade in place
 - temporary reconcile state may still exist, but `resume` is an internal capability rather than a primary user-facing skill
 - every tracked slug should have an `.vico/index/<slug>.json` linkage file
 - `index` is derived linkage metadata, not the primary human source of truth
+- `vico-ops` owns repo-local maintenance and lifecycle operations rather than keeping them on the planning surface
 
 ## Design Principle
 
@@ -114,9 +115,10 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 - ground before planning: `vico-ground -> vico-plan`
 - pressure-test before planning: `vico-ground stress -> vico-plan`
 - tracked planning only: `vico-plan`
+- repo-local maintenance: `vico-ops`
 - cross-agent handoff: `Codex vico-plan -> Claude Code vico-exec`
 - Claude runner loop: `Codex vico-plan -> Claude runner -> vico-plan verify`
-- end-to-end tracked execution: `vico-plan -> vico-exec -> vico-plan close`
+- end-to-end tracked execution: `vico-plan -> vico-exec -> vico-plan verify -> vico-ops close`
 
 ## Escalation Hints
 
@@ -137,17 +139,19 @@ See [CONTRACTS.md](CONTRACTS.md) for the owner map, derived forms, sync policy, 
 ## Natural Triggers
 
 - `vico-ground`: `scan the repo`, `inspect the codebase`, `scan the architecture`, `take a quick pass over the project`, `orient me in this repo`, `clarify this`, `what are we actually solving`, `align on terms`, `stress-test this`, `challenge this assumption`, `where are we disagreeing`, `review what we know`, `resolve this into a handoff`, `扫一下这个项目`, `扫一下架构`, `摸一下这个仓库`, `摸个底`, `盘一下这个代码库`, `过一遍整体结构`, `先看看整体`, `看下架构`, `how do I use vico-ground`
-- `vico-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `verify close`, `verify sync`, `verify replan`, `close this plan`, `做个计划`, `建个 tracked plan`, `整理成执行步骤`, `对一下 plan`, `verify 一下`, `收个口`, `close 这个 plan`, `how do I use vico-plan`
+- `vico-plan`: `make a plan`, `create a tracked plan`, `turn this into execution steps`, `reconcile the current plan`, `verify this plan`, `replan this slug`, `做个计划`, `建个 tracked plan`, `整理成执行步骤`, `对一下 plan`, `verify 一下`, `how do I use vico-plan`
 - `vico-exec`: `keep going`, `continue until complete`, `execute the active plan`, `carry this through unless blocked`, `vico-exec cc`, `run this with cc`, `handoff to cc`, `use claude code runner`, `继续做`, `一直做到完成`, `别停`, `接着跑`, `继续推进直到完成`, `how do I use vico-exec`
 - `vico-feedback`: `file an issue`, `report a bug`, `I have feedback about vico-skills`, `draft a GitHub issue`, `提个 issue`, `记个反馈`, `这个 workflow 有点别扭`, `这个触发不太对`, `帮我整理成 issue`, `how do I use vico-feedback`
+- `vico-ops`: `bootstrap a new slug`, `sync the active docs`, `close this tracked work`, `cancel this slug`, `extract architecture truth`, `validate the vico workspace`, `how do I use vico-ops`
 
 If a natural-language request could reasonably mean more than one of these routes, prefer a short clarification over guessing the wrong workflow.
 Route by intent cluster first, phrase match second.
 If the wording is about understanding, aligning, mapping, tradeoffs, or pressure-testing before planning, prefer `vico-ground`.
 If the wording is a short repo-orientation phrase such as `scan`, `quick pass`, `orient me`, `扫一下`, `摸底`, `盘一下`, or `过一遍整体`, treat it as a strong default hint toward `vico-ground` when the request is about the whole project rather than one narrow file or an immediate code change.
-If the wording is about tracked-work control such as making a plan, syncing, replanning, verifying, or closing tracked docs, prefer `vico-plan`.
+If the wording is about tracked-work control such as making a plan, replanning, or verifying the current execution contract, prefer `vico-plan`.
 If the wording is about persistent implementation continuation such as `keep going`, `别停`, or `一直做到完成`, prefer `vico-exec` only when an active plan already exists; otherwise ask or route through `vico-plan`.
 If the wording is about bugs, UX friction, trigger misses, naming, or workflow complaints in `vico-skills` itself, prefer `vico-feedback`.
+If the wording is about repo-local maintenance such as bootstrap, sync, close, cancel, truth extraction, or workspace validation, prefer `vico-ops`.
 If the request is clearly narrow and local, prefer direct answer or direct execution instead of forcing a Vico skill.
 
 ## Using Vico Ground
@@ -199,8 +203,8 @@ scan -> clarify -> stress -> handoff
 - Need to start, update, reconcile, or reshape tracked work: `vico-plan`
 - Need to verify that a plan is really complete against the current codebase before close-out: `vico-plan verify`
 - Continue implementation against an active plan: `vico-exec`
-- Need to close out or cancel tracked work and remove active docs: `vico-plan`
-- Need architecture truth extraction or boundary handling: `vico-plan`
+- Need to close out or cancel tracked work and remove active docs: `vico-ops`
+- Need repo-local sync, bootstrap, truth extraction, or workspace validation: `vico-ops`
 - Need to turn feedback into a GitHub issue draft or file it after confirmation: `vico-feedback`
 
 `vico-feedback` should auto-classify the report as `bug`, `ux_friction`, `contract_gap`, or `feature_request` unless the category is genuinely ambiguous.
@@ -226,18 +230,19 @@ Example prompts:
 
 ## Automation
 
-- `vico-plan/scripts/bootstrap_vico_slug.py`
-  Creates starter active plan/PRD/architecture files when `vico-plan` decides a new slug is needed.
-- `vico-plan/scripts/sync_vico_headers.py`
+- `runtime/cli/bootstrap_vico_slug.py`
+  Creates starter active plan/PRD/architecture files when repo-local bootstrap is needed.
+- `runtime/cli/sync_vico_headers.py`
   Synchronizes plan and PRD headers plus cross-links.
-- `vico-plan/scripts/sync_vico_index.py`
+- `runtime/cli/sync_vico_index.py`
   Rebuilds minimal `.vico/index/*.json` manifests from current artifacts.
-- `vico-plan/scripts/close_vico_slug.py`
+- `runtime/cli/close_vico_slug.py`
   Deletes completed active docs and clears temporary resume/index state.
-- `vico-plan/scripts/validate_vico_workspace.py`
+- `runtime/cli/validate_vico_workspace.py`
   Validates the current `.vico` workspace against the Vico schema.
 - `scripts/validate_vico_skills.py`
   Validates all Vico skills, helper scripts, tests, and basic content hygiene.
+Public repo-local operations surface: `vico-ops`. Compatibility wrappers still exist under `vico-plan/scripts/`.
 
 ## Install And Uninstall
 
@@ -326,19 +331,7 @@ vico-plan verify
 ### Verify Then Close Out
 
 ```text
-vico-plan verify close
-```
-
-### Verify Then Sync
-
-```text
-vico-plan verify sync
-```
-
-### Verify Then Replan
-
-```text
-vico-plan verify replan
+vico-plan verify -> vico-ops close
 ```
 
 ### Show Available Modes
@@ -354,6 +347,8 @@ vico-ground -> vico-plan
 ```
 
 ### Export Repo Operating Brief
+
+These commands are repo-development utilities for this repository checkout. Installed-skill users should invoke the skill itself rather than assuming a local `vico-skills/` folder exists.
 
 ```text
 python vico-skills/scripts/export_vico_operating_md.py AGENTS.md
@@ -387,14 +382,15 @@ vico-ground help
 ### Execute Then Manually Close
 
 ```text
-vico-exec -> user confirms -> vico-plan close
+vico-exec -> vico-plan verify -> vico-ops close
 ```
 
 The lifecycle remains simple even when the user wants end-to-end completion:
 
 - `vico-exec` finishes implementation and keeps the plan current
-- `vico-plan close` performs close-out deletion handling
-- agents should stop after showing completion evidence and wait for the user to type the close command explicitly
+- `vico-plan verify` confirms completion against code reality
+- `vico-ops close` performs close-out deletion handling
+- agents should stop after showing completion evidence and wait for the user to invoke `vico-ops close` explicitly
 
 ### Codex Plan Then Claude Execute
 
@@ -410,12 +406,15 @@ This is a first-class supported handoff:
 
 ### Claude Runner Loop
 
+This runner is a repo-local development utility. It is useful when you are working from a checkout of `vico-skills` or have copied the runner into a repo on purpose.
+
 ```bash
-python3 vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon
+python vico-skills/vico-exec/scripts/claude_exec_runner.py --repo-root D:/projects/spoon
 ```
 
 Use the runner when Claude Code should keep looping through execute + verify + continue decisions until it reaches `done`, `blocked`, `needs_user`, or `stale_plan`.
 Natural entrypoints: `vico-exec cc`, `run this with cc`, `handoff to cc`.
+Owner source: `adapters/claude/claude_exec_runner.py`. The `vico-exec/scripts/` path remains as a compatibility wrapper.
 
 ## External Influences
 
@@ -441,7 +440,7 @@ Vico intentionally stays smaller and more repo-native than those systems. These 
 - `Think Before Coding` maps to `vico-ground`, explicit assumptions, clarification-first routing, and lightweight pre-planning pressure-testing.
 - `Simplicity First` maps to `vico-plan` simplicity discipline and the preference for smaller execution contracts.
 - `Surgical Changes` maps to `vico-exec` surgical execution discipline and Vico's small-scope edit bias.
-- `Goal-Driven Execution` maps to verify-driven loops in `vico-exec` and close-out verification in `vico-plan verify`.
+- `Goal-Driven Execution` maps to verify-driven loops in `vico-exec` and completion gating in `vico-plan verify`.
 
 What Vico should continue absorbing:
 
@@ -459,8 +458,11 @@ What Vico should not absorb directly:
 
 - Treat `vico-skills/` as the single source of truth.
 - During development, point project-local `.codex/skills/` and `.claude/skills/` entries at these folders instead of copying skill contents.
-- For Claude Code, hook scripts live in `vico-exec/scripts/` and project hook wiring lives in `.claude/settings*.json`.
-- For Claude Code, the stronger outer-loop runner lives at `vico-exec/scripts/claude_exec_runner.py`.
+- For Claude Code, adapter owner sources live under `adapters/claude/`.
+- For repo-local Vico plan automation, CLI owner sources live under `runtime/cli/`.
+- Keep `vico-plan/scripts/` as thin compatibility wrappers when stable skill-local paths still matter.
+- Keep `vico-exec/scripts/` as thin compatibility wrappers when stable skill-local paths still matter.
+- Treat `vico-ops` as the repo-local operations surface over `runtime/cli/`.
 - Use `scripts/export_vico_operating_md.py` as a repo-level utility rather than as part of `vico-ground`.
 
 ## Validation

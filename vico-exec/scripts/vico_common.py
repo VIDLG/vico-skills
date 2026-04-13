@@ -88,6 +88,13 @@ def write_json(path: Path, data: dict) -> None:
     path.write_text(json.dumps(data, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
 
 
+def write_text(path: Path, text: str, *, overwrite: bool = False) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists() and not overwrite:
+        raise FileExistsError(f"Refusing to overwrite existing file: {path}")
+    path.write_text(text, encoding="utf-8")
+
+
 def relative_path(root: Path, target: Path) -> str:
     return target.resolve().relative_to(root).as_posix()
 
@@ -319,3 +326,55 @@ def build_index_manifest(root: Path, slug: str, existing_index: dict | None) -> 
     if relationships:
         manifest["relationships"] = relationships
     return manifest
+
+
+def ensure_vico_layout(root: Path) -> None:
+    required_dirs = [
+        root / ".vico" / "index",
+        root / ".vico" / "plans" / "active",
+        root / ".vico" / "prd" / "active",
+        root / ".vico" / "resume",
+    ]
+    for directory in required_dirs:
+        directory.mkdir(parents=True, exist_ok=True)
+
+
+def sync_active_headers_for_slug(root: Path, slug: str, *, touch_updated: bool = False, current_date: str | None = None) -> list[Path]:
+    current_date = current_date or today_iso()
+    changed: list[Path] = []
+    manifest = index_path(root, slug)
+    manifest_rel = relative_path(root, manifest) if manifest.exists() else None
+    plan = plan_path(root, slug)
+    prd = prd_path(root, slug)
+
+    if plan.exists():
+        plan_meta = detect_metadata(plan)
+        plan_updates: dict[str, tuple[str, str | None]] = {
+            "slug": ("Slug", slug),
+            "mode": ("Mode", "prd_backed" if prd.exists() else "plan_only"),
+            "manifest": ("Manifest", manifest_rel),
+            "source_prd": ("Source PRD", relative_path(root, prd) if prd.exists() else None),
+            "created": ("Created", plan_meta.get("created") or current_date),
+            "updated": ("Updated", current_date if touch_updated else (plan_meta.get("updated") or current_date)),
+        }
+        updated_text = update_metadata_text(plan.read_text(encoding="utf-8"), plan_updates)
+        if updated_text != plan.read_text(encoding="utf-8"):
+            plan.write_text(updated_text, encoding="utf-8")
+            changed.append(plan)
+
+    if prd.exists():
+        prd_meta = detect_metadata(prd)
+        prd_updates: dict[str, tuple[str, str | None]] = {
+            "slug": ("Slug", slug),
+            "mode": ("Mode", "prd_backed"),
+            "manifest": ("Manifest", manifest_rel),
+            "execution_plan": ("Execution Plan", relative_path(root, plan) if plan.exists() else None),
+            "created": ("Created", prd_meta.get("created") or current_date),
+            "updated": ("Updated", current_date if touch_updated else (prd_meta.get("updated") or current_date)),
+        }
+        updated_text = update_metadata_text(prd.read_text(encoding="utf-8"), prd_updates)
+        if updated_text != prd.read_text(encoding="utf-8"):
+            prd.write_text(updated_text, encoding="utf-8")
+            changed.append(prd)
+
+    return changed

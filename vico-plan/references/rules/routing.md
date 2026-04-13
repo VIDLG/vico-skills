@@ -68,6 +68,6 @@ When `.vico` artifacts are outdated or disagree with code, start with `vico-plan
 - stale execution state: `vico-plan`
 - changed scope or acceptance: `vico-plan`
 - `plan_only` slug now needs durable scope framing: `vico-plan` for `upgrade-to-prd-backed`
-- stale architecture truth: `vico-plan` with internal truth extraction
-- effectively complete work still marked active: `vico-plan close`
-- implementation done and the user expects end-to-end completion: `vico-exec` then `vico-plan close`
+- stale architecture truth: `vico-ops truth`
+- effectively complete work still marked active: `vico-ops close`
+- implementation done and the user expects end-to-end completion: `vico-exec` then `vico-plan verify` then `vico-ops close`

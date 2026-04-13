@@ -16,6 +16,12 @@ Treat short repo-orientation requests as strong `vico-ground` signals by default
 
 Do not force `vico-ground` for every short inspection request. If the wording clearly asks for a narrow direct answer, a one-off file read, or immediate implementation, route normally. When the same phrase could mean either quick inspection or explicit shared-ground building, prefer one short clarification rather than silently skipping the skill.
 
+## Agent Summary
+
+- `Display name`: `Vico Ground`
+- `Short description`: `Build shared ground before planning or execution`
+- `Default prompt`: `Build just enough shared ground to choose a safe next route. Keep the public interface small: prefer `scan`, `clarify`, `stress`, or `handoff`; stop grounding once the next route is clear; ask rather than guess when uncertainty is material; and emit a thin ground handoff when the next consumer is vico-plan. Think before acting: prefer the minimum grounding move that resolves the highest-value uncertainty.`
+
 ## Public Moves
 
 `vico-ground` keeps a small public interface:
@@ -90,24 +96,27 @@ Do not force a larger state model into user-facing output unless the user explic
 
 ## Output Contract
 
-Every move-driven output must begin with exactly one visible line: `Move: <move>`.
+Every move-driven output should begin with exactly one visible line: `Move: <move>`.
+
+If route-debug context is needed, prefer surfacing it in a short update immediately before the move-driven output rather than inserting lines ahead of `Move: <move>`.
 
 Default output should stay compact and include:
 
 - `Conclusion`
 - `Evidence`
 - `Next route`
-- `Next action`
+- `Recommended next action`
 
 Optional sections:
 
+- `Other next actions`
 - `Assumptions`
 - `Tensions`
 - `Why this matters`
 
 Keep machine-facing literals stable.
 Use the user's primary working language when it is clear from the conversation.
-Surface this route-debug shape in the first visible update when `vico-ground` is selected:
+When route selection may be non-obvious, surface this route-debug shape in the first visible update when `vico-ground` is selected:
 
 - `Skill route: vico-ground`
 - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
@@ -125,9 +134,10 @@ Minimum output:
 - `Conclusion`
 - `Evidence`
 - `Next route`
-- `Next action`
+- `Recommended next action`
 
 `scan` may include a structural map when the shape of the system is itself the blocker, but that map is optional.
+When more than one safe follow-up exists, keep one clearly preferred action under `Recommended next action` and put 1-3 concise alternatives under `Other next actions`.
 
 ### `clarify`
 

@@ -5,10 +5,10 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 
 ## Distribution Assumptions
 
-- Runtime should be safe for single-skill installation and use.
+- `vico-skills` is designed as one repo-local workflow set.
 - Runtime must not depend on the repository-root `README.md`.
-- Runtime must not depend on cross-skill paths.
-- Shared runtime needs must be satisfied through owner sources plus skill-local closures.
+- Shared runtime, CLI, and adapter needs may live in repo-level owner layers such as `runtime/` and `adapters/`.
+- Stable skill-local wrapper paths may remain when they improve operator ergonomics, but they should not replace the owner source.
 
 ## Persistence Policy
 
@@ -23,18 +23,18 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 - Do not dump the full internal scheduler, issue bank, or execution heuristics into default user-facing output unless the user asks for that detail or it materially affects the next decision.
 - Do not present ungrounded or assumption-level `vico-ground` conclusions as if they were repository-backed findings or tracked-plan commitments.
 - Keep machine-consumed fields stable even when surrounding prose is optimized for user readability.
-- When a Vico skill is selected, expose the active skill route and route reason in the first visible update so the user can distinguish skill-routed behavior from generic model behavior.
+- When a Vico skill is selected through natural routing, expose the active skill route and route reason in the first visible update when that extra visibility helps the user distinguish skill-routed behavior from generic model behavior.
 - Prefer this minimal route-debug shape:
   - `Skill route: <skill-name>`
   - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
   - optional `Route detail: <the strongest route-specific detail>`
   - optional `Route mode: <public mode or move>` when a specific mode already explains the route more clearly
-- For explicit invocations, say that the route came from an explicit skill request.
+- For explicit invocations, say that the route came from an explicit skill request when that context is not already obvious.
 - For natural routing, prefer naming the strongest intent cluster or natural trigger rather than a vague explanation.
 - When a human-facing checkpoint, summary, verification result, or handoff is emitted, prefer an explicit route and next step when that action is not already obvious.
 - For `vico-ground`, prefer the pair:
   - `Next route`
-  - `Next action`
+  - `Recommended next action`
 - Route literals should stay stable, especially:
   - `direct_execute`
   - `vico-plan`
@@ -48,15 +48,17 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 - Use phrase lists to improve recall, especially for short colloquial requests, but do not let phrase matching override clearer intent signals.
 - Apply route preconditions before locking a skill:
   - `vico-ground`: user is trying to orient, inspect, align, map, challenge, review, or build shared ground
-  - `vico-plan`: user is trying to create, reconcile, verify, sync, replan, or close tracked work
+  - `vico-plan`: user is trying to create, reconcile, verify, or replan tracked work
   - `vico-exec`: user wants persistent implementation continuation and an active plan exists
   - `vico-feedback`: user is giving feedback about `vico-skills` behavior or asking to draft/file an issue about it
+  - `vico-ops`: user is trying to bootstrap, sync, close, cancel, extract truth, or validate repo-local tracked state
 - Prefer one short clarification question when the same wording could reasonably map to more than one route.
 - Prefer direct execution or direct answer when the request is clearly narrow, local, and does not benefit from Vico routing.
 - Short colloquial repo-orientation phrases such as `scan`, `quick pass`, `orient me`, `扫一下`, `摸底`, `盘一下`, or `过一遍整体` should be treated as strong `vico-ground` hints when they target the whole repo, architecture, boundaries, or overall structure.
-- Short colloquial tracked-work phrases such as `做个计划`, `收个口`, `对一下 plan`, `继续推进这个计划`, `verify 一下`, or `close 这个` should be treated as strong `vico-plan` hints when tracked work is already in scope.
+- Short colloquial tracked-work phrases such as `做个计划`, `对一下 plan`, `verify 一下`, or `replan 一下` should be treated as strong `vico-plan` hints when tracked work is already in scope.
 - Short colloquial persistence phrases such as `继续做`, `一直做完`, `别停`, `接着跑`, or `继续直到完成` should be treated as strong `vico-exec` hints only when an active plan already exists.
 - Short colloquial feedback phrases such as `提个 issue`, `记个反馈`, `这个体验别扭`, `这个触发不对`, or `帮我整理成 issue` should be treated as strong `vico-feedback` hints when they clearly target `vico-skills` itself.
+- Short colloquial maintenance phrases such as `收尾`, `收口删除`, `sync 一下`, `close 这个 tracked work`, `cancel 这个 slug`, or `校验一下 .vico` should be treated as strong `vico-ops` hints when repo-local tracked state is already in scope.
 
 ## Workflow Re-entry Rule
 
@@ -108,8 +110,10 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 | Contract type | Owner source | Derived forms | Validator responsibility |
 | --- | --- | --- | --- |
 | Global workflow constitution | `README.md` | skill-level references, contract map entries, workflow invariant checks | ensure README markers exist and downstream docs do not drift on core invariants |
-| Skill behavior contract | each `<skill>/SKILL.md` | `<skill>/agents/openai.yaml`, skill-local references, examples | ensure the skill body is present, referenced helpers exist, and agent summaries do not become a second full contract |
-| Shared scripts | owner script file, currently under `vico-plan/scripts/` | skill-local wrapper entries under `<skill>/scripts/` when still needed | ensure owner source exists, local wrapper entry points exist where required, and runtime references do not point across skill boundaries |
+| Skill behavior contract | each `<skill>/SKILL.md` | `<skill>/agents/openai.yaml`, skill-local references, examples | ensure the skill body is present, referenced helpers exist, `Agent Summary` blocks stay structured, and generated agent summaries do not become a second full contract |
+| Shared scripts | owner script file, currently under `runtime/vico_artifacts/` | skill-local wrapper entries under `<skill>/scripts/` when still needed | ensure owner source exists, local wrapper entry points exist where required, and runtime references do not point across skill boundaries |
+| Repo-local CLI owners | owner CLI file under `runtime/cli/` | skill-local wrapper entries under `<skill>/scripts/` when stable command paths still matter | ensure owner CLIs exist, wrappers stay thin, and repo-local automation logic does not drift across duplicate entrypoints |
+| Platform adapters | owner adapter file under `adapters/` | skill-local wrapper entries under `<skill>/scripts/` when stable skill-local paths still matter | ensure owner adapters exist, wrappers stay thin, and adapter-specific logic does not sprawl back into skill contracts |
 | Shared status and decision rules | owner reference file, currently under `vico-plan/references/` | skill-local full reference copies where runtime visibility is required | ensure owner files exist, local copies exist where required, and copies are treated as derived content |
 | Strong templates | owner template file, such as `plan-template.md`, `prd-template.md`, `reconcile-output-template.md` | skill-local visible copies or references needed for runtime closure | ensure owner templates exist, required local closures exist, and key structure remains stable |
 | Feedback / issue templates | owner template file under `vico-feedback/references/` | issue drafts and filing behavior in `vico-feedback` | ensure draft templates exist, stay concise, and keep confirmation boundaries explicit |
@@ -120,6 +124,7 @@ It is not the user-facing workflow guide and not a second source of skill behavi
 - Owner sources are edited directly.
 - Derived forms are synchronized from owner sources.
 - Derived forms are read-only by default.
+- When a shared script is intentionally duplicated for skill-local runtime closure, keep one explicit owner copy and enforce parity on the duplicated closures.
 - If a derived file needs owner-specific additions, the derived block and the owner-local block must be explicitly separated.
 - Do not create a new top-level shared source directory just to deduplicate content.
 - Only synchronize high-repeat, structurally stable, cross-skill content.

@@ -25,7 +25,7 @@ Keep commands and move literals unchanged.
 - use `clarify` when scope, terms, or intent are weak
 - use `stress` when a proposal, assumption, or plan needs pressure
 - use `handoff` when the next route is already clear
-- show this route-debug shape in the first visible update:
+- when route selection may be non-obvious, show this route-debug shape in a short update before the main move output:
   - `Skill route: vico-ground`
   - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
   - optional `Route detail: <repo_orientation | architecture_scan | exact trigger phrase>`
@@ -37,7 +37,8 @@ Keep commands and move literals unchanged.
 - `Conclusion`
 - `Evidence`
 - `Next route`
-- `Next action`
+- `Recommended next action`
+- optional `Other next actions`
 
 ## Examples
 

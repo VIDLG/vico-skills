@@ -8,7 +8,7 @@ Keep commands and mode literals unchanged.
 ## Vico Plan Help
 
 - Entry: `vico-plan`
-- Default role: the only front door for tracked work
+- Default role: the default front door for tracked work
 - Axis position: the tracked-execution front door; move from vibe execution into explicit tracked planning only when needed
 
 ## Modes
@@ -16,13 +16,8 @@ Keep commands and mode literals unchanged.
 - default
 - review
 - verify
-- sync
 - prd
 - replan
-- replace
-- truth
-- close
-- cancel
 
 ## Input Sources
 
@@ -44,25 +39,20 @@ Keep commands and mode literals unchanged.
   - `Skill route: vico-plan`
   - `Route reason: <explicit_skill_request | intent_cluster | natural_trigger>`
   - optional `Route detail: <tracked_work_controller | verify_request | exact trigger phrase>`
-  - optional `Route mode: <review | verify | sync | prd | replan | replace | truth | close | cancel>`
+  - optional `Route mode: <review | verify | prd | replan>`
 
 ## Safety Rules
 
 - `review` is read-only
 - `verify` is read-only
-- `truth` is manual only
-- `replace`, `close`, and `cancel` require explicit slug when multiple active slugs exist
+- route lifecycle and repo-local maintenance operations through `vico-ops`
 
 ## Mode Hints
 
-- `sync`: use when code moved and the current plan should catch up
-- `verify`: use when you need to check completion against real code and test evidence before close-out
-- `verify close`: use when you explicitly want verification to gate an immediate close-out
-- `verify sync`: use when you want verification to gate an immediate state refresh
-- `verify replan`: use when you want verification to gate an immediate execution-contract rewrite
+- `verify`: use when you need to check completion against real code and test evidence before lifecycle cleanup
 - `replan`: use when the same slug still applies, but the execution contract itself should be rewritten
 - `prd`: use when the work now needs or updates `prd_backed` framing
-- `close`: use only when you explicitly want active docs deleted after completion is verified
+- `vico-ops`: use after planning when the real need is bootstrap, sync, close, cancel, truth extraction, or workspace validation
 
 ## Examples
 
@@ -72,13 +62,10 @@ Keep commands and mode literals unchanged.
 - `vico-plan review`
 - `vico-plan verify`
 - `verify 一下`
-- `vico-plan verify sync`
-- `vico-plan verify replan`
-- `vico-plan sync`
 - `vico-plan prd`
-- `vico-plan replace`
-- `vico-plan close`
-- `vico-plan cancel`
+- `vico-plan replan`
+- `vico-ops sync`
+- `vico-ops close`
 ```
 
 Keep help compact and command-like. It should explain the controller clearly without restating the full skill contract.

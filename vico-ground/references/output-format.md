@@ -26,9 +26,14 @@ Next route
 
 - `vico-plan`
 
-Next action
+Recommended next action
 
 - rewrite the `vico-ground` public contract around fewer moves and a thinner handoff
+
+Other next actions
+
+- draft the routing deltas before editing templates
+- run `vico-ground stress` on the proposed simplification first
 ```
 
 ## Clarify Example
@@ -50,9 +55,14 @@ Next route
 
 - `stay_in_ground`
 
-Next action
+Recommended next action
 
 - continue with `vico-ground scan`
+
+Other next actions
+
+- ask one short clarification question if the target is still ambiguous
+- route directly to `direct_execute` if the user narrows to one local change
 ```
 
 ## Stress Example
@@ -73,9 +83,14 @@ Next route
 
 - `stay_in_ground`
 
-Next action
+Recommended next action
 
 - collapse those routes into `vico-ground stress`
+
+Other next actions
+
+- keep the public route names but reduce them to aliases only
+- prototype the shorter route set in help docs before rewriting the skill contract
 ```
 
 ## Handoff Example
@@ -97,9 +112,14 @@ Next route
 
 - `vico-plan`
 
-Next action
+Recommended next action
 
 - create the v2 migration plan and update the skill contract
+
+Other next actions
+
+- open a `vico-plan` replan pass focused on the handoff contract
+- capture one thin handoff example before touching the main contract
 ```
 
 ## Full Handoff Example
@@ -154,5 +174,5 @@ Evidence
 Why this is incomplete:
 
 - missing `Next route`
-- missing `Next action`
+- missing `Recommended next action`
 - does not hand the work forward
